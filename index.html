@@ -12,7 +12,7 @@
         extend: {
           colors: {
             biruMuda: '#e0f2fe',    
-            biruUtama: '#0284c7',  
+            biruUtama: '#0284c7',   
             kuningOsis: '#eab308',  
             abuLatar: '#f3f4f6',    
           }
@@ -21,7 +21,7 @@
     }
   </script>
   
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFwbGlrYXNpIFdhbGkgS2VsYXMgU01QIiwKICAic2hvcnRfbmFtZSI6ICJTaVdhbGkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjRmNiIsCiAgInRoZW1lX2Y2b2xvciI6ICIjMDI4NGM3IiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiCn0=">
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFwbGlrYXNpIFdhbGkgS2VsYXMgU01QIiwKICAic2hvcnRfbmFtZSI6ICJTaVdhbGkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjRmNiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjg0YzciLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIKfQ==">
   <meta name="theme-color" content="#0284c7">
 </head>
 <body class="bg-abuLatar text-gray-800 font-sans max-w-md mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-200 relative pb-20">
@@ -251,16 +251,13 @@
 
     <div id="view-biodata" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-xl shadow-sm flex gap-2">
-        <input type="number" id="searchNisn" placeholder="Masukkan 10 digit NISN Siswa..." class="flex-1 p-2 border rounded-lg text-sm outline-none focus:border-biruUtama">
+        <input type="text" id="searchNis" placeholder="Masukkan NIS Siswa..." class="flex-1 p-2 border rounded-lg text-sm outline-none focus:border-biruUtama">
         <button onclick="cariProfilSiswa()" class="bg-kuningOsis text-slate-900 font-bold px-4 py-2 rounded-lg text-sm shadow">Cari</button>
       </div>
 
       <div id="profilResult" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-xl shadow-sm text-center border-t-4 border-biruUtama">
-          <div id="pFotoContainer" class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl text-gray-400 overflow-hidden shadow-inner relative">
-            <span id="pAvatarIcon">👤</span>
-            <img id="pFotoImg" src="" alt="Foto Profil" class="w-full h-full object-cover hidden">
-          </div>
+          <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl text-gray-400">👤</div>
           <h3 id="pNama" class="font-bold text-base text-gray-800">Nama Siswa</h3>
           <p id="pNisNisn" class="text-xs text-gray-500">NIS</p>
         </div>
@@ -330,7 +327,8 @@
   </nav>
 
   <script>
-    const URL_GAS = "https://script.google.com/macros/s/AKfycbxgMi_TQzbNjkSrlH9X2j_-aEO6I0jH8Nf81i2xvS5dKzC92VO8lkkOy_1lr01WHVkEMw/exec";
+    // ⚠️ PASTIKAN URL_GAS DI BAWAH INI ADALAH URL "WEB APP" TERBARU HASIL DEPLOYMENT ANDA!
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbwsNbHxI8KlbKPOZh94hS_A_jKe0wQulwzADhaf2S3Q7oIDGCZb5Nx8cNXacKcAQxSoeg/exec";
 
     function go(step) {
       if (step === 2) {
@@ -393,16 +391,22 @@
       document.getElementById('btn-' + tab).className = "flex-1 py-2 text-center rounded bg-biruUtama text-white";
     }
 
+    // Sinkronisasi Memuat Data Struktur, Visi Misi dari INFO_KELAS
     function muatInfoKelasMaster() {
       const scriptTag = document.createElement('script');
       scriptTag.src = `${URL_GAS}?aksi=getInfoKelas&callback=handleInfoKelas`;
+      
+      // Deteksi kegagalan koneksi awal
       scriptTag.onerror = function() {
-        document.getElementById('txtWaliKelas').innerText = "Gagal terhubung ke GAS";
-        document.getElementById('txtKetuaKelas').innerText = "Gagal terhubung ke GAS";
+        document.getElementById('txtWaliKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
+        document.getElementById('txtKetuaKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
+        console.error("Sinkronisasi gagal. Pastikan deployment diset ke 'Anyone'.");
       };
+      
       document.body.appendChild(scriptTag);
     }
 
+    // Callback Handler Data Master Kelas
     function handleInfoKelas(response) {
       if(response.status === "success") {
         const d = response.data;
@@ -491,7 +495,7 @@
       scriptTag.onload = function() {
         setTimeout(() => {
           if (!responsDiterima) {
-            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap Anda berhasil terkirim.' });
+            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap Anda berhasil terkirim ke server.' });
             document.getElementById('siswaForm').reset();
             bukaHalaman('view-dashboard');
           }
@@ -500,16 +504,17 @@
       };
       
       scriptTag.onerror = function() {
-        Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script.' });
+        Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script. Pastikan URL dan setelan deploy benar.' });
         if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
 
       document.body.appendChild(scriptTag);
     }
 
+    // CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA 
     function cariProfilSiswa() {
-      const nisn = document.getElementById('searchNisn').value.trim();
-      if(!nisn) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NISN terlebih dahulu!' });
+      const nis = document.getElementById('searchNis').value;
+      if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
       
       Swal.fire({
         title: 'Mencari Data...',
@@ -523,29 +528,14 @@
           const b = res.biodata; 
           
           document.getElementById('profilResult').classList.remove('hidden');
-          document.getElementById('pNama').innerText = res.nama || b[4] || "Siswa";
-          document.getElementById('pNisNisn').innerText = `NIS: ${res.nis || b[15]} | NISN: ${res.nisn || b[16]}`;
+          document.getElementById('pNama').innerText = b[4] || "Siswa (NIS: " + nis + ")";
+          document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
           
-          // Render Avatar Dinamis berdasarkan Link Foto di Kolom AH (res.foto)
-          const avatarIcon = document.getElementById('pAvatarIcon');
-          const fotoImg = document.getElementById('pFotoImg');
-          
-          if (res.foto && res.foto.trim() !== "") {
-            fotoImg.src = res.foto;
-            fotoImg.classList.remove('hidden');
-            avatarIcon.classList.add('hidden');
-          } else {
-            fotoImg.src = "";
-            fotoImg.classList.add('hidden');
-            avatarIcon.classList.remove('hidden');
-          }
-
-          // Struktur Pemetaan Detail Data Tabel 
           const strukturBiodata = [
             { label: "ID Unik Sistem", val: b[0] },
             { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
             { label: "Nomor Absen", val: b[2] },
-            { label: "Kelas", val: b[3] },
+            { label: "Kelas Pilihan", val: b[3] },
             { label: "Nama Lengkap", val: b[4] },
             { label: "Nama Panggilan", val: b[5] },
             { label: "Jenis Kelamin", val: b[6] === "L" ? "Laki-laki" : (b[6] === "P" ? "Perempuan" : b[6]) },
@@ -558,7 +548,7 @@
             { label: "Hobi Utama", val: b[13] },
             { label: "Cita-cita", val: b[14] },
             { label: "Pelajaran Disukai", val: b[17] },
-            { label: "Pelajaran Tidak Disukai", val: b[18] },
+            { label: "Pelajaran Dibenci", val: b[18] },
             { label: "Ekstrakurikuler", val: b[19] },
             { label: "Kegiatan Motivasi", val: b[20] },
             { label: "Gaya Belajar", val: b[21] },
@@ -597,18 +587,25 @@
           res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
 
         } else {
-          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NISN tersebut belum terdaftar.' });
+          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NIS tersebut belum terdaftar.' });
           document.getElementById('profilResult').classList.add('hidden');
         }
       };
 
       const scriptTag = document.createElement('script');
-      scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nisn=${nisn}&callback=handleGasResponse`;
+      scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}&callback=handleGasResponse`;
       scriptTag.onload = () => { if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag); };
+      
+      // Handler Intersept Eror Jaringan/CORS/URL Salah
       scriptTag.onerror = () => { 
-        Swal.fire({ icon: 'error', title: 'Koneksi Ditolak', text: 'Gagal memuat riwayat siswa.' });
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Koneksi Ditolak', 
+          text: 'Gagal memuat riwayat siswa. Hal ini terjadi karena URL_GAS salah atau izin akses Web App Apps Script belum disetel ke "Anyone".' 
+        });
         if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
+      
       document.body.appendChild(scriptTag);
     }
 
