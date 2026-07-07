@@ -1,0 +1,151 @@
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
+  <div class="border-b pb-2">
+    <h2 class="text-base font-bold text-gray-700">Formulir Data Mandiri Siswa</h2>
+    <p class="text-[11px] text-gray-400">Isi data di bawah ini dengan lengkap dan benar.</p>
+  </div>
+  
+  <form id="siswaForm" onsubmit="kirimDataSiswaGET(event)" class="space-y-4 text-xs">
+    
+    <div class="space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-200/60">
+      <span class="font-bold text-[10px] text-biruUtama uppercase tracking-wider block">1. Identitas Utama</span>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">Nama Lengkap Siswa</label>
+        <input type="text" id="nama" required class="w-full p-2.5 border rounded-lg focus:outline-none focus:border-biruUtama text-xs bg-white">
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">NIS (Nomor Induk)</label>
+          <input type="text" id="nis" required class="w-full p-2.5 border rounded-lg focus:outline-none focus:border-biruUtama text-xs bg-white">
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">NISN</label>
+          <input type="text" id="nisn" required class="w-full p-2.5 border rounded-lg focus:outline-none focus:border-biruUtama text-xs bg-white">
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">No. HP Aktif Siswa</label>
+        <input type="tel" id="hpSiswa" placeholder="08xxxxxxxxxx" class="w-full p-2.5 border rounded-lg focus:outline-none focus:border-biruUtama text-xs bg-white">
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">Alamat Lengkap Tempat Tinggal</label>
+        <textarea id="alamat" rows="2" class="w-full p-2.5 border rounded-lg focus:outline-none focus:border-biruUtama text-xs bg-white"></textarea>
+      </div>
+    </div>
+
+    <div class="space-y-3 bg-sky-50/50 p-3 rounded-xl border border-biruMuda">
+      <span class="font-bold text-[10px] text-sky-700 uppercase tracking-wider block">2. Data Orang Tua & Wali</span>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Nama Ayah</label>
+          <input type="text" id="namaAyah" class="w-full p-2.5 border rounded-lg text-xs bg-white">
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Nama Ibu</label>
+          <input type="text" id="namaIbu" class="w-full p-2.5 border rounded-lg text-xs bg-white">
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">Pekerjaan Orang Tua</label>
+        <input type="text" id="pekerjaanOrtu" class="w-full p-2.5 border rounded-lg text-xs bg-white">
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">No. HP Orang Tua / Wali</label>
+        <input type="tel" id="hpOrangTua" class="w-full p-2.5 border rounded-lg text-xs bg-white">
+      </div>
+      
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Memiliki KIP?</label>
+          <select id="kip" class="w-full p-2.5 border rounded-lg bg-white">
+            <option value="Tidak">Tidak</option>
+            <option value="Ya">Ya</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Memiliki PIP?</label>
+          <select id="pip" class="w-full p-2.5 border rounded-lg bg-white">
+            <option value="Tidak">Tidak</option>
+            <option value="Ya">Ya</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">Status Yatim/Piatu</label>
+        <select id="statusYatim" class="w-full p-2.5 border rounded-lg bg-white">
+          <option value="-">- Bukan / Lengkap -</option>
+          <option value="Yatim">Yatim</option>
+          <option value="Piatu">Piatu</option>
+          <option value="Yatim Piatu">Yatim Piatu</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-200/60">
+      <span class="font-bold text-[10px] text-amber-600 uppercase tracking-wider block">3. Minat, Bakat & Akademik</span>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Mata Pelajaran Favorit</label>
+          <input type="text" id="mapelFavorit" class="w-full p-2.5 border rounded-lg bg-white">
+        </div>
+        <div>
+          <label class="block font-medium mb-1 text-gray-600">Mata Pelajaran Sulit</label>
+          <input type="text" id="mapelSulit" class="w-full p-2.5 border rounded-lg bg-white">
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium mb-1 text-gray-600">Target Setelah Lulus SMP</label>
+        <input type="text" id="targetLulus" placeholder="Misal: SMAN 1, SMK Jurusan Mesin" class="w-full p-2.5 border rounded-lg bg-white">
+      </div>
+    </div>
+
+    <button type="submit" class="w-full bg-biruUtama text-white p-3 rounded-xl font-bold shadow-md hover:bg-sky-700 active:scale-[0.98] transition">
+      Simpan Data Sekarang
+    </button>
+  </form>
+</div>
+
+<script>
+  function kirimDataSiswaGET(e) {
+    e.preventDefault();
+    
+    // Ambil nilai data input dan bungkus agar aman dikirim lewat URL string
+    const nama = encodeURIComponent(document.getElementById('nama').value);
+    const nis = encodeURIComponent(document.getElementById('nis').value);
+    const nisn = encodeURIComponent(document.getElementById('nisn').value);
+    const alamat = encodeURIComponent(document.getElementById('alamat').value);
+    const hpSiswa = encodeURIComponent(document.getElementById('hpSiswa').value);
+    const hpOrangTua = encodeURIComponent(document.getElementById('hpOrangTua').value);
+    const namaAyah = encodeURIComponent(document.getElementById('namaAyah').value);
+    const namaIbu = encodeURIComponent(document.getElementById('namaIbu').value);
+    const pekerjaanOrtu = encodeURIComponent(document.getElementById('pekerjaanOrtu').value);
+    const kip = encodeURIComponent(document.getElementById('kip').value);
+    const pip = encodeURIComponent(document.getElementById('pip').value);
+    const statusYatim = encodeURIComponent(document.getElementById('statusYatim').value);
+    const mapelFavorit = encodeURIComponent(document.getElementById('mapelFavorit').value);
+    const mapelSulit = encodeURIComponent(document.getElementById('mapelSulit').value);
+    const targetLulus = encodeURIComponent(document.getElementById('targetLulus').value);
+
+    // Menyusun url request parameter GET menembak ke URL_GAS global di Index.html
+    const urlFinal = `${URL_GAS}?aksi=simpanBiodata&nama=${nama}&nis=${nis}&nisn=${nisn}&alamat=${alamat}&hpSiswa=${hpSiswa}&hpOrangTua=${hpOrangTua}&namaAyah=${namaAyah}&namaIbu=${namaIbu}&pekerjaanOrtu=${pekerjaanOrtu}&kip=${kip}&pip=${pip}&statusYatim=${statusYatim}&mapelFavorit=${mapelFavorit}&mapelSulit=${mapelSulit}&targetLulus=${targetLulus}`;
+
+    // Eksekusi Trik Tag Script inject (Bypass CORS 100% tuntas)
+    const scriptTag = document.createElement('script');
+    scriptTag.src = urlFinal;
+    
+    scriptTag.onload = function() {
+      alert("✅ Sukses! Biodata Anda berhasil disimpan ke Spreadsheet kelas.");
+      document.getElementById('siswaForm').reset();
+      if(typeof bukaHalaman === "function") {
+         bukaHalaman('view-dashboard'); // Kembali otomatis ke halaman dashboard utama
+      }
+      document.body.removeChild(scriptTag);
+    };
+    
+    scriptTag.onerror = function() {
+      alert("❌ Terjadi kegagalan koneksi atau URL GAS salah.");
+      document.body.removeChild(scriptTag);
+    };
+
+    document.body.appendChild(scriptTag);
+  }
+</script>
