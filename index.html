@@ -251,7 +251,7 @@
 
     <div id="view-biodata" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-xl shadow-sm flex gap-2">
-        <input type="text" id="searchNis" placeholder="Masukkan NIS Siswa..." class="flex-1 p-2 border rounded-lg text-sm outline-none focus:border-biruUtama">
+        <input type="number" id="searchNisn" placeholder="Masukkan 10 digit NISN Siswa..." class="flex-1 p-2 border rounded-lg text-sm outline-none focus:border-biruUtama">
         <button onclick="cariProfilSiswa()" class="bg-kuningOsis text-slate-900 font-bold px-4 py-2 rounded-lg text-sm shadow">Cari</button>
       </div>
 
@@ -491,7 +491,7 @@
       scriptTag.onload = function() {
         setTimeout(() => {
           if (!responsDiterima) {
-            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap Anda berhasil terkirim ke server.' });
+            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap Anda berhasil terkirim.' });
             document.getElementById('siswaForm').reset();
             bukaHalaman('view-dashboard');
           }
@@ -507,10 +507,9 @@
       document.body.appendChild(scriptTag);
     }
 
-    // FIX UTAMA: PENCARIAN PROFIL SISWA BERDASARKAN DATABASE BIODATA (33 KOLOM)
     function cariProfilSiswa() {
-      const nis = document.getElementById('searchNis').value.trim();
-      if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
+      const nisn = document.getElementById('searchNisn').value.trim();
+      if(!nisn) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NISN terlebih dahulu!' });
       
       Swal.fire({
         title: 'Mencari Data...',
@@ -524,10 +523,10 @@
           const b = res.biodata; 
           
           document.getElementById('profilResult').classList.remove('hidden');
-          document.getElementById('pNama').innerText = res.nama || b[4] || "Siswa (NIS: " + nis + ")";
-          document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
+          document.getElementById('pNama').innerText = res.nama || b[4] || "Siswa";
+          document.getElementById('pNisNisn').innerText = `NIS: ${res.nis || b[15]} | NISN: ${res.nisn || b[16]}`;
           
-          // Logika Menampilkan Foto Profil / Avatar dari kolom AH (indeks ke-33)
+          // Render Avatar Dinamis berdasarkan Link Foto di Kolom AH (res.foto)
           const avatarIcon = document.getElementById('pAvatarIcon');
           const fotoImg = document.getElementById('pFotoImg');
           
@@ -541,7 +540,7 @@
             avatarIcon.classList.remove('hidden');
           }
 
-          // Struktur Pemetaan Data 33 Kolom Google Sheets secara urut
+          // Struktur Pemetaan Detail Data Tabel 
           const strukturBiodata = [
             { label: "ID Unik Sistem", val: b[0] },
             { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
@@ -598,13 +597,13 @@
           res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
 
         } else {
-          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NIS tersebut belum terdaftar.' });
+          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NISN tersebut belum terdaftar.' });
           document.getElementById('profilResult').classList.add('hidden');
         }
       };
 
       const scriptTag = document.createElement('script');
-      scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}&callback=handleGasResponse`;
+      scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nisn=${nisn}&callback=handleGasResponse`;
       scriptTag.onload = () => { if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag); };
       scriptTag.onerror = () => { 
         Swal.fire({ icon: 'error', title: 'Koneksi Ditolak', text: 'Gagal memuat riwayat siswa.' });
