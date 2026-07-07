@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PWA Dashboard Kelas</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0284c7">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -18,88 +20,92 @@
     }
   </script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen pb-10">
+<body class="bg-gray-900 font-sans text-gray-800 antialiased min-h-screen flex justify-center items-start sm:py-4">
 
-  <div class="bg-gradient-to-r from-sky-600 to-biruUtama text-white p-5 rounded-b-2xl shadow-md mb-4">
-    <div class="flex justify-between items-center mb-4">
-      <div class="flex items-center space-x-3">
-        <img src="https://yanuar-moga.github.io/guruwali/assets/logo.png" alt="Logo Sekolah" class="w-12 h-12 object-contain drop-shadow-md">
-        <div>
-          <h1 id="txtHeaderKelas" class="text-2xl font-black tracking-wide leading-tight">MEMUAT...</h1>
-          <p class="text-[11px] text-sky-100">Selamat Datang di PWA Aplikasi Kelas</p>
+  <div class="w-full max-w-md bg-gray-100 min-h-screen sm:min-h-[840px] sm:rounded-2xl sm:shadow-2xl overflow-hidden relative pb-10">
+
+    <div class="bg-gradient-to-r from-sky-600 to-biruUtama text-white p-5 rounded-b-2xl shadow-md mb-4">
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center space-x-3">
+          <img src="https://yanuar-moga.github.io/guruwali/assets/logo.png" alt="Logo Sekolah" class="w-12 h-12 object-contain drop-shadow-md">
+          <div>
+            <h1 id="txtHeaderKelas" class="text-2xl font-black tracking-wide leading-tight">9I</h1>
+            <p class="text-[11px] text-sky-100">Selamat Datang di PWA Aplikasi Kelas</p>
+          </div>
+        </div>
+        <div class="bg-white/20 p-2 rounded-xl text-center min-w-[65px] backdrop-blur-sm">
+          <span class="block text-[9px] uppercase font-bold tracking-wider text-sky-200">Status</span>
+          <span id="badgeStatusKelas" class="text-xs font-extrabold">-</span>
         </div>
       </div>
-      <div class="bg-white/20 p-2 rounded-xl text-center min-w-[65px] backdrop-blur-sm">
-        <span class="block text-[9px] uppercase font-bold tracking-wider text-sky-200">Status</span>
-        <span id="badgeStatusKelas" class="text-xs font-extrabold">-</span>
-      </div>
-    </div>
-    
-    <div class="bg-white/10 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
-      <div class="flex justify-between"><span class="text-sky-200">Wali Kelas:</span><span id="txtWaliKelas" class="font-bold">Memuat...</span></div>
-      <div class="flex justify-between"><span class="text-sky-200">Ketua Kelas:</span><span id="txtKetuaKelas" class="font-bold">Memuat...</span></div>
-    </div>
-  </div>
-
-  <div class="max-w-md mx-auto px-4 space-y-4">
-    
-    <div id="view-dashboard" class="space-y-4">
       
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Visi & Misi Kelas</h3>
-        <p id="txtVisi" class="text-sm font-bold text-gray-700 italic mb-2">"Memuat visi kelas..."</p>
-        <p id="txtMisi" class="text-xs text-gray-500 whitespace-pre-line">Memuat misi kelas...</p>
+      <div class="bg-white/10 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
+        <div class="flex justify-between"><span class="text-sky-200">Wali Kelas:</span><span id="txtWaliKelas" class="font-bold">Memuat...</span></div>
+        <div class="flex justify-between"><span class="text-sky-200">Ketua Kelas:</span><span id="txtKetuaKelas" class="font-bold">Memuat...</span></div>
       </div>
-
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Akses Fitur</h3>
-
-        <button onclick="bukaHalaman('view-struktur')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
-          <div class="flex items-center space-x-3">
-            <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 font-bold text-lg">👥</div>
-            <div class="text-left">
-              <h4 class="font-bold text-gray-700 text-sm">Struktur Organisasi Kelas</h4>
-              <p class="text-[11px] text-gray-400">Lihat kepengurusan dan petugas kelas saat ini</p>
-            </div>
-          </div>
-          <span class="text-gray-400 text-sm">➔</span>
-        </button>
-
-        <button onclick="bukaHalaman('view-form-siswa')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
-          <div class="flex items-center space-x-3">
-            <div class="p-2.5 bg-sky-50 rounded-xl text-biruUtama font-bold text-lg">📝</div>
-            <div class="text-left">
-              <h4 class="font-bold text-gray-700 text-sm">Formulir Data Mandiri Siswa</h4>
-              <p class="text-[11px] text-gray-400">Isi dan perbarui data profil siswa lengkap</p>
-            </div>
-          </div>
-          <span class="text-gray-400 text-sm">➔</span>
-        </button>
-      </div>
-
     </div>
 
-    <div id="view-struktur" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
-      <div class="border-b pb-2 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-bold text-gray-700">Struktur Organisasi Kelas</h2>
-          <p class="text-[11px] text-gray-400">Daftar pengurus kelas resmi aktif</p>
+    <div class="px-4 space-y-4">
+      
+      <div id="view-dashboard" class="space-y-4">
+        
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Visi & Misi Kelas</h3>
+          <p id="txtVisi" class="text-sm font-bold text-gray-700 italic mb-2">"Memuat visi kelas..."</p>
+          <p id="txtMisi" class="text-xs text-gray-500 whitespace-pre-line">Memuat misi kelas...</p>
         </div>
-        <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg font-medium">Kembali</button>
-      </div>
-      
-      <div id="containerStruktur" class="space-y-2 text-xs">
-        <p class="text-gray-400 text-center py-4">Sedang memproses struktur...</p>
-      </div>
-    </div>
 
-    <div id="view-form-siswa" class="hidden space-y-3">
-      <div class="flex justify-end">
-        <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold">✕ Batalkan & Kembali</button>
+        <div class="space-y-2">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Akses Fitur</h3>
+
+          <button onclick="bukaHalaman('view-struktur')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 font-bold text-lg">👥</div>
+              <div class="text-left">
+                <h4 class="font-bold text-gray-700 text-sm">Struktur Organisasi Kelas</h4>
+                <p class="text-[11px] text-gray-400">Lihat kepengurusan dan petugas kelas saat ini</p>
+              </div>
+            </div>
+            <span class="text-gray-400 text-sm">➔</span>
+          </button>
+
+          <button onclick="bukaHalaman('view-form-siswa')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 bg-sky-50 rounded-xl text-biruUtama font-bold text-lg">📝</div>
+              <div class="text-left">
+                <h4 class="font-bold text-gray-700 text-sm">Formulir Data Mandiri Siswa</h4>
+                <p class="text-[11px] text-gray-400">Isi dan perbarui data profil siswa lengkap</p>
+              </div>
+            </div>
+            <span class="text-gray-400 text-sm">➔</span>
+          </button>
+        </div>
+
       </div>
-      <div id="formContainer">
-        <p class="text-center text-xs text-gray-400 bg-white p-6 rounded-xl border">Silakan hubungkan komponen FormSiswa.html Anda ke dalam container div ini.</p>
+
+      <div id="view-struktur" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
+        <div class="border-b pb-2 flex justify-between items-center">
+          <div>
+            <h2 class="text-base font-bold text-gray-700">Struktur Organisasi Kelas</h2>
+            <p class="text-[11px] text-gray-400">Daftar pengurus kelas resmi aktif</p>
+          </div>
+          <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg font-medium">Kembali</button>
+        </div>
+        
+        <div id="containerStruktur" class="space-y-2 text-xs">
+          <p class="text-gray-400 text-center py-4">Sedang memproses struktur...</p>
+        </div>
       </div>
+
+      <div id="view-form-siswa" class="hidden space-y-3">
+        <div class="flex justify-end">
+          <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold">✕ Batalkan & Kembali</button>
+        </div>
+        <div id="formContainer">
+          <p class="text-center text-xs text-gray-400 bg-white p-6 rounded-xl border">Silakan hubungkan komponen FormSiswa.html Anda ke dalam container div ini.</p>
+        </div>
+      </div>
+
     </div>
 
   </div>
