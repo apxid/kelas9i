@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Wali Kelas SMP - PWA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            biruMuda: '#e0f2fe',    // Latar belakang lembut (sky-100)
+            biruUtama: '#0284c7',   // Warna dominan aplikasi (sky-600)
+            kuningOsis: '#eab308',  // Kuning khas OSIS/Emas (yellow-500)
+            abuLatar: '#f3f4f6',    // Abu-abu terang (gray-100)
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFwbGlrYXNpIFdhbGkgS2VsYXMgU01QIiwKICAic2hvcnRfbmFtZSI6ICJTaVdhbGkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjRmNiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjg0YzciLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIKfQ==">
+  <meta name="theme-color" content="#0284c7">
+</head>
+<body class="bg-abuLatar text-gray-800 font-sans max-w-md mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-200 relative pb-20">
+
+  <header class="bg-biruUtama text-white p-4 shadow-md sticky top-0 z-50 rounded-b-xl">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-base font-bold tracking-wide">SI-Wali Kelas</h1>
+        <p class="text-xs text-biruMuda">Sistem Informasi & Biodata Siswa</p>
+      </div>
+      <div class="bg-kuningOsis text-slate-900 text-xs px-2.5 py-1 rounded-full font-extrabold shadow-sm">
+        SMP
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 overflow-y-auto">
+    
+    <div id="view-dashboard" class="space-y-4">
+      <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-kuningOsis">
+        <h2 class="font-bold text-gray-800 text-sm flex items-center gap-1">👋 Selamat Datang di Dashboard Class</h2>
+        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Silakan bagi siswa untuk mengisi data diri mandiri, atau wali kelas untuk memantau biodata, prestasi, dan pelanggaran.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="text-2xl p-2 bg-biruMuda text-biruUtama rounded-lg">👥</div>
+          <div>
+            <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Total Siswa</span>
+            <span class="text-base font-bold text-gray-700" id="dash-total-siswa">-</span>
+          </div>
+        </div>
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="text-2xl p-2 bg-amber-100 text-amber-600 rounded-lg">📢</div>
+          <div>
+            <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Info Baru</span>
+            <span class="text-base font-bold text-gray-700">1</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-4">Menu Aplikasi</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="bukaHalaman('view-form')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama active:scale-95 transition flex flex-col items-center justify-center">
+          <div class="w-12 h-12 bg-sky-50 rounded-full flex items-center justify-center text-xl mb-2">📝</div>
+          <span class="text-xs font-bold text-gray-700 block">Isi Biodata Diri</span>
+        </button>
+        
+        <button onclick="bukaHalaman('view-biodata')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama active:scale-95 transition flex flex-col items-center justify-center">
+          <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-xl mb-2">👤</div>
+          <span class="text-xs font-bold text-gray-700 block">Profil & Riwayat</span>
+        </button>
+
+        <button onclick="bukaHalaman('view-kelas')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama active:scale-95 transition flex flex-col items-center justify-center col-span-2 py-4 flex-row gap-4">
+          <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-lg">🏫</div>
+          <span class="text-xs font-bold text-gray-700 text-left">Struktur Organisasi, Jadwal & Informasi</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="view-form" class="hidden">
+      <div id="formSiswaContainer"></div>
+    </div>
+
+    <div id="view-biodata" class="hidden">
+      <p class="text-center text-gray-400 text-sm">Halaman Biodata & Riwayat Siswa (Sedang memuat...)</p>
+    </div>
+
+    <div id="view-kelas" class="hidden">
+      <p class="text-center text-gray-400 text-sm">Halaman Fitur Kelas (Sedang memuat...)</p>
+    </div>
+
+  </main>
+
+  <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-2 shadow-xl z-50 rounded-t-xl">
+    <button onclick="bukaHalaman('view-dashboard')" id="nav-dashboard" class="flex flex-col items-center text-biruUtama font-bold text-[10px] gap-0.5">
+      <span class="text-lg">🏠</span><span>Beranda</span>
+    </button>
+    <button onclick="bukaHalaman('view-form')" id="nav-form" class="flex flex-col items-center text-gray-400 text-[10px] gap-0.5">
+      <span class="text-lg">✍️</span><span>Isi Data</span>
+    </button>
+    <button onclick="bukaHalaman('view-biodata')" id="nav-biodata" class="flex flex-col items-center text-gray-400 text-[10px] gap-0.5">
+      <span class="text-lg">👤</span><span>Biodata</span>
+    </button>
+  </nav>
+
+  <script>
+    // Konfigurasi URL Web App GAS Anda yang Baru
+    const URL_GAS = "https://script.google.com/macros/s/AKfyfby...Isi_ID_Deployment_Anda_Di_Sini.../exec";
+
+    function bukaHalaman(viewId) {
+      // Sembunyikan semua views
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-form').classList.add('hidden');
+      document.getElementById('view-biodata').classList.add('hidden');
+      document.getElementById('view-kelas').classList.add('hidden');
+
+      // Tampilkan view yang dipilih
+      document.getElementById(viewId).classList.remove('hidden');
+
+      // Update warna tombol navigasi bawah
+      const navs = ['nav-dashboard', 'nav-form', 'nav-biodata'];
+      navs.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+          if(id === 'nav-' + viewId.replace('view-', '')) {
+            el.classList.add('text-biruUtama', 'font-bold');
+            el.classList.remove('text-gray-400');
+          } else {
+            el.classList.remove('text-biruUtama', 'font-bold');
+            el.classList.add('text-gray-400');
+          }
+        }
+      });
+    }
+
+    // Registrasi Service Worker ringan untuk kebutuhan PWA
+    if ('serviceWorker' in navigator) {
+      const sw = `self.addEventListener('fetch', function(e) { });`;
+      const blob = new Blob([sw], {type: 'application/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log(err));
+    }
+  </script>
+</body>
+</html>
