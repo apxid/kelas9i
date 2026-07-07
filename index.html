@@ -65,6 +65,7 @@
           <div class="w-12 h-12 bg-sky-50 rounded-full flex items-center justify-center text-xl mb-2">📝</div>
           <span class="text-xs font-bold text-gray-700 block">Isi Biodata Diri</span>
         </button>
+  
         <button onclick="bukaHalaman('view-biodata')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition flex flex-col items-center justify-center">
           <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-xl mb-2">👤</div>
           <span class="text-xs font-bold text-gray-700 block">Profil & Riwayat</span>
@@ -261,6 +262,16 @@
           <p id="pNisNisn" class="text-xs text-gray-500">NIS</p>
         </div>
 
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+          <h4 class="font-bold text-xs text-biruUtama mb-2 flex items-center gap-1">📋 Detail Biodata Lengkap</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <tbody id="tableDetailBiodata" class="text-gray-600 divide-y divide-gray-100">
+                </tbody>
+            </table>
+          </div>
+        </div>
+
         <div class="bg-white p-4 rounded-xl shadow-sm border border-green-100">
           <h4 class="font-bold text-xs text-green-600 mb-2 flex items-center gap-1">🏆 Riwayat Prestasi</h4>
           <ul id="listPrestasi" class="text-xs space-y-1 list-disc pl-4 text-gray-600"></ul>
@@ -316,7 +327,7 @@
   </nav>
 
   <script>
-    const URL_GAS = "https://script.google.com/macros/s/AKfycbwsNbHxI8KlbKPOZh94hS_A_jKe0wQulwzADhaf2S3Q7oIDGCZb5Nx8cNXacKcAQxSoeg/exec";
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbxgMi_TQzbNjkSrlH9X2j_-aEO6I0jH8Nf81i2xvS5dKzC92VO8lkkOy_1lr01WHVkEMw/exec";
 
     // Navigasi Multi-Step Form Internal + Validasi per Step
     function go(step) {
@@ -385,7 +396,8 @@
     // Sinkronisasi Memuat Data Struktur, Visi Misi dari INFO_KELAS
     function muatInfoKelasMaster() {
       const scriptTag = document.createElement('script');
-      scriptTag.src = `${URL_GAS}?aksi=getInfoKelas`;
+      // PERBAIKAN UTAMA: Tambahkan parameter callback secara eksplisit agar sinkronisasi lancar
+      scriptTag.src = `${URL_GAS}?aksi=getInfoKelas&callback=handleInfoKelas`;
       document.body.appendChild(scriptTag);
     }
 
@@ -393,7 +405,6 @@
     function handleInfoKelas(response) {
       if(response.status === "success") {
         const d = response.data;
-        
         if(d.KELAS) {
           document.getElementById('txtHeaderKelas').innerText = `Kelas ${d.KELAS.value}`;
           document.getElementById('badgeStatusKelas').innerText = d.KELAS.status;
@@ -412,7 +423,6 @@
 
         const urutanPengurus = ['WALI_KELAS', 'KETUA_KELAS', 'WAKIL_KETUA', 'BENDAHARA', 'SEKRETARIS'];
         let adaPengurus = false;
-        
         urutanPengurus.forEach(kunci => {
           if(d[kunci] && d[kunci].status === "ACTIVE") {
             adaPengurus = true;
@@ -427,7 +437,6 @@
             containerStruktur.insertAdjacentHTML('beforeend', rowHtml);
           }
         });
-
         if(!adaPengurus) {
           containerStruktur.innerHTML = `<p class="text-center text-gray-400 py-2">Belum ada data pengurus aktif.</p>`;
         }
@@ -442,7 +451,6 @@
     // KIRIM DATA via GET (Anti-CORS) dengan Isian Lengkap Berbasis Fail-Safe
     function kirimDataSiswaGET(e) {
       e.preventDefault();
-      
       Swal.fire({
         title: 'Menyimpan Data...',
         text: 'Harap tunggu sebentar',
@@ -457,7 +465,7 @@
         'namaAyah', 'pekerjaanAyah', 'pendidikanAyah', 'namaIbu', 'pekerjaanIbu', 
         'pendidikanIbu', 'topikOrtu', 'harapanOrtu', 'punyaKip', 'statusYatimPiatu', 'riwayatSakit'
       ];
-      
+
       let queryStr = `?aksi=simpanBiodata`;
       fields.forEach(f => {
         const el = document.getElementById(f);
@@ -467,8 +475,6 @@
       });
 
       let responsDiterima = false;
-
-      // Global Callback Handler untuk respons sukses formal
       window.handleFormResponse = function(res) {
         responsDiterima = true;
         if(res.status === "success") {
@@ -482,39 +488,30 @@
 
       const scriptTag = document.createElement('script');
       scriptTag.src = URL_GAS + queryStr + `&callback=handleFormResponse`;
-      
       scriptTag.onload = function() {
-        // Melonggarkan batas timeout menjadi 1500ms agar mengompensasi redirect internal Google Apps Script
         setTimeout(() => {
           if (!responsDiterima) {
-            responsDiterima = true; // Set true agar bypass deteksi error di onerror
             Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap Anda berhasil terkirim ke server.' });
             document.getElementById('siswaForm').reset();
             bukaHalaman('view-dashboard');
           }
           if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
-        }, 1500);
+        }, 800);
       };
       
       scriptTag.onerror = function() {
-        // Jeda sedikit untuk memastikan callback window.handleFormResponse tidak sempat tereksekusi di background.
-        // Karena CORS/Redirect Google Apps Script sering memicu event onerror palsu pada tag script.
-        setTimeout(() => {
-          if (!responsDiterima) {
-            Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script. Coba lagi.' });
-          }
-          if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
-        }, 500);
+        Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script. Coba lagi.' });
+        if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
 
       document.body.appendChild(scriptTag);
     }
 
-    // CARI PROFIL & RIWAYAT via GET (Anti-CORS)
+    // PERBAIKAN SEKALIGUS OPTIMALISASI: CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA 
     function cariProfilSiswa() {
       const nis = document.getElementById('searchNis').value;
       if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
-
+      
       Swal.fire({
         title: 'Mencari Data...',
         allowOutsideClick: false,
@@ -523,20 +520,77 @@
 
       window.handleGasResponse = function(res) {
         Swal.close();
-        if(res.status === "success") {
-          document.getElementById('profilResult').classList.remove('hidden');
-          document.getElementById('pNama').innerText = res.nama || "Siswa (NIS: " + nis + ")";
-          document.getElementById('pNisNisn').innerText = "NIS: " + (res.nis || nis) + " | NISN: " + (res.nisn || "-");
+        if(res.status === "success" && res.biodata) {
+          const b = res.biodata; // Array baris data dari database BIODATA Google Sheets
           
+          document.getElementById('profilResult').classList.remove('hidden');
+          
+          // Nama Lengkap (indeks 4) dan NIS/NISN (indeks 15 & 16)
+          document.getElementById('pNama').innerText = b[4] || "Siswa (NIS: " + nis + ")";
+          document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
+          
+          // Pemetaan Judul Label Berdasarkan Susunan Kolom rowData di Google Apps Script
+          const strukturBiodata = [
+            { label: "ID Unik Sistem", val: b[0] },
+            { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
+            { label: "Nomor Absen", val: b[2] },
+            { label: "Kelas Pilihan", val: b[3] },
+            { label: "Nama Lengkap", val: b[4] },
+            { label: "Nama Panggilan", val: b[5] },
+            { label: "Jenis Kelamin", val: b[6] === "L" ? "Laki-laki" : (b[6] === "P" ? "Perempuan" : b[6]) },
+            { label: "Tempat Lahir", val: b[7] },
+            { label: "Tanggal Lahir", val: b[8] },
+            { label: "Alamat Tinggal", val: b[9] },
+            { label: "No. WA Siswa", val: b[10] },
+            { label: "No. WA Orang Tua", val: b[11] },
+            { label: "Prestasi (Form)", val: b[12] },
+            { label: "Hobi Utama", val: b[13] },
+            { label: "Cita-cita", val: b[14] },
+            { label: "Pelajaran Disukai", val: b[17] },
+            { label: "Pelajaran Dibenci", val: b[18] },
+            { label: "Ekstrakurikuler", val: b[19] },
+            { label: "Kegiatan Motivasi", val: b[20] },
+            { label: "Gaya Belajar", val: b[21] },
+            { label: "Nama Lengkap Ayah", val: b[22] },
+            { label: "Pekerjaan Ayah", val: b[23] },
+            { label: "Pendidikan Ayah", val: b[24] },
+            { label: "Nama Lengkap Ibu", val: b[25] },
+            { label: "Pekerjaan Ibu", val: b[26] },
+            { label: "Pendidikan Ibu", val: b[27] },
+            { label: "Topik Obrolan Rumah", val: b[28] },
+            { label: "Harapan Orang Tua", val: b[29] },
+            { label: "Memiliki KIP", val: b[30] },
+            { label: "Status Yatim/Piatu", val: b[31] },
+            { label: "Riwayat Penyakit", val: b[32] }
+          ];
+
+          // Render Dinamis ke dalam Tabel HTML detail siswa
+          const tableBody = document.getElementById('tableDetailBiodata');
+          tableBody.innerHTML = "";
+          strukturBiodata.forEach(item => {
+            if(item.val !== undefined && item.val !== "") {
+              tableBody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                  <td class="p-2 font-semibold text-gray-500 w-5/12 border-b border-gray-100">${item.label}</td>
+                  <td class="p-2 text-gray-800 border-b border-gray-100">: ${item.val}</td>
+                </tr>
+              `;
+            }
+          });
+
+          // Render Riwayat Prestasi Terpisah (Sheet PRESTASI)
           const pList = document.getElementById('listPrestasi');
           pList.innerHTML = res.prestasi.length ? "" : "<li>Belum ada catatan prestasi</li>";
           res.prestasi.forEach(r => pList.innerHTML += `<li><strong>${r[2]}</strong></li>`);
 
+          // Render Riwayat Pelanggaran Terpisah (Sheet PELANGGARAN)
           const pelList = document.getElementById('listPelanggaran');
           pelList.innerHTML = res.pelanggaran.length ? "" : "<tr><td colspan='2' class='p-2 text-center text-gray-400'>Bersih</td></tr>";
           res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
+
         } else {
-          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NIS tersebut tidak ditemukan.' });
+          Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data siswa dengan NIS tersebut belum terdaftar.' });
+          document.getElementById('profilResult').classList.add('hidden');
         }
       };
 
