@@ -3,437 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aplikasi Wali Kelas SMP - PWA</title>
+  <title>PWA Dashboard Kelas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            biruMuda: '#e0f2fe',    
-            biruUtama: '#0284c7',   
-            kuningOsis: '#eab308',  
-            abuLatar: '#f3f4f6',    
+            biruUtama: '#0284c7',
+            biruMuda: '#e0f2fe'
           }
         }
       }
     }
   </script>
-  
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFwbGlrYXNpIFdhbGkgS2VsYXMgU01QIiwKICAic2hvcnRfbmFtZSI6ICJTaVdhbGkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjRmNiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjg0YzciLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIKfQ==">
-  <meta name="theme-color" content="#0284c7">
 </head>
-<body class="bg-abuLatar text-gray-800 font-sans max-w-md mx-auto min-h-screen flex flex-col shadow-lg border-x border-gray-200 relative pb-20">
+<body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen pb-10">
 
-  <header class="bg-biruUtama text-white p-4 shadow-md sticky top-0 z-50 rounded-b-xl">
-    <div class="flex justify-between items-center">
-      <div>
-        <h1 class="text-base font-bold tracking-wide">SI-Wali Kelas</h1>
-        <p class="text-xs text-biruMuda">Sistem Informasi & Biodata Siswa</p>
+  <div class="bg-gradient-to-r from-sky-600 to-biruUtama text-white p-5 rounded-b-2xl shadow-md mb-4">
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center space-x-3">
+        <img src="https://yanuar-moga.github.io/guruwali/assets/logo.png" alt="Logo Sekolah" class="w-12 h-12 object-contain drop-shadow-md">
+        <div>
+          <h1 id="txtHeaderKelas" class="text-2xl font-black tracking-wide leading-tight">MEMUAT...</h1>
+          <p class="text-[11px] text-sky-100">Selamat Datang di PWA Aplikasi Kelas</p>
+        </div>
       </div>
-      <div class="bg-kuningOsis text-slate-900 text-xs px-2.5 py-1 rounded-full font-extrabold shadow-sm">SMP</div>
+      <div class="bg-white/20 p-2 rounded-xl text-center min-w-[65px] backdrop-blur-sm">
+        <span class="block text-[9px] uppercase font-bold tracking-wider text-sky-200">Status</span>
+        <span id="badgeStatusKelas" class="text-xs font-extrabold">-</span>
+      </div>
     </div>
-  </header>
+    
+    <div class="bg-white/10 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
+      <div class="flex justify-between"><span class="text-sky-200">Wali Kelas:</span><span id="txtWaliKelas" class="font-bold">Memuat...</span></div>
+      <div class="flex justify-between"><span class="text-sky-200">Ketua Kelas:</span><span id="txtKetuaKelas" class="font-bold">Memuat...</span></div>
+    </div>
+  </div>
 
-  <main class="flex-1 p-4 overflow-y-auto">
+  <div class="max-w-md mx-auto px-4 space-y-4">
     
     <div id="view-dashboard" class="space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-kuningOsis">
-        <h2 class="font-bold text-gray-800 text-sm flex items-center gap-1">👋 Selamat Datang di Kelas</h2>
-        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Gunakan aplikasi ini untuk mengisi biodata mandiri siswa atau melihat jadwal, struktur organisasi, dan riwayat siswa.</p>
+      
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Visi & Misi Kelas</h3>
+        <p id="txtVisi" class="text-sm font-bold text-gray-700 italic mb-2">"Memuat visi kelas..."</p>
+        <p id="txtMisi" class="text-xs text-gray-500 whitespace-pre-line">Memuat misi kelas...</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="bukaHalaman('view-form')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition flex flex-col items-center justify-center">
-          <div class="w-12 h-12 bg-sky-50 rounded-full flex items-center justify-center text-xl mb-2">📝</div>
-          <span class="text-xs font-bold text-gray-700 block">Isi Biodata Diri</span>
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Akses Fitur</h3>
+
+        <button onclick="bukaHalaman('view-struktur')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
+          <div class="flex items-center space-x-3">
+            <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 font-bold text-lg">👥</div>
+            <div class="text-left">
+              <h4 class="font-bold text-gray-700 text-sm">Struktur Organisasi Kelas</h4>
+              <p class="text-[11px] text-gray-400">Lihat kepengurusan dan petugas kelas saat ini</p>
+            </div>
+          </div>
+          <span class="text-gray-400 text-sm">➔</span>
         </button>
-        <button onclick="bukaHalaman('view-biodata')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition flex flex-col items-center justify-center">
-          <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-xl mb-2">👤</div>
-          <span class="text-xs font-bold text-gray-700 block">Profil & Riwayat</span>
+
+        <button onclick="bukaHalaman('view-form-siswa')" class="w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:bg-gray-50 transition active:scale-[0.99]">
+          <div class="flex items-center space-x-3">
+            <div class="p-2.5 bg-sky-50 rounded-xl text-biruUtama font-bold text-lg">📝</div>
+            <div class="text-left">
+              <h4 class="font-bold text-gray-700 text-sm">Formulir Data Mandiri Siswa</h4>
+              <p class="text-[11px] text-gray-400">Isi dan perbarui data profil siswa lengkap</p>
+            </div>
+          </div>
+          <span class="text-gray-400 text-sm">➔</span>
         </button>
-        <button onclick="bukaHalaman('view-kelas')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition col-span-2 py-4 flex items-center justify-center gap-4">
-          <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-lg">🏫</div>
-          <span class="text-xs font-bold text-gray-700">Struktur Organisasi, Jadwal & Informasi</span>
-        </button>
+      </div>
+
+    </div>
+
+    <div id="view-struktur" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
+      <div class="border-b pb-2 flex justify-between items-center">
+        <div>
+          <h2 class="text-base font-bold text-gray-700">Struktur Organisasi Kelas</h2>
+          <p class="text-[11px] text-gray-400">Daftar pengurus kelas resmi aktif</p>
+        </div>
+        <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg font-medium">Kembali</button>
+      </div>
+      
+      <div id="containerStruktur" class="space-y-2 text-xs">
+        <p class="text-gray-400 text-center py-4">Sedang memproses struktur...</p>
       </div>
     </div>
 
-    <div id="view-form" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
-      <div class="border-b pb-2">
-        <h2 class="text-base font-bold text-gray-700">Formulir Data Mandiri</h2>
+    <div id="view-form-siswa" class="hidden space-y-3">
+      <div class="flex justify-end">
+        <button onclick="bukaHalaman('view-dashboard')" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold">✕ Batalkan & Kembali</button>
       </div>
-      <form id="siswaForm" onsubmit="kirimDataSiswaGET(event)" class="text-xs space-y-4">
-        
-        <div id="step1" class="space-y-3">
-          <h4 class="text-sm font-bold text-biruUtama border-b pb-1">Biodata Diri (1/3)</h4>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">No Absen</label>
-            <input type="number" id="noAbsen" placeholder="Contoh: 1" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Kelas</label>
-            <input type="text" id="kelas" placeholder="Contoh: VII-A" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Nama Lengkap</label>
-            <input type="text" id="namaLengkap" placeholder="Nama sesuai Akte Lahir" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Nama Panggilan</label>
-            <input type="text" id="namaPanggilan" placeholder="Contoh: Budi" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Jenis Kelamin</label>
-            <select id="jk" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-              <option value="L">Laki-laki</option>
-              <option value="P">Perempuan</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Tempat Lahir</label>
-            <input type="text" id="tempatLahir" placeholder="Contoh: Pemalang" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Tgl Lahir</label>
-            <input type="date" id="tglLahir" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Alamat Lengkap</label>
-            <input type="text" id="alamat" placeholder="Nama jalan, RT/RW, nomor rumah, kecamatan" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">No WA Siswa</label>
-            <input type="text" id="noWaSiswa" placeholder="Contoh: 0852xxx" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">No WA Ortu</label>
-            <input type="text" id="noWaOrtu" placeholder="Contoh: 0852xxx" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white focus:border-biruUtama outline-none">
-          </div>
-          <button type="button" onclick="go(2)" class="w-full bg-biruUtama text-white p-3 rounded-lg font-bold shadow-md hover:bg-sky-700 transition">Lanjut</button>
-        </div>
-
-        <div id="step2" class="hidden space-y-3">
-          <h4 class="text-sm font-bold text-amber-600 border-b pb-1">Minat & Sekolah (2/3)</h4>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Prestasi Ringkas</label>
-            <input type="text" id="prestasiRingkas" placeholder="Contoh: Juara 1 Lomba Mewarnai Tingkat Kecamatan" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Hobi</label>
-            <input type="text" id="hobi" placeholder="Contoh: Membaca, Sepak bola, Menggambar" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Cita-cita</label>
-            <input type="text" id="citaCita" placeholder="Contoh: Programmer, Dokter, Guru" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">No Induk (NIS)</label>
-            <input type="text" id="nis" placeholder="Masukkan Nomor Induk Siswa" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">NISN</label>
-            <input type="number" id="nisn" placeholder="Masukkan 10 digit NISN nasional" required class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pelajaran Disukai</label>
-            <input type="text" id="pelajaranSuka" placeholder="Contoh: Matematika, Bahasa Inggris" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pelajaran Tidak Disukai</label>
-            <input type="text" id="pelajaranTdkSuka" placeholder="Contoh: Sejarah, Fisika" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Ekskul</label>
-            <input type="text" id="ekskul" placeholder="Contoh: Pramuka, PMR, Basket" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Kegiatan Motivasi</label>
-            <input type="text" id="kegiatanMotivasi" placeholder="Kegiatan yang bikin kamu semangat belajar" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Cara Belajar</label>
-            <select id="caraBelajar" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-              <option value="Menonton Video atau Gambar">Menonton Video atau Gambar</option>
-              <option value="Mendengarkan cerita guru atau podcast">Mendengarkan cerita guru atau podcast</option>
-              <option value="Praktik langsung">Praktik langsung</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="go(1)" class="bg-gray-200 text-gray-700 p-3 rounded-lg font-bold hover:bg-gray-300 transition">Kembali</button>
-            <button type="button" onclick="go(3)" class="bg-biruUtama text-white p-3 rounded-lg font-bold shadow-md hover:bg-sky-700 transition">Lanjut</button>
-          </div>
-        </div>
-
-        <div id="step3" class="hidden space-y-3">
-          <h4 class="text-sm font-bold text-green-600 border-b pb-1">Data Keluarga (3/3)</h4>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Nama Ayah</label>
-            <input type="text" id="namaAyah" placeholder="Nama lengkap ayah" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pekerjaan Ayah</label>
-            <input type="text" id="pekerjaanAyah" placeholder="Contoh: Karyawan Swasta, PNS, Wiraswasta" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pendidikan Ayah</label>
-            <input type="text" id="pendidikanAyah" placeholder="Contoh: SMA, S1, Diploma" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Nama Ibu</label>
-            <input type="text" id="namaIbu" placeholder="Nama lengkap ibu" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pekerjaan Ibu</label>
-            <input type="text" id="pekerjaanIbu" placeholder="Contoh: Ibu Rumah Tangga, Guru, Pedagang" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Pendidikan Ibu</label>
-            <input type="text" id="pendidikanIbu" placeholder="Contoh: SMP, SMA, S1" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Topik Sering Dibicarakan</label>
-            <input type="text" id="topikOrtu" placeholder="Contoh: Perkembangan belajar, Masalah keuangan, Masa depan" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Harapan Orang Tua</label>
-            <input type="text" id="harapanOrtu" placeholder="Contoh: Sukses kuliah, Menjadi anak mandiri" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Punya KIP</label>
-            <select id="punyaKip" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-              <option value="Tidak">Tidak</option>
-              <option value="Ya">Ya</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Status Yatim/Piatu</label>
-            <select id="statusYatimPiatu" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-              <option value="Lengkap">Lengkap</option>
-              <option value="Yatim">Yatim</option>
-              <option value="Piatu">Piatu</option>
-              <option value="Yatim Piatu">Yatim Piatu</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-gray-600">Riwayat Sakit</label>
-            <input type="text" id="riwayatSakit" placeholder="Contoh: Asma, Tipes, Kejang, Mag, atau Tulis 'Tidak Ada'" class="w-full p-2.5 border rounded-lg bg-gray-50 focus:bg-white outline-none">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="go(2)" class="bg-gray-200 text-gray-700 p-3 rounded-lg font-bold hover:bg-gray-300 transition">Kembali</button>
-            <button type="submit" class="bg-green-600 text-white p-3 rounded-lg font-bold shadow-md hover:bg-green-700 transition">Kirim Data</button>
-          </div>
-        </div>
-
-      </form>
-    </div>
-
-    <div id="view-biodata" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-sm flex gap-2">
-        <input type="text" id="searchNis" placeholder="Masukkan NIS Siswa..." class="flex-1 p-2 border rounded-lg text-sm outline-none focus:border-biruUtama">
-        <button onclick="cariProfilSiswa()" class="bg-kuningOsis text-slate-900 font-bold px-4 py-2 rounded-lg text-sm shadow">Cari</button>
-      </div>
-
-      <div id="profilResult" class="hidden space-y-4">
-        <div class="bg-white p-4 rounded-xl shadow-sm text-center border-t-4 border-biruUtama">
-          <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl text-gray-400">👤</div>
-          <h3 id="pNama" class="font-bold text-base text-gray-800">Nama Siswa</h3>
-          <p id="pNisNisn" class="text-xs text-gray-500">NIS</p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-green-100">
-          <h4 class="font-bold text-xs text-green-600 mb-2 flex items-center gap-1">🏆 Riwayat Prestasi</h4>
-          <ul id="listPrestasi" class="text-xs space-y-1 list-disc pl-4 text-gray-600"></ul>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-red-100">
-          <h4 class="font-bold text-xs text-red-600 mb-2 flex items-center gap-1">⚠️ Riwayat Pelanggaran & Poin</h4>
-          <table class="w-full text-left text-xs">
-            <thead><tr class="bg-gray-50"><th class="p-1 text-gray-500">Kasus</th><th class="p-1 text-right text-gray-500">Poin</th></tr></thead>
-            <tbody id="listPelanggaran" class="text-gray-600"></tbody>
-          </table>
-        </div>
+      <div id="formContainer">
+        <p class="text-center text-xs text-gray-400 bg-white p-6 rounded-xl border">Silakan hubungkan komponen FormSiswa.html Anda ke dalam container div ini.</p>
       </div>
     </div>
 
-    <div id="view-kelas" class="hidden space-y-4">
-      <div class="flex bg-white p-1 rounded-lg shadow-sm text-xs font-bold">
-        <button id="btn-st" onclick="tabKelas('st')" class="flex-1 py-2 text-center rounded bg-biruUtama text-white">Struktur</button>
-        <button id="btn-jd" onclick="tabKelas('jd')" class="flex-1 py-2 text-center rounded text-gray-600">Jadwal & Piket</button>
-      </div>
-
-      <div id="tab-st" class="bg-white p-4 rounded-xl shadow-sm space-y-2 text-xs">
-        <h3 class="font-bold text-center text-gray-700 border-b pb-2">Struktur Organisasi</h3>
-        <div class="p-2 bg-biruMuda rounded flex justify-between"><strong>Ketua Kelas:</strong> <span>Andi</span></div>
-        <div class="p-2 bg-biruMuda rounded flex justify-between"><strong>Wakil Ketua:</strong> <span>Budi</span></div>
-        <div class="p-2 bg-gray-50 rounded flex justify-between"><strong>Sekretaris:</strong> <span>Cici</span></div>
-        <div class="p-2 bg-gray-50 rounded flex justify-between"><strong>Bendahara:</strong> <span>Deni</span></div>
-      </div>
-
-      <div id="tab-jd" class="bg-white p-4 rounded-xl shadow-sm hidden text-xs space-y-3">
-        <div class="border-l-4 border-biruUtama bg-gray-50 p-2.5 rounded">
-          <span class="font-bold text-biruUtama">Senin (Piket: Team A)</span>
-          <p class="text-gray-600 mt-0.5">Matematika, Bahasa Indonesia, IPA</p>
-        </div>
-        <div class="border-l-4 border-biruUtama bg-gray-50 p-2.5 rounded">
-          <span class="font-bold text-biruUtama">Selasa (Piket: Team B)</span>
-          <p class="text-gray-600 mt-0.5">Bahasa Inggris, PJOK, Seni Budaya</p>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-2 shadow-xl z-50 rounded-t-xl">
-    <button onclick="bukaHalaman('view-dashboard')" id="nav-dashboard" class="flex flex-col items-center text-biruUtama font-bold text-[10px] gap-0.5">
-      <span>🏠</span><span>Beranda</span>
-    </button>
-    <button onclick="bukaHalaman('view-form')" id="nav-form" class="flex flex-col items-center text-gray-400 text-[10px] gap-0.5">
-      <span>✍️</span><span>Isi Data</span>
-    </button>
-    <button onclick="bukaHalaman('view-biodata')" id="nav-biodata" class="flex flex-col items-center text-gray-400 text-[10px] gap-0.5">
-      <span>👤</span><span>Biodata</span>
-    </button>
-  </nav>
+  </div>
 
   <script>
-    const URL_GAS = "https://script.google.com/macros/s/AKfycbxgMi_TQzbNjkSrlH9X2j_-aEO6I0jH8Nf81i2xvS5dKzC92VO8lkkOy_1lr01WHVkEMw/exec";
+    // URL Web App GAS Anda
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbzQ7l7oO_XpX_K9M9-vU2Y6Tylj-Yn-B1C6z6ZJ7S8/exec"; 
 
-    // Navigasi Multi-Step Form
-    function go(step) {
-      // Validasi manual sebelum pindah step jika input bertanda required kosong
-      if (step === 2) {
-        const requiredInputs = document.getElementById('step1').querySelectorAll('[required]');
-        for (let input of requiredInputs) {
-          if (!input.value) {
-            alert("Harap lengkapi semua isian bertanda wajib sebelum lanjut!");
-            input.focus();
-            return;
-          }
-        }
-      }
-      if (step === 3) {
-        const requiredInputs = document.getElementById('step2').querySelectorAll('[required]');
-        for (let input of requiredInputs) {
-          if (!input.value) {
-            alert("Harap lengkapi semua isian bertanda wajib sebelum lanjut!");
-            input.focus();
-            return;
-          }
-        }
-      }
-
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.add('hidden');
-      document.getElementById('step3').classList.add('hidden');
-      document.getElementById('step' + step).classList.remove('hidden');
-    }
-
-    // Navigasi SPA Menu Utama
-    function bukaHalaman(viewId) {
+    // Fungsi Navigasi Antar Halaman/View
+    function bukaHalaman(idView) {
       document.getElementById('view-dashboard').classList.add('hidden');
-      document.getElementById('view-form').classList.add('hidden');
-      document.getElementById('view-biodata').classList.add('hidden');
-      document.getElementById('view-kelas').classList.add('hidden');
-      document.getElementById(viewId).classList.remove('hidden');
+      document.getElementById('view-struktur').classList.add('hidden');
+      document.getElementById('view-form-siswa').classList.add('hidden');
+      
+      document.getElementById(idView).classList.remove('hidden');
+      window.scrollTo(0,0);
+    }
 
-      // Reset ke step 1 jika membuka form lagi
-      if(viewId === 'view-form') go(1);
+    // Ambil Data Master Info Kelas Saat PWA Pertama Kali Dibuka
+    function muatInfoKelas() {
+      const scriptTag = document.createElement('script');
+      scriptTag.src = `${URL_GAS}?aksi=getInfoKelas`;
+      document.body.appendChild(scriptTag);
+    }
 
-      ['nav-dashboard', 'nav-form', 'nav-biodata'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) {
-          if(id === 'nav-' + viewId.replace('view-', '')) {
-            el.classList.add('text-biruUtama', 'font-bold');
-            el.classList.remove('text-gray-400');
+    // Handler JSONP Callback untuk Memproses & Merender Data dari INFO_KELAS
+    function handleInfoKelas(response) {
+      if(response.status === "success") {
+        const d = response.data;
+        
+        // 1. Render Elemen Header & Atribut Dashboard Utama
+        if(d.KELAS) {
+          document.getElementById('txtHeaderKelas').innerText = `KELAS ${d.KELAS.value}`;
+          document.getElementById('badgeStatusKelas').innerText = d.KELAS.status;
+          if(d.KELAS.status === 'ACTIVE') {
+            document.getElementById('badgeStatusKelas').className = "text-xs font-extrabold text-green-300";
           } else {
-            el.classList.remove('text-biruUtama', 'font-bold');
-            el.classList.add('text-gray-400');
+            document.getElementById('badgeStatusKelas').className = "text-xs font-extrabold text-red-300";
           }
         }
-      });
-    }
+        
+        if(d.WALI_KELAS) document.getElementById('txtWaliKelas').innerText = d.WALI_KELAS.value || "-";
+        if(d.KETUA_KELAS) document.getElementById('txtKetuaKelas').innerText = d.KETUA_KELAS.value || "-";
+        if(d.VISI) document.getElementById('txtVisi').innerText = `"${d.VISI.value}"` || `""`;
+        if(d.MISI) document.getElementById('txtMisi').innerText = d.MISI.value || "-";
 
-    function tabKelas(tab) {
-      document.getElementById('tab-st').classList.add('hidden');
-      document.getElementById('tab-jd').classList.add('hidden');
-      document.getElementById('btn-st').className = "flex-1 py-2 text-center rounded text-gray-600";
-      document.getElementById('btn-jd').className = "flex-1 py-2 text-center rounded text-gray-600";
+        // 2. Render Struktur Organisasi Secara Dinamis (Menurun & Lewati Komponen INACTIVE)
+        const containerStruktur = document.getElementById('containerStruktur');
+        containerStruktur.innerHTML = ""; 
 
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      document.getElementById('btn-' + tab).className = "flex-1 py-2 text-center rounded bg-biruUtama text-white";
-    }
+        const urutanPengurus = ['WALI_KELAS', 'KETUA_KELAS', 'WAKIL_KETUA', 'BENDAHARA', 'SEKRETARIS'];
+        
+        let adaPengurus = false;
+        urutanPengurus.forEach(kunci => {
+          if(d[kunci] && d[kunci].status === "ACTIVE") {
+            adaPengurus = true;
+            const labelBersih = kunci.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+            
+            const rowHtml = `
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                <span class="font-semibold text-gray-500">${labelBersih}</span>
+                <span class="font-bold text-gray-800 text-right">${d[kunci].value || '-'}</span>
+              </div>
+            `;
+            containerStruktur.insertAdjacentHTML('beforeend', rowHtml);
+          }
+        });
 
-    // KIRIM DATA via GET (Anti-CORS) dengan Isian Lengkap Baru
-    function kirimDataSiswaGET(e) {
-      e.preventDefault();
-      
-      const fields = [
-        'noAbsen', 'kelas', 'namaLengkap', 'namaPanggilan', 'jk', 'tempatLahir', 'tglLahir', 
-        'alamat', 'noWaSiswa', 'noWaOrtu', 'prestasiRingkas', 'hobi', 'citaCita', 'nis', 'nisn', 
-        'pelajaranSuka', 'pelajaranTdkSuka', 'ekskul', 'kegiatanMotivasi', 'caraBelajar',
-        'namaAyah', 'pekerjaanAyah', 'pendidikanAyah', 'namaIbu', 'pekerjaanIbu', 
-        'pendidikanIbu', 'topikOrtu', 'harapanOrtu', 'punyaKip', 'statusYatimPiatu', 'riwayatSakit'
-      ];
-      
-      let queryStr = `?aksi=simpanBiodata`;
-      fields.forEach(f => {
-        const el = document.getElementById(f);
-        if(el) {
-          queryStr += `&${f}=${encodeURIComponent(el.value)}`;
+        if(!adaPengurus) {
+          containerStruktur.innerHTML = `<p class="text-center text-gray-400 py-4">Belum ada struktur pengurus yang diaktifkan.</p>`;
         }
-      });
 
-      const scriptTag = document.createElement('script');
-      scriptTag.src = URL_GAS + queryStr;
+      } else {
+        alert("Gagal memuat informasi kelas: " + response.message);
+      }
       
-      scriptTag.onload = function() {
-        alert("✅ Selamat! Biodata lengkap berhasil tersimpan di Google Sheets.");
-        document.getElementById('siswaForm').reset();
-        bukaHalaman('view-dashboard');
-        document.body.removeChild(scriptTag);
-      };
-      
-      scriptTag.onerror = function() {
-        alert("❌ Masalah hubungan jaringan atau server. Silakan coba lagi.");
-        document.body.removeChild(scriptTag);
-      };
-
-      document.body.appendChild(scriptTag);
+      const scripts = document.getElementsByTagName('script');
+      for (let s of scripts) {
+        if(s.src.includes('aksi=getInfoKelas')) document.body.removeChild(s);
+      }
     }
 
-    // CARI PROFIL & RIWAYAT via GET (Anti-CORS)
-    function cariProfilSiswa() {
-      const nis = document.getElementById('searchNis').value;
-      if(!nis) return alert("Isi NIS terlebih dahulu!");
-
-      window.handleGasResponse = function(res) {
-        if(res.status === "success") {
-          document.getElementById('profilResult').classList.remove('hidden');
-          document.getElementById('pNama').innerText = "Siswa (NIS: " + nis + ")";
-          
-          const pList = document.getElementById('listPrestasi');
-          pList.innerHTML = res.prestasi.length ? "" : "<li>Belum ada catatan prestasi</li>";
-          res.prestasi.forEach(r => pList.innerHTML += `<li><strong>${r[2]}</strong></li>`);
-
-          const pelList = document.getElementById('listPelanggaran');
-          pelList.innerHTML = res.pelanggaran.length ? "" : "<tr><td colspan='2' class='p-2 text-center text-gray-400'>Bersih</td></tr>";
-          res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
-        }
-      };
-
-      const scriptTag = document.createElement('script');
-      scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}`;
-      scriptTag.onload = () => document.body.removeChild(scriptTag);
-      document.body.appendChild(scriptTag);
-    }
-
-    // Service Worker Instan PWA
-    if ('serviceWorker' in navigator) {
-      const sw = `self.addEventListener('fetch', function(e) { });`;
-      const blob = new Blob([sw], {type: 'application/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(e => console.log(e));
-    }
+    // Jalankan load data otomatis saat halaman selesai dimuat sempurna
+    window.onload = muatInfoKelas;
   </script>
 </body>
 </html>
