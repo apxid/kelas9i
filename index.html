@@ -257,7 +257,10 @@
 
       <div id="profilResult" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-xl shadow-sm text-center border-t-4 border-biruUtama">
-          <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl text-gray-400">👤</div>
+          <div id="pFotoContainer" class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-2xl text-gray-400 overflow-hidden shadow-inner relative">
+            <span id="pAvatarIcon">👤</span>
+            <img id="pFotoImg" src="" alt="Foto Profil" class="w-full h-full object-cover hidden">
+          </div>
           <h3 id="pNama" class="font-bold text-base text-gray-800">Nama Siswa</h3>
           <p id="pNisNisn" class="text-xs text-gray-500">NIS</p>
         </div>
@@ -328,7 +331,7 @@
 
   <script>
     // ⚠️ PASTIKAN URL_GAS DI BAWAH INI ADALAH URL "WEB APP" TERBARU HASIL DEPLOYMENT ANDA!
-    const URL_GAS = "https://script.google.com/macros/s/AKfycbwsNbHxI8KlbKPOZh94hS_A_jKe0wQulwzADhaf2S3Q7oIDGCZb5Nx8cNXacKcAQxSoeg/exec";
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbxgMi_TQzbNjkSrlH9X2j_-aEO6I0jH8Nf81i2xvS5dKzC92VO8lkkOy_1lr01WHVkEMw/exec";
 
     function go(step) {
       if (step === 2) {
@@ -396,7 +399,6 @@
       const scriptTag = document.createElement('script');
       scriptTag.src = `${URL_GAS}?aksi=getInfoKelas&callback=handleInfoKelas`;
       
-      // Deteksi kegagalan koneksi awal
       scriptTag.onerror = function() {
         document.getElementById('txtWaliKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
         document.getElementById('txtKetuaKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
@@ -511,7 +513,7 @@
       document.body.appendChild(scriptTag);
     }
 
-    // CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA 
+    // CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA BESERTA AVATAR DARI KOLOM AH
     function cariProfilSiswa() {
       const nis = document.getElementById('searchNis').value;
       if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
@@ -528,9 +530,24 @@
           const b = res.biodata; 
           
           document.getElementById('profilResult').classList.remove('hidden');
-          document.getElementById('pNama').innerText = b[4] || "Siswa (NIS: " + nis + ")";
+          document.getElementById('pNama').innerText = res.nama || b[4] || "Siswa (NIS: " + nis + ")";
           document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
           
+          // --- LOGIKA MENAMPILKAN FOTO DARI KOLOM AH (INDEKS 33) ---
+          const avatarIcon = document.getElementById('pAvatarIcon');
+          const fotoImg = document.getElementById('pFotoImg');
+          
+          if (res.foto && res.foto.trim() !== "") {
+            fotoImg.src = res.foto;
+            fotoImg.classList.remove('hidden');
+            avatarIcon.classList.add('hidden');
+          } else {
+            fotoImg.src = "";
+            fotoImg.classList.add('hidden');
+            avatarIcon.classList.remove('hidden');
+          }
+          // --------------------------------------------------------
+
           const strukturBiodata = [
             { label: "ID Unik Sistem", val: b[0] },
             { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
@@ -596,12 +613,11 @@
       scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}&callback=handleGasResponse`;
       scriptTag.onload = () => { if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag); };
       
-      // Handler Intersept Eror Jaringan/CORS/URL Salah
       scriptTag.onerror = () => { 
         Swal.fire({ 
           icon: 'error', 
           title: 'Koneksi Ditolak', 
-          text: 'Gagal memuat riwayat siswa. Hal ini terjadi karena URL_GAS salah atau izin akses Web App Apps Script belum disetel ke "Anyone".' 
+          text: 'Gagal memuat riwayat siswa. Pastikan URL_GAS benar dan deployment diset ke "Anyone".' 
         });
         if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
