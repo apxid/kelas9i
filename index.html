@@ -327,9 +327,9 @@
   </nav>
 
   <script>
-    const URL_GAS = "https://script.google.com/macros/s/AKfycbxgMi_TQzbNjkSrlH9X2j_-aEO6I0jH8Nf81i2xvS5dKzC92VO8lkkOy_1lr01WHVkEMw/exec";
+    // ⚠️ PASTIKAN URL_GAS DI BAWAH INI ADALAH URL "WEB APP" TERBARU HASIL DEPLOYMENT ANDA!
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbwsNbHxI8KlbKPOZh94hS_A_jKe0wQulwzADhaf2S3Q7oIDGCZb5Nx8cNXacKcAQxSoeg/exec";
 
-    // Navigasi Multi-Step Form Internal + Validasi per Step
     function go(step) {
       if (step === 2) {
         const requiredInputs = document.getElementById('step1').querySelectorAll('[required]');
@@ -358,7 +358,6 @@
       document.getElementById('step' + step).classList.remove('hidden');
     }
 
-    // Navigasi SPA Lintas Halaman Utama (Tanpa Reload Halaman Baru)
     function bukaHalaman(viewId) {
       document.getElementById('view-dashboard').classList.add('hidden');
       document.getElementById('view-form').classList.add('hidden');
@@ -382,7 +381,6 @@
       });
     }
 
-    // Switch Tab Khusus di Halaman Kelas
     function tabKelas(tab) {
       document.getElementById('tab-st').classList.add('hidden');
       document.getElementById('tab-jd').classList.add('hidden');
@@ -396,8 +394,15 @@
     // Sinkronisasi Memuat Data Struktur, Visi Misi dari INFO_KELAS
     function muatInfoKelasMaster() {
       const scriptTag = document.createElement('script');
-      // PERBAIKAN UTAMA: Tambahkan parameter callback secara eksplisit agar sinkronisasi lancar
       scriptTag.src = `${URL_GAS}?aksi=getInfoKelas&callback=handleInfoKelas`;
+      
+      // Deteksi kegagalan koneksi awal
+      scriptTag.onerror = function() {
+        document.getElementById('txtWaliKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
+        document.getElementById('txtKetuaKelas').innerText = "Gagal terhubung ke GAS (Cek URL/Deployment)";
+        console.error("Sinkronisasi gagal. Pastikan deployment diset ke 'Anyone'.");
+      };
+      
       document.body.appendChild(scriptTag);
     }
 
@@ -448,7 +453,6 @@
       }
     }
 
-    // KIRIM DATA via GET (Anti-CORS) dengan Isian Lengkap Berbasis Fail-Safe
     function kirimDataSiswaGET(e) {
       e.preventDefault();
       Swal.fire({
@@ -500,14 +504,14 @@
       };
       
       scriptTag.onerror = function() {
-        Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script. Coba lagi.' });
+        Swal.fire({ icon: 'error', title: 'Koneksi Bermasalah', text: 'Gagal terhubung ke server Google Apps Script. Pastikan URL dan setelan deploy benar.' });
         if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
 
       document.body.appendChild(scriptTag);
     }
 
-    // PERBAIKAN SEKALIGUS OPTIMALISASI: CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA 
+    // CARI PROFIL & TAMPILKAN KESELURUHAN BIODATA SISWA 
     function cariProfilSiswa() {
       const nis = document.getElementById('searchNis').value;
       if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
@@ -521,15 +525,12 @@
       window.handleGasResponse = function(res) {
         Swal.close();
         if(res.status === "success" && res.biodata) {
-          const b = res.biodata; // Array baris data dari database BIODATA Google Sheets
+          const b = res.biodata; 
           
           document.getElementById('profilResult').classList.remove('hidden');
-          
-          // Nama Lengkap (indeks 4) dan NIS/NISN (indeks 15 & 16)
           document.getElementById('pNama').innerText = b[4] || "Siswa (NIS: " + nis + ")";
           document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
           
-          // Pemetaan Judul Label Berdasarkan Susunan Kolom rowData di Google Apps Script
           const strukturBiodata = [
             { label: "ID Unik Sistem", val: b[0] },
             { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
@@ -564,7 +565,6 @@
             { label: "Riwayat Penyakit", val: b[32] }
           ];
 
-          // Render Dinamis ke dalam Tabel HTML detail siswa
           const tableBody = document.getElementById('tableDetailBiodata');
           tableBody.innerHTML = "";
           strukturBiodata.forEach(item => {
@@ -578,12 +578,10 @@
             }
           });
 
-          // Render Riwayat Prestasi Terpisah (Sheet PRESTASI)
           const pList = document.getElementById('listPrestasi');
           pList.innerHTML = res.prestasi.length ? "" : "<li>Belum ada catatan prestasi</li>";
           res.prestasi.forEach(r => pList.innerHTML += `<li><strong>${r[2]}</strong></li>`);
 
-          // Render Riwayat Pelanggaran Terpisah (Sheet PELANGGARAN)
           const pelList = document.getElementById('listPelanggaran');
           pelList.innerHTML = res.pelanggaran.length ? "" : "<tr><td colspan='2' class='p-2 text-center text-gray-400'>Bersih</td></tr>";
           res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
@@ -597,19 +595,24 @@
       const scriptTag = document.createElement('script');
       scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}&callback=handleGasResponse`;
       scriptTag.onload = () => { if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag); };
+      
+      // Handler Intersept Eror Jaringan/CORS/URL Salah
       scriptTag.onerror = () => { 
-        Swal.fire({ icon: 'error', title: 'Eror', text: 'Gagal memuat riwayat siswa.' });
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Koneksi Ditolak', 
+          text: 'Gagal memuat riwayat siswa. Hal ini terjadi karena URL_GAS salah atau izin akses Web App Apps Script belum disetel ke "Anyone".' 
+        });
         if(document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
       };
+      
       document.body.appendChild(scriptTag);
     }
 
-    // Jalankan sinkronisasi data master saat web app pertama kali dirender
     window.onload = function() {
       muatInfoKelasMaster();
     }
 
-    // Service Worker Instan PWA
     if ('serviceWorker' in navigator) {
       const sw = `self.addEventListener('fetch', function(e) { });`;
       const blob = new Blob([sw], {type: 'application/javascript'});
