@@ -1,77 +1,101 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MyClass 9I - Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="fade-in pb-24 space-y-4">
   
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: { smpprimary: '#0B409C', osisyellow: '#F4CE14', appbg: '#F3F4F6' }
-        }
-      }
-    }
-  </script>
-  
-  <style>
-    .nav-item.active { color: #0B409C !important; }
-    .nav-item.active i { transform: translateY(-1px); filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
-    .fade-in { animation: slideUp 0.35s ease forwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .shimmer { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: load 1.5s infinite; }
-    @keyframes load { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
-    /* Sembunyikan scrollbar bawaan browser pada navigasi tab internal */
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
-</head>
-<body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
-
-  <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
-    
-    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
-      <div id="active-view"></div>
-    </div>
-
-    <nav id="bottom-nav" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
-      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-school text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
-      </button>
-      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-clipboard-list text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
-      </button>
-      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-id-card text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
-      </button>
-      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-folder-open text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
-      </button>
-    </nav>
-
-  </div>
-
-  <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-white p-5 w-full max-w-xs text-center shadow-2xl rounded-2xl">
-      <h3 id="alert-title" class="text-sm font-black text-slate-800 mb-1"></h3>
-      <p id="alert-msg" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
-      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs rounded-xl">Selesai</button>
+  <div id="wrapper-LOGO" class="hidden flex items-center space-x-3 px-5 pt-4">
+    <img id="val-LOGO" src="" class="w-10 h-10 object-contain" alt="Logo Sekolah">
+    <div>
+      <h3 class="text-xs font-black text-slate-800 tracking-tight uppercase">MyClass 9I</h3>
+      <p class="text-[10px] text-gray-400 font-bold uppercase">SMP Negeri 1 Moga</p>
     </div>
   </div>
 
-  <script>
-    // URL WEB APP GOOGLE APPS SCRIPT
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
-  </script>
-  <script src="Scripts.js"></script>
-</body>
-</html>
+  <div class="bg-gradient-to-br from-blue-700 to-indigo-900 text-white px-6 py-6 shadow-md mx-4 rounded-[24px] relative overflow-hidden">
+    <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+    <div class="relative z-10 space-y-1.5">
+      <h2 class="text-base font-black tracking-tight leading-tight">Halo, Selamat Datang!</h2>
+      <p class="text-[11px] text-blue-100/90 leading-relaxed font-medium">
+        Silakan gunakan Aplikasi MyClass 9I ini untuk memantau perkembangan, rekam jejak, serta melengkapi biodata diagnostik siswa secara berkala.
+      </p>
+    </div>
+  </div>
+
+  <div id="wrapper-VISI" class="hidden bg-white border border-gray-100 p-4 mx-4 rounded-[20px] shadow-sm space-y-1">
+    <span class="text-[8px] bg-indigo-50 text-indigo-700 px-2 py-0.5 font-black uppercase tracking-wide inline-block rounded-md">Visi Kelas</span>
+    <p id="val-VISI" class="text-[11px] text-slate-600 font-medium italic leading-relaxed">-</p>
+  </div>
+
+  <div class="mx-4 grid grid-cols-2 gap-3">
+    <div id="wrapper-WALI_KELAS" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-blue-50 flex items-center justify-center text-smpprimary rounded-xl flex-shrink-0"><i class="fas fa-user-tie text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Wali Kelas</span>
+        <h4 id="val-WALI_KELAS" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-KELAS" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-emerald-50 flex items-center justify-center text-emerald-600 rounded-xl flex-shrink-0"><i class="fas fa-school text-xs"></i></div>
+      <div>
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Kelas</span>
+        <h4 id="val-KELAS" class="text-[11px] font-black text-slate-800 uppercase">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-KETUA_KELAS" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-amber-50 flex items-center justify-center text-amber-600 rounded-xl flex-shrink-0"><i class="fas fa-user text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Ketua Kelas</span>
+        <h4 id="val-KETUA_KELAS" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-BENDAHARA_1" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-rose-50 flex items-center justify-center text-rose-600 rounded-xl flex-shrink-0"><i class="fas fa-coins text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Bendahara 1</span>
+        <h4 id="val-BENDAHARA_1" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-Sie_Kebersihan" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-gray-50 flex items-center justify-center text-gray-500 rounded-xl flex-shrink-0"><i class="fas fa-broom text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Sie Kebersihan</span>
+        <h4 id="val-Sie_Kebersihan" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-Sie_Keamanan" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-gray-50 flex items-center justify-center text-gray-500 rounded-xl flex-shrink-0"><i class="fas fa-shield-alt text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Sie Keamanan</span>
+        <h4 id="val-Sie_Keamanan" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-Sie_Peralatan" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-gray-50 flex items-center justify-center text-gray-500 rounded-xl flex-shrink-0"><i class="fas fa-tools text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Sie Peralatan</span>
+        <h4 id="val-Sie_Peralatan" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+
+    <div id="wrapper-Sie_Keagamaan" class="hidden bg-white border border-gray-100 p-3 rounded-[20px] shadow-sm flex items-center space-x-2.5">
+      <div class="w-8 h-8 bg-gray-50 flex items-center justify-center text-gray-500 rounded-xl flex-shrink-0"><i class="fas fa-pray text-xs"></i></div>
+      <div class="overflow-hidden">
+        <span class="text-[8px] text-gray-400 font-bold uppercase block">Sie Keagamaan</span>
+        <h4 id="val-Sie_Keagamaan" class="text-[11px] font-black text-slate-800 truncate">-</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white border border-gray-100 p-4 mx-4 rounded-[24px] shadow-sm space-y-3">
+    <div class="flex items-center space-x-2 border-b border-gray-50 pb-2">
+      <div class="w-2 h-3.5 bg-smpprimary rounded-sm"></div>
+      <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">Statistik Gender Siswa</h3>
+    </div>
+    <div class="w-full relative min-h-[140px] flex items-center justify-center">
+      <canvas id="chartJenisKelamin" class="max-h-[140px]"></canvas>
+    </div>
+  </div>
+</div>
