@@ -1,0 +1,25 @@
+<div id="view-dashboard" class="space-y-4">
+  <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-kuningOsis">
+    <h2 class="font-bold text-gray-800 text-sm flex items-center gap-1">👋 Selamat Datang di Kelas</h2>
+    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Gunakan aplikasi ini untuk mengisi biodata mandiri siswa atau melihat jadwal, struktur organisasi, dan riwayat siswa.</p>
+  </div>
+  <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Visi & Misi Kelas</h3>
+    <p id="txtVisi" class="text-xs font-bold text-gray-700 italic mb-1">"Memuat visi kelas..."</p>
+    <p id="txtMisi" class="text-[11px] text-gray-500 whitespace-pre-line">Memuat misi kelas...</p>
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <button onclick="bukaHalaman('view-form')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition flex flex-col items-center justify-center">
+      <div class="w-12 h-12 bg-sky-50 rounded-full flex items-center justify-center text-xl mb-2">📝</div>
+      <span class="text-xs font-bold text-gray-700 block">Isi Biodata Diri</span>
+    </button>
+    <button onclick="bukaHalaman('view-biodata')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition flex flex-col items-center justify-center">
+      <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-xl mb-2">👤</div>
+      <span class="text-xs font-bold text-gray-700 block">Profil & Riwayat</span>
+    </button>
+    <button onclick="bukaHalaman('view-kelas')" class="bg-white p-4 rounded-xl shadow-sm text-center border border-gray-100 hover:border-biruUtama transition col-span-2 py-4 flex items-center justify-center gap-4">
+      <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-lg">🏫</div>
+      <span class="text-xs font-bold text-gray-700">Struktur Organisasi, Jadwal & Informasi</span>
+    </button>
+  </div>
+</div>
