@@ -1,7 +1,7 @@
 // Scripts.js - Multi-file Router Engine via Fetch HTTP
 let appState = { currentView: 'dashboard', currentSubMenu: 'prestasi' };
 let chartInstance = null;
-let masterSidata = [];        // Menyimpan data BIODATA terurut di memori aplikasi
+let masterSidata = [];        // Menyimpan data BIODATA terurut di memori aplikasi global
 let currentSiswaIndex = -1;   // Menyimpan indeks siswa yang sedang aktif dilihat
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -79,7 +79,7 @@ function loadDataPrestasiMenu3(container) {
         <div class="flex justify-between items-center mb-1"><span class="bg-blue-50 text-smpprimary px-2 py-0.5 rounded font-bold text-[9px] uppercase">${item.Jenis || 'Lomba'}</span><span class="text-gray-400 text-[10px]">${item.Tanggal || ''}</span></div>
         <h5 class="font-bold text-slate-800">${item['Nama Prestasi'] || '-'}</h5>
         <p class="text-gray-500 text-[11px] mt-0.5">Siswa (NISN): <span class="font-bold text-slate-700">${item.NISN}</span> | Tingkat: ${item.Tingkat}</p>
-        ${item['Campiran URL'] || item['Lampiran URL'] ? `<a href="${item['Lampiran URL'] || item['Campiran URL']}" target="_blank" class="text-smpprimary font-bold block mt-2 text-[10px]"><i class="fas fa-link mr-1"></i> Lihat Dokumen Lampiran</a>` : ''}
+        ${item['Lampiran URL'] || item['Campiran URL'] ? `<a href="${item['Lampiran URL'] || item['Campiran URL']}" target="_blank" class="text-smpprimary font-bold block mt-2 text-[10px]"><i class="fas fa-link mr-1"></i> Lihat Dokumen Lampiran</a>` : ''}
       </div>
     `).join('');
   });
