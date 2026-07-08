@@ -19,6 +19,7 @@
   </script>
   
   <style>
+    /* Mengubah semua indikator atau elemen kustom agar lurus/kotak */
     .nav-item.active { color: #0B409C !important; }
     .nav-item.active i { transform: translateY(-1px); filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
     .fade-in { animation: slideUp 0.35s ease forwards; }
@@ -29,7 +30,7 @@
 </head>
 <body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
 
-  <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col sm:rounded-[36px] border border-slate-800/50">
+  <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
     
     <div class="bg-smpprimary text-white text-[11px] px-6 pt-3 pb-1.5 flex justify-between items-center font-semibold select-none z-50">
       <span id="app-clock">00:00</span>
@@ -44,8 +45,8 @@
       <div id="active-view"></div>
     </div>
 
-    <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-2 py-2.5 flex justify-around items-center z-40 sm:rounded-b-[36px]">
-      <button onclick="switchView('berandaKelas')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+    <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-2 py-2.5 flex justify-around items-center z-40">
+      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
         <i class="fas fa-school text-lg mb-0.5"></i>
         <span class="text-[9px] font-bold uppercase tracking-wider">Beranda</span>
       </button>
@@ -53,19 +54,19 @@
         <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
         <span class="text-[9px] font-bold uppercase tracking-wider">Isi Biodata</span>
       </button>
-      <button onclick="switchView('rekamJejak')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-trophy text-lg mb-0.5"></i>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Prestasi</span>
+      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-folder-open text-lg mb-0.5"></i>
+        <span class="text-[9px] font-bold uppercase tracking-wider">Rekam Jejak</span>
       </button>
     </nav>
 
   </div>
 
   <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-white rounded-2xl p-5 w-full max-w-xs text-center shadow-2xl">
+    <div class="bg-white p-5 w-full max-w-xs text-center shadow-2xl">
       <h3 id="alert-title" class="text-sm font-black text-slate-800 mb-1"></h3>
       <p id="alert-msg" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
-      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold rounded-xl text-xs">Selesai</button>
+      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs">Selesai</button>
     </div>
   </div>
 
