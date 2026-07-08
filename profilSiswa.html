@@ -1,0 +1,109 @@
+// Tambahkan atau pastikan variabel penampung global ini ada di baris atas Scripts.js
+let masterSidata = []; 
+let currentSiswaIndex = -1; // Menyimpan indeks siswa yang sedang aktif dilihat
+
+// FUNGSI: Mengisi list nama siswa ke elemen dropdown <select>
+function loadDropdownDaftarSiswa() {
+  const selectNode = document.getElementById('select-profil-siswa');
+  
+  callBackend('getData', { sheetName: 'BIODATA' }).then(data => {
+    if (!data || data.length === 0) {
+      selectNode.innerHTML = '<option value="">Gagal/Data BIODATA kosong</option>';
+      return;
+    }
+    
+    // Urutkan siswa berdasarkan Nomor Absen dari terkecil ke terbesar
+    data.sort((a, b) => {
+      return parseInt(a['No Absen'] || 99) - parseInt(b['No Absen'] || 99);
+    });
+    
+    masterSidata = data; // Simpan data terurut ke dalam memori aplikasi
+
+    let optionsHtml = '<option value="">-- PILIH NAMA SISWA --</option>';
+    data.forEach(siswa => {
+      optionsHtml += `<option value="${siswa.NISN}">Absen ${siswa['No Absen'] || '-'} : ${siswa['Nama Lengkap']}</option>`;
+    });
+    selectNode.innerHTML = optionsHtml;
+    
+    // Jika sebelumnya sudah ada profil terpilih, kembalikan posisi select-nya
+    if (currentSiswaIndex !== -1 && masterSidata[currentSiswaIndex]) {
+      selectNode.value = masterSidata[currentSiswaIndex].NISN;
+    }
+  });
+}
+
+// FUNGSI: Memetakan (mapping) seluruh data ke elemen halaman profil
+function renderDetailProfilSiswa(nisnSelected) {
+  const container = document.getElementById('detail-profil-container');
+  const placeholder = document.getElementById('profil-placeholder');
+  const selectNode = document.getElementById('select-profil-siswa');
+
+  if (!nisnSelected) {
+    currentSiswaIndex = -1;
+    container.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    return;
+  }
+
+  // Cari indeks siswa di dalam data masterSidata
+  currentSiswaIndex = masterSidata.findIndex(item => item.NISN.toString() === nisnSelected.toString());
+  
+  if (currentSiswaIndex === -1) return;
+  const s = masterSidata[currentSiswaIndex];
+
+  placeholder.classList.add('hidden');
+  container.classList.remove('hidden');
+  if (selectNode) selectNode.value = nisnSelected; // Selaraskan dropdown dengan tombol prev/next
+
+  // Kolom fields pemetaan data
+  const fields = [
+    'No Absen', 'Kelas', 'Nama Lengkap', 'Nama Panggilan', 'Jenis Kelamin', 
+    'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'No WA Siswa', 'No WA Ortu', 
+    'Prestasi Ringkas', 'Hobi', 'Cita-cita', 'NIS', 'NISN', 'Pelajaran Disukai', 
+    'Pelajaran Tidak Disukai', 'Ekskul', 'Kegiatan Motivasi', 'Cara Belajar', 
+    'Nama Ayah', 'Pekerjaan Ayah', 'Pendidikan Ayah', 'Nama Ibu', 'Pekerjaan Ibu', 
+    'Pendidikan Ibu', 'Topik Sering Dibicarakan', 'Harapan Orang Tua', 'Punya KIP', 
+    'Status Yatim Piatu', 'Riwayat Sakit'
+  ];
+
+  fields.forEach(field => {
+    const elementId = `prof-${field.replace(/\s+/g, '_').replace(/-/g, '_')}`;
+    const targetEl = document.getElementById(elementId);
+    if (targetEl) {
+      targetEl.innerText = s[field] !== undefined && s[field] !== "" ? s[field] : "-";
+    }
+  });
+
+  // FOTO: Mengambil data tautan URL dari kolom Foto (Kolom AH)
+  const imgEl = document.getElementById('prof-Foto');
+  if (imgEl) {
+    if (s['Foto'] && s['Foto'].toString().trim().startsWith('http')) {
+      imgEl.src = s['Foto'].toString().trim();
+    } else {
+      // Gambar cadangan jika link kosong atau rusak
+      imgEl.src = 'https://via.placeholder.com/150x200?text=Tanpa+Foto';
+    }
+  }
+}
+
+// FUNGSI BARU: Logika Tombol Navigasi Geser Kanan-Kiri (Prev & Next)
+function navigateProfilSiswa(direction) {
+  if (masterSidata.length === 0 || currentSiswaIndex === -1) return;
+
+  // Hitung indeks target berikutnya
+  let nextIndex = currentSiswaIndex + direction;
+
+  // Proteksi jika melampaui batas awal atau batas akhir daftar absen siswa
+  if (nextIndex < 0) {
+    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen pertama.', 'success');
+    return;
+  }
+  if (nextIndex >= masterSidata.length) {
+    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen terakhir.', 'success');
+    return;
+  }
+
+  // Jalankan render profil untuk target siswa yang baru
+  const targetSiswa = masterSidata[nextIndex];
+  renderDetailProfilSiswa(targetSiswa.NISN);
+}
