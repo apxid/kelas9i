@@ -1,7 +1,7 @@
 <div class="p-5 fade-in pb-24 space-y-4">
   <div class="mb-2">
     <h4 class="text-base font-black text-slate-800 tracking-tight">Profil Lengkap Siswa</h4>
-    <p class="text-[11px] text-gray-400">Gunakan dropdown atau tombol navigasi di bawah untuk melihat isi data sheet BIODATA.</p>
+    <p class="text-[11px] text-gray-400">Gunakan dropdown atau tombol navigasi untuk melihat detail data.</p>
   </div>
 
   <div class="relative bg-white border border-gray-200 p-2 text-xs">
@@ -11,7 +11,6 @@
   </div>
 
   <div id="detail-profil-container" class="space-y-4 hidden">
-    
     <div class="bg-white border border-gray-200 p-4 flex flex-col items-center text-center space-y-3">
       <img id="prof-Foto" src="" class="w-28 h-36 object-cover border border-gray-200 bg-gray-50 shadow-sm" alt="Foto Siswa" onerror="this.src='https://via.placeholder.com/150x200?text=Tanpa+Foto'">
       <div>
@@ -42,7 +41,7 @@
         <div><p class="text-[10px] text-gray-400 font-bold uppercase">Pelajaran Dibenci</p><p id="prof-Pelajaran_Tidak_Disukai" class="font-semibold">-</p></div>
         <div><p class="text-[10px] text-gray-400 font-bold uppercase">Hobi</p><p id="prof-Hobi" class="font-semibold">-</p></div>
         <div><p class="text-[10px] text-gray-400 font-bold uppercase">Cita-Cita</p><p id="prof-Cita-cita" class="font-semibold">-</p></div>
-        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Ekstrakurikuler</p><p id="prof-Ekskul" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Ekskul</p><p id="prof-Ekskul" class="font-semibold">-</p></div>
         <div><p class="text-[10px] text-gray-400 font-bold uppercase">Cara Belajar</p><p id="prof-Cara_Belajar" class="font-semibold">-</p></div>
         <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Kegiatan Motivasi</p><p id="prof-Kegiatan_Motivasi" class="font-semibold text-slate-600">-</p></div>
         <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Prestasi Ringkas</p><p id="prof-Prestasi_Ringkas" class="font-semibold text-slate-600">-</p></div>
@@ -64,13 +63,6 @@
           <div><p class="text-[9px] text-gray-400 font-medium">Pekerjaan</p><p id="prof-Pekerjaan_Ibu" class="font-semibold text-slate-700">-</p></div>
           <div><p class="text-[9px] text-gray-400 font-medium">Pendidikan</p><p id="prof-Pendidikan_Ibu" class="font-semibold text-slate-700">-</p></div>
         </div>
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div><p class="text-[10px] text-gray-400 font-bold uppercase">Punya KIP</p><p id="prof-Punya_KIP" class="font-bold">-</p></div>
-          <div><p class="text-[10px] text-gray-400 font-bold uppercase">Status Yatim/Piatu</p><p id="prof-Status_Yatim_Piatu" class="font-bold">-</p></div>
-          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Riwayat Sakit / Komorbid</p><p id="prof-Riwayat_Sakit" class="font-semibold text-rose-700">-</p></div>
-          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Topik Sering Dibicarakan</p><p id="prof-Topik_Sering_Dibicarakan" class="font-semibold text-slate-600">-</p></div>
-          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Harapan Orang Tua</p><p id="prof-Harapan_Orang_Tua" class="font-semibold text-slate-600">-</p></div>
-        </div>
       </div>
     </div>
 
@@ -82,11 +74,25 @@
         Berikutnya <i class="fas fa-chevron-right ml-2"></i>
       </button>
     </div>
-
   </div>
 
   <div id="profil-placeholder" class="bg-white border border-gray-200 p-8 text-center text-xs text-gray-400">
     <i class="fas fa-user-graduate text-3xl text-gray-200 mb-2 block"></i>
     Silakan pilih nama siswa pada kolom di atas untuk menampilkan profil.
+  </div>
+
+  <div id="pin-lock-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+    <div class="bg-white p-6 w-full max-w-xs text-center shadow-2xl rounded-2xl border border-gray-100">
+      <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3">
+        <i class="fas fa-lock text-base"></i>
+      </div>
+      <h3 class="text-sm font-black text-slate-800 mb-1">Akses Halaman Terkunci</h3>
+      <p class="text-[11px] text-gray-400 mb-4">Masukkan PIN khusus Wali Kelas untuk membuka data profil siswa.</p>
+      <input type="password" id="input-pin-akses" pattern="\d*" inputmode="numeric" maxlength="6" placeholder="••••••" 
+        class="w-full text-center tracking-[1em] font-black text-lg py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-600 mb-4 bg-gray-50/50">
+      <button onclick="verifikasiPinProfil()" class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs rounded-xl hover:bg-blue-800">
+        Buka Kunci Data
+      </button>
+    </div>
   </div>
 </div>
