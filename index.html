@@ -19,13 +19,17 @@
   </script>
   
   <style>
-    /* Mengubah semua indikator atau elemen kustom agar lurus/kotak */
+    /* Mengubah semua indikator agar lurus/kotak sesuai request */
     .nav-item.active { color: #0B409C !important; }
     .nav-item.active i { transform: translateY(-1px); filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
     .fade-in { animation: slideUp 0.35s ease forwards; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .shimmer { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: load 1.5s infinite; }
     @keyframes load { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    /* Sembunyikan scrollbar bawaan browser pada navigasi tab internal */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
@@ -45,18 +49,22 @@
       <div id="active-view"></div>
     </div>
 
-    <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-2 py-2.5 flex justify-around items-center z-40">
+    <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
       <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-school text-lg mb-0.5"></i>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Beranda</span>
+        <i class="fas fa-school text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
       </button>
       <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Isi Biodata</span>
+        <i class="fas fa-clipboard-list text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
+      </button>
+      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-id-card text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
       </button>
       <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-folder-open text-lg mb-0.5"></i>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Rekam Jejak</span>
+        <i class="fas fa-folder-open text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
       </button>
     </nav>
 
@@ -71,10 +79,9 @@
   </div>
 
   <script>
-    // URL WEB APP GAS ANDA (?action=...)
+    // URL WEB APP GOOGLE APPS SCRIPT ANDA
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
   </script>
-  <script src="TemplateViews.js"></script>
   <script src="Scripts.js"></script>
 </body>
 </html>
