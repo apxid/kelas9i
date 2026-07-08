@@ -3,6 +3,7 @@ let appState = { currentView: 'dashboard', currentSubMenu: 'prestasi' };
 let chartInstance = null;
 let masterSidata = [];        // Menyimpan data BIODATA terurut di memori aplikasi global
 let currentSiswaIndex = -1;   // Menyimpan indeks siswa yang sedang aktif dilihat
+let isPinVerified = false;    // Status verifikasi PIN halaman profil dalam sesi aktif
 
 window.addEventListener('DOMContentLoaded', () => {
   // Fungsi pembaruan jam dinonaktifkan karena elemen status bar telah dihilangkan dari index.html
@@ -50,7 +51,8 @@ function switchView(viewName) {
         switchSubMenu(appState.currentSubMenu);
       }
       if (viewName === 'profilSiswa') {
-        loadDropdownDaftarSiswa();
+        // Jalankan pengecekan gerbang PIN keamanan backend
+        checkPinAksesProfil();
       }
     })
     .catch(err => {
@@ -264,6 +266,62 @@ function navigateProfilSiswa(direction) {
   const targetSiswa = masterSidata[nextIndex];
   const targetNisn = targetSiswa.NISN || targetSiswa.nisn;
   renderDetailProfilSiswa(targetNisn);
+}
+
+// ================== LOGIKA PENGAMANAN PIN PROFIL SISWA (BACKEND SECURE) ==================
+function checkPinAksesProfil() {
+  const lockScreen = document.getElementById('pin-lock-screen');
+  if (!lockScreen) return;
+
+  if (isPinVerified) {
+    // Jika sesi sebelumnya sudah sukses verifikasi PIN, langsung buka kunci data
+    lockScreen.classList.add('hidden');
+    loadDropdownDaftarSiswa();
+  } else {
+    // Jika belum terverifikasi dalam sesi ini, tampilkan form pop-up PIN lock
+    lockScreen.classList.remove('hidden');
+    setTimeout(() => {
+      const pinInput = document.getElementById('input-pin-akses');
+      if (pinInput) pinInput.focus();
+    }, 200);
+  }
+}
+
+function verifikasiPinProfil() {
+  const pinInput = document.getElementById('input-pin-akses');
+  const lockScreen = document.getElementById('pin-lock-screen');
+  
+  if (!pinInput || !lockScreen) return;
+  const nilaiPin = pinInput.value.trim();
+
+  if (nilaiPin === "") {
+    showAlert('Perhatian', 'PIN tidak boleh kosong.');
+    return;
+  }
+
+  showAlert('Memproses', 'Memverifikasi kode keamanan...');
+
+  // Kirim verifikasi pin dengan aman langsung ke Google Apps Script Engine
+  fetch(`${BACKEND_URL}?action=verifikasiPin&pin=${encodeURIComponent(nilaiPin)}`)
+    .then(response => response.json())
+    .then(res => {
+      closeAlert(); // Menghapus/menutup popup loading 'Memproses'
+      
+      if (res.success) {
+        isPinVerified = true;
+        lockScreen.classList.add('hidden');
+        pinInput.value = "";
+        loadDropdownDaftarSiswa(); // Muat data siswa setelah izin dikonfirmasi server
+      } else {
+        showAlert('Akses Ditolak', 'PIN yang Anda masukkan salah.');
+        pinInput.value = "";
+        pinInput.focus();
+      }
+    })
+    .catch(err => {
+      console.error("Gagal melakukan verifikasi PIN:", err);
+      showAlert('Error Sistem', 'Gagal terhubung ke modul keamanan server.');
+    });
 }
 
 // ================== ATRIBUT KONTROL UTAMA BERANDA ==================
