@@ -1,6 +1,8 @@
 // Scripts.js - Multi-file Router Engine via Fetch HTTP
 let appState = { currentView: 'dashboard', currentSubMenu: 'prestasi' };
 let chartInstance = null;
+let masterSidata = [];        // Menyimpan data BIODATA terurut di memori aplikasi
+let currentSiswaIndex = -1;   // Menyimpan indeks siswa yang sedang aktif dilihat
 
 window.addEventListener('DOMContentLoaded', () => {
   runClock();
@@ -42,13 +44,16 @@ function switchView(viewName) {
       if (viewName === 'informasiSiswa') {
         switchSubMenu(appState.currentSubMenu);
       }
+      if (viewName === 'profilSiswa') {
+        loadDropdownDaftarSiswa();
+      }
     })
     .catch(err => {
       screenContainer.innerHTML = `<p class="p-6 text-center text-xs text-rose-500 font-medium">Gagal memuat komponen sistem: ${err.message}</p>`;
     });
 }
 
-// ================== LOGIKA SUB-MENU HALAMAN KE-3 ==================
+// ================== LOGIKA SUB-MENU HALAMAN REKAM JEJAK ==================
 function switchSubMenu(subName) {
   appState.currentSubMenu = subName;
   document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('bg-smpprimary', 'text-white', 'active'));
@@ -65,7 +70,7 @@ function switchSubMenu(subName) {
   if (subName === 'jadwal') loadDataJadwalMenu3(subContainer);
 }
 
-// 🏆 PEMUAT DATA PRESTASI (Menu 3)
+// 🏆 PEMUAT DATA PRESTASI (Menu Rekam Jejak)
 function loadDataPrestasiMenu3(container) {
   callBackend('getData', { sheetName: 'PRESTASI' }).then(data => {
     if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Belum ada log prestasi.</p>'; return; }
@@ -74,13 +79,13 @@ function loadDataPrestasiMenu3(container) {
         <div class="flex justify-between items-center mb-1"><span class="bg-blue-50 text-smpprimary px-2 py-0.5 rounded font-bold text-[9px] uppercase">${item.Jenis || 'Lomba'}</span><span class="text-gray-400 text-[10px]">${item.Tanggal || ''}</span></div>
         <h5 class="font-bold text-slate-800">${item['Nama Prestasi'] || '-'}</h5>
         <p class="text-gray-500 text-[11px] mt-0.5">Siswa (NISN): <span class="font-bold text-slate-700">${item.NISN}</span> | Tingkat: ${item.Tingkat}</p>
-        ${item['Lampiran URL'] ? `<a href="${item['Lampiran URL']}" target="_blank" class="text-smpprimary font-bold block mt-2 text-[10px]"><i class="fas fa-link mr-1"></i> Lihat Dokumen Lampiran</a>` : ''}
+        ${item['Campiran URL'] || item['Lampiran URL'] ? `<a href="${item['Lampiran URL'] || item['Campiran URL']}" target="_blank" class="text-smpprimary font-bold block mt-2 text-[10px]"><i class="fas fa-link mr-1"></i> Lihat Dokumen Lampiran</a>` : ''}
       </div>
     `).join('');
   });
 }
 
-// 📢 PEMUAT DATA PENGUMUMAN (Menu 3)
+// 📢 PEMUAT DATA PENGUMUMAN (Menu Rekam Jejak)
 function loadDataInformasiMenu3(container) {
   callBackend('getData', { sheetName: 'INFORMASI' }).then(data => {
     if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Belum ada pengumuman kelas.</p>'; return; }
@@ -93,7 +98,7 @@ function loadDataInformasiMenu3(container) {
   });
 }
 
-// 🚨 PEMUAT DATA PELANGGARAN (Menu 3)
+// 🚨 PEMUAT DATA PELANGGARAN (Menu Rekam Jejak)
 function loadDataPelanggaranMenu3(container) {
   callBackend('getData', { sheetName: 'PELANGGARAN' }).then(data => {
     if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Catatan kelas bersih dari pelanggaran.</p>'; return; }
@@ -106,7 +111,7 @@ function loadDataPelanggaranMenu3(container) {
   });
 }
 
-// 📅 PEMUAT DATA JADWAL (Menu 3)
+// 📅 PEMUAT DATA JADWAL (Menu Rekam Jejak)
 function loadDataJadwalMenu3(container) {
   callBackend('getData', { sheetName: 'JADWAL' }).then(data => {
     if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Belum ada agenda jadwal pelajaran.</p>'; return; }
@@ -117,6 +122,112 @@ function loadDataJadwalMenu3(container) {
       </div>
     `).join('');
   });
+}
+
+// ================== UTAMA MENU PROFIL SISWA (DENGAN NAVIGASI PREV & NEXT) ==================
+
+// Mengisi list nama siswa ke elemen dropdown <select> dan mengurutkan berdasarkan nomor absen
+function loadDropdownDaftarSiswa() {
+  const selectNode = document.getElementById('select-profil-siswa');
+  
+  callBackend('getData', { sheetName: 'BIODATA' }).then(data => {
+    if (!data || data.length === 0) {
+      selectNode.innerHTML = '<option value="">Gagal atau Data BIODATA kosong</option>';
+      return;
+    }
+    
+    // Urutkan siswa secara presisi berdasarkan Nomor Absen dari terkecil ke terbesar
+    data.sort((a, b) => parseInt(a['No Absen'] || 99) - parseInt(b['No Absen'] || 99));
+    
+    masterSidata = data; // Simpan data terurut ke dalam memori aplikasi global
+
+    let optionsHtml = '<option value="">-- PILIH NAMA SISWA --</option>';
+    data.forEach(siswa => {
+      optionsHtml += `<option value="${siswa.NISN}">Absen ${siswa['No Absen'] || '-'} : ${siswa['Nama Lengkap']}</option>`;
+    });
+    selectNode.innerHTML = optionsHtml;
+    
+    // Jika sebelumnya sudah ada profil terpilih, kembalikan posisi fokus dropdown-nya
+    if (currentSiswaIndex !== -1 && masterSidata[currentSiswaIndex]) {
+      selectNode.value = masterSidata[currentSiswaIndex].NISN;
+    }
+  });
+}
+
+// Memetakan (mapping) seluruh data isian kolom ke form detail profil halaman
+function renderDetailProfilSiswa(nisnSelected) {
+  const container = document.getElementById('detail-profil-container');
+  const placeholder = document.getElementById('profil-placeholder');
+  const selectNode = document.getElementById('select-profil-siswa');
+
+  if (!nisnSelected) {
+    currentSiswaIndex = -1;
+    container.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    return;
+  }
+
+  // Cari posisi indeks siswa aktif di memori data masterSidata berdasarkan NISN
+  currentSiswaIndex = masterSidata.findIndex(item => item.NISN.toString() === nisnSelected.toString());
+  
+  if (currentSiswaIndex === -1) return;
+  const s = masterSidata[currentSiswaIndex];
+
+  placeholder.classList.add('hidden');
+  container.classList.remove('hidden');
+  if (selectNode) selectNode.value = nisnSelected; // Sinkronkan nilai dropdown atas jika terpicu tombol navigasi bawah
+
+  // Daftar nama kolom di Spreadsheet dan ID padanannya di HTML
+  const fields = [
+    'No Absen', 'Kelas', 'Nama Lengkap', 'Nama Panggilan', 'Jenis Kelamin', 
+    'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'No WA Siswa', 'No WA Ortu', 
+    'Prestasi Ringkas', 'Hobi', 'Cita-cita', 'NIS', 'NISN', 'Pelajaran Disukai', 
+    'Pelajaran Tidak Disukai', 'Ekskul', 'Kegiatan Motivasi', 'Cara Belajar', 
+    'Nama Ayah', 'Pekerjaan Ayah', 'Pendidikan Ayah', 'Nama Ibu', 'Pekerjaan Ibu', 
+    'Pendidikan Ibu', 'Topik Sering Dibicarakan', 'Harapan Orang Tua', 'Punya KIP', 
+    'Status Yatim Piatu', 'Riwayat Sakit'
+  ];
+
+  fields.forEach(field => {
+    const elementId = `prof-${field.replace(/\s+/g, '_').replace(/-/g, '_')}`;
+    const targetEl = document.getElementById(elementId);
+    if (targetEl) {
+      targetEl.innerText = s[field] !== undefined && s[field] !== "" ? s[field] : "-";
+    }
+  });
+
+  // FOTO SISWA: Mengambil data tautan URL dari kolom Foto (di sheet BIODATA)
+  const imgEl = document.getElementById('prof-Foto');
+  if (imgEl) {
+    if (s['Foto'] && s['Foto'].toString().trim().startsWith('http')) {
+      imgEl.src = s['Foto'].toString().trim();
+    } else {
+      // Gambar cadangan default jika tautan kosong/salah format
+      imgEl.src = 'https://via.placeholder.com/150x200?text=Tanpa+Foto';
+    }
+  }
+}
+
+// Logika Tombol Navigasi Geser (Prev & Next) Berdasarkan Urutan Absen
+function navigateProfilSiswa(direction) {
+  if (masterSidata.length === 0 || currentSiswaIndex === -1) return;
+
+  // Tentukan target indeks berikutnya
+  let nextIndex = currentSiswaIndex + direction;
+
+  // Batasan limitasi urutan siswa teratas dan terbawah
+  if (nextIndex < 0) {
+    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen pertama.');
+    return;
+  }
+  if (nextIndex >= masterSidata.length) {
+    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen terakhir.');
+    return;
+  }
+
+  // Tampilkan detail profil siswa target berikutnya
+  const targetSiswa = masterSidata[nextIndex];
+  renderDetailProfilSiswa(targetSiswa.NISN);
 }
 
 // ================== ATRIBUT KONTROL UTAMA BERANDA ==================
@@ -161,11 +272,11 @@ function submitFormBiodata() {
   const form = document.getElementById('main-bio-form');
   const formDataObj = {};
   new FormData(form).forEach((value, key) => { formDataObj[key] = value; });
-  showAlert('Memproses', 'Sedang menyimpan biodata...', 'success');
+  showAlert('Memproses', 'Sedang menyimpan biodata...');
   fetch(`${BACKEND_URL}?action=submitBiodata&formData=${encodeURIComponent(JSON.stringify(formDataObj))}`)
     .then(r => r.json())
-    .then(res => { if (res.success) { showAlert('Berhasil', res.message, 'success'); form.reset(); } })
-    .catch(e => showAlert('Error', 'Gagal memproses.', 'error'));
+    .then(res => { if (res.success) { showAlert('Berhasil', res.message); form.reset(); } })
+    .catch(e => showAlert('Error', 'Gagal memproses.'));
 }
 
 async function callBackend(actionName, parameterData = {}) {
@@ -182,4 +293,7 @@ function showAlert(title, msg) {
   document.getElementById('alert-msg').innerText = msg;
   overlay.classList.remove('opacity-0', 'pointer-events-none');
 }
-function closeAlert() { document.getElementById('custom-alert').classList.add('opacity-0', 'pointer-events-none'); }
+
+function closeAlert() { 
+  document.getElementById('custom-alert').classList.add('opacity-0', 'pointer-events-none'); 
+}
