@@ -1,27 +1,71 @@
-<div class="p-5 fade-in space-y-5">
-  <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-xl relative overflow-hidden">
-    <div id="wrapper-LOGO" class="hidden flex justify-center mb-3">
-      <img id="val-LOGO" src="" class="h-16 w-auto object-contain rounded-full" alt="Logo Kelas">
-    </div>
-    <div class="text-center">
-      <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Aplikasi Informasi Kelas</p>
-      <h2 id="wrapper-KELAS" class="hidden text-3xl font-black text-smpprimary tracking-tight mt-0.5">Kelas <span id="val-KELAS">-</span></h2>
-    </div>
-    <div class="mt-4 pt-4 border-t border-gray-50 space-y-2.5 text-xs text-slate-700">
-      <div id="wrapper-WALI_KELAS" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Wali Kelas:</span><span id="val-WALI_KELAS" class="font-bold"></span></div>
-      <div id="wrapper-KETUA_KELAS" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Ketua Kelas:</span><span id="val-KETUA_KELAS" class="font-semibold"></span></div>
-      <div id="wrapper-WAKIL_KETUA" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Wakil Ketua:</span><span id="val-WAKIL_KETUA" class="font-semibold"></span></div>
-      <div id="wrapper-BENDAHARA_1" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Bendahara 1:</span><span id="val-BENDAHARA_1" class="font-semibold"></span></div>
-      <div id="wrapper-BENDAHARA_2" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Bendahara 2:</span><span id="val-BENDAHARA_2" class="font-semibold"></span></div>
-      <div id="wrapper-SEKRETARIS_1" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Sekretaris 1:</span><span id="val-SEKRETARIS_1" class="font-semibold"></span></div>
-      <div id="wrapper-SEKRETARIS_2" class="hidden flex justify-between"><span class="text-gray-400 font-medium">Sekretaris 2:</span><span id="val-SEKRETARIS_2" class="font-semibold"></span></div>
+<div class="fade-in pb-24 space-y-5">
+  
+  <div class="bg-gradient-to-br from-blue-700 to-indigo-900 text-white px-6 py-7 shadow-md mx-4 mt-4 rounded-[28px] relative overflow-hidden">
+    <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+    <div class="absolute -left-4 -bottom-4 w-16 h-16 bg-blue-500/20 rounded-full blur-lg"></div>
+    
+    <div class="relative z-10 space-y-2">
+      <h2 class="text-xl font-extrabold tracking-tight leading-tight">
+        Halo, Selamat Datang!
+      </h2>
+      <p class="text-xs text-blue-100/90 leading-relaxed font-medium">
+        Silakan gunakan aplikasi Kelas 9I ini untuk memantau perkembangan, rekam jejak, serta melengkapi biodata diagnostik siswa secara berkala.
+      </p>
     </div>
   </div>
 
-  <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-md">
-    <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider mb-3"><i class="fas fa-chart-pie mr-1"></i> Komposisi Siswa (L/P)</h4>
-    <div class="relative w-full h-44 flex justify-center">
-      <canvas id="chartJenisKelamin"></canvas>
+  <div class="mx-4 grid grid-cols-1 gap-3">
+    
+    <div id="wrapper-NAMA_SEKOLAH" class="hidden bg-white border border-gray-100 p-4 rounded-[20px] shadow-sm flex items-center space-x-3.5">
+      <div class="w-10 h-10 bg-blue-50 flex items-center justify-center text-smpprimary rounded-xl">
+        <i class="fas fa-university text-base"></i>
+      </div>
+      <div>
+        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Lembaga Pendidikan</span>
+        <h4 id="val-NAMA_SEKOLAH" class="text-xs font-black text-slate-800 uppercase">-</h4>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div id="wrapper-WALI_KELAS" class="hidden bg-white border border-gray-100 p-4 rounded-[20px] shadow-sm flex items-center space-x-3">
+        <div class="w-9 h-9 bg-amber-50 flex items-center justify-center text-amber-600 rounded-xl">
+          <i class="fas fa-user-tie text-sm"></i>
+        </div>
+        <div class="overflow-hidden">
+          <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Wali Kelas</span>
+          <h4 id="val-WALI_KELAS" class="text-xs font-black text-slate-800 truncate">-</h4>
+        </div>
+      </div>
+
+      <div id="wrapper-RUANG_KELAS" class="hidden bg-white border border-gray-100 p-4 rounded-[20px] shadow-sm flex items-center space-x-3">
+        <div class="w-9 h-9 bg-emerald-50 flex items-center justify-center text-emerald-600 rounded-xl">
+          <i class="fas fa-door-open text-sm"></i>
+        </div>
+        <div>
+          <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Ruang / Kelas</span>
+          <h4 id="val-RUANG_KELAS" class="text-xs font-black text-slate-800 uppercase">-</h4>
+        </div>
+      </div>
+    </div>
+
+    <div id="wrapper-PENGUMUMAN_BERANDA" class="hidden bg-amber-50 border border-amber-200/60 p-4 rounded-[20px] flex items-start space-x-3">
+      <i class="fas fa-bullhorn text-amber-600 text-xs mt-0.5"></i>
+      <div class="text-[11px] text-amber-900 leading-relaxed">
+        <strong class="font-bold block mb-0.5">Catatan Penting Wali Kelas:</strong>
+        <span id="val-PENGUMUMAN_BERANDA">-</span>
+      </div>
     </div>
   </div>
+
+  <div class="bg-white border border-gray-100 p-5 mx-4 rounded-[24px] shadow-sm space-y-4">
+    <div class="flex items-center space-x-2 border-b border-gray-50 pb-2.5">
+      <div class="w-2.5 h-4 bg-smpprimary rounded-sm"></div>
+      <h3 class="text-xs font-black text-slate-800 uppercase tracking-wide">Statistik Gender Siswa</h3>
+    </div>
+    
+    <div class="w-full relative min-h-[160px] flex items-center justify-center">
+      <canvas id="chartJenisKelamin" class="max-h-[160px]"></canvas>
+    </div>
+  </div>
+
 </div>
