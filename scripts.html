@@ -1,0 +1,193 @@
+<script>
+  // ⚠️ PASTIKAN URL_GAS DI BAWAH INI ADALAH URL "WEB APP" TERBARU HASIL DEPLOYMENT ANDA!
+  const URL_GAS = "https://script.google.com/macros/s/AKfycbwsNbHxI8KlbKPOZh94hS_A_jKe0wQulwzADhaf2S3Q7oIDGCZb5Nx8cNXacKcAQxSoeg/exec";
+
+  function go(step) {
+    if (step === 2) {
+      const requiredInputs = document.getElementById('step1').querySelectorAll('[required]');
+      for (let input of requiredInputs) {
+        if (!input.value) {
+          Swal.fire({ icon: 'warning', title: 'Belum Lengkap', text: 'Harap lengkapi semua isian bertanda wajib di tahap 1!' });
+          input.focus();
+          return;
+        }
+      }
+    }
+    if (step === 3) {
+      const requiredInputs = document.getElementById('step2').querySelectorAll('[required]');
+      for (let input of requiredInputs) {
+        if (!input.value) {
+          Swal.fire({ icon: 'warning', title: 'Belum Lengkap', text: 'Harap lengkapi semua isian bertanda wajib di tahap 2!' });
+          input.focus();
+          return;
+        }
+      }
+    }
+
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step' + step).classList.remove('hidden');
+  }
+
+  function bukaHalaman(viewId) {
+    document.getElementById('view-dashboard').classList.add('hidden');
+    document.getElementById('view-form').classList.add('hidden');
+    document.getElementById('view-biodata').classList.add('hidden');
+    document.getElementById('view-kelas').classList.add('hidden');
+    document.getElementById(viewId).classList.remove('hidden');
+
+    if(viewId === 'view-form') go(1);
+
+    ['nav-dashboard', 'nav-form', 'nav-biodata'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) {
+        if(id === 'nav-' + viewId.replace('view-', '')) {
+          el.classList.add('text-biruUtama', 'font-bold');
+          el.classList.remove('text-gray-400');
+        } else {
+          el.classList.remove('text-biruUtama', 'font-bold');
+          el.classList.add('text-gray-400');
+        }
+      }
+    });
+  }
+
+  function tabKelas(tab) {
+    document.getElementById('tab-st').classList.add('hidden');
+    document.getElementById('tab-jd').classList.add('hidden');
+    document.getElementById('btn-st').className = "flex-1 py-2 text-center rounded text-gray-600";
+    document.getElementById('btn-jd').className = "flex-1 py-2 text-center rounded text-gray-600";
+
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.getElementById('btn-' + tab).className = "flex-1 py-2 text-center rounded bg-biruUtama text-white";
+  }
+
+  function muatInfoKelasMaster() {
+    const scriptTag = document.createElement('script');
+    scriptTag.src = `${URL_GAS}?aksi=getInfoKelas&callback=handleInfoKelas`;
+    scriptTag.onerror = function() {
+      document.getElementById('txtWaliKelas').innerText = "Gagal terhubung ke GAS";
+      console.error("Sinkronisasi gagal.");
+    };
+    document.body.appendChild(scriptTag);
+  }
+
+  function handleInfoKelas(response) {
+    if(response.status === "success") {
+      const d = response.data;
+      if(d.KELAS) {
+        document.getElementById('txtHeaderKelas').innerText = `Kelas ${d.KELAS.value}`;
+        document.getElementById('badgeStatusKelas').innerText = d.KELAS.status;
+        document.getElementById('badgeStatusKelas').className = d.KELAS.status === 'ACTIVE' 
+          ? "text-[10px] font-bold text-green-300 px-2 py-0.5 bg-white/10 rounded" 
+          : "text-[10px] font-bold text-red-300 px-2 py-0.5 bg-white/10 rounded";
+      }
+      if(d.WALI_KELAS) document.getElementById('txtWaliKelas').innerText = d.WALI_KELAS.value || "-";
+      if(d.KETUA_KELAS) document.getElementById('txtKetuaKelas').innerText = d.KETUA_KELAS.value || "-";
+      if(d.VISI) document.getElementById('txtVisi').innerText = `"${d.VISI.value}"`;
+      if(d.MISI) document.getElementById('txtMisi').innerText = d.MISI.value || "-";
+
+      const containerStruktur = document.getElementById('containerStruktur');
+      containerStruktur.innerHTML = ""; 
+      const urutanPengurus = ['WALI_KELAS', 'KETUA_KELAS', 'WAKIL_KETUA', 'BENDAHARA', 'SEKRETARIS'];
+      let adaPengurus = false;
+      urutanPengurus.forEach(kunci => {
+        if(d[kunci] && d[kunci].status === "ACTIVE") {
+          adaPengurus = true;
+          const labelBersih = kunci.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+          containerStruktur.insertAdjacentHTML('beforeend', `<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100"><span class="font-semibold text-gray-500">${labelBersih}:</span><span class="font-bold text-gray-800">${d[kunci].value || '-'}</span></div>`);
+        }
+      });
+      if(!adaPengurus) containerStruktur.innerHTML = `<p class="text-center text-gray-400 py-2">Belum ada data pengurus aktif.</p>`;
+    }
+  }
+
+  function kirimDataSiswaGET(e) {
+    e.preventDefault();
+    Swal.fire({ title: 'Menyimpan Data...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+    const fields = ['noAbsen', 'kelas', 'namaLengkap', 'namaPanggilan', 'jk', 'tempatLahir', 'tglLahir', 'alamat', 'noWaSiswa', 'noWaOrtu', 'prestasiRingkas', 'hobi', 'citaCita', 'nis', 'nisn', 'pelajaranSuka', 'pelajaranTdkSuka', 'ekskul', 'kegiatanMotivasi', 'caraBelajar', 'namaAyah', 'pekerjaanAyah', 'pendidikanAyah', 'namaIbu', 'pekerjaanIbu', 'pendidikanIbu', 'topikOrtu', 'harapanOrtu', 'punyaKip', 'statusYatimPiatu', 'riwayatSakit'];
+    let queryStr = `?aksi=simpanBiodata`;
+    fields.forEach(f => { queryStr += `&${f}=${encodeURIComponent(document.getElementById(f).value)}`; });
+
+    window.handleFormResponse = function(res) {
+      if(res.status === "success") {
+        Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Biodata lengkap berhasil tersimpan di Google Sheets.' });
+        document.getElementById('siswaForm').reset();
+        bukaHalaman('view-dashboard');
+      } else {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: res.message || 'Terjadi kesalahan sistem.' });
+      }
+    };
+    
+    const scriptTag = document.createElement('script');
+    scriptTag.src = URL_GAS + queryStr + `&callback=handleFormResponse`;
+    document.body.appendChild(scriptTag);
+  }
+
+  function cariProfilSiswa() {
+    const nis = document.getElementById('searchNis').value;
+    if(!nis) return Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Isi NIS terlebih dahulu!' });
+    Swal.fire({ title: 'Mencari...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+    window.handleGasResponse = function(res) {
+      Swal.close();
+      if(res.status === "success" && res.biodata) {
+        const b = res.biodata;
+        document.getElementById('profilResult').classList.remove('hidden');
+        document.getElementById('pNama').innerText = b[4] || "Siswa";
+        document.getElementById('pNisNisn').innerText = `NIS: ${b[15] || nis} | NISN: ${b[16] || '-'}`;
+
+        const foto = document.getElementById('fotoSiswa');
+        let fotoUrl = b[33] || '';
+        if(fotoUrl && fotoUrl.includes('drive.google.com')){
+          const m = fotoUrl.match(/\/d\/(.*?)\//);
+          if(m) fotoUrl = 'https://drive.google.com/uc?export=view&id=' + m[1];
+        }
+        foto.src = fotoUrl && fotoUrl.trim() !== '' ? fotoUrl : 'https://via.placeholder.com/150?text=Foto';
+
+        const strukturBiodata = [
+          { label: "ID Unik", val: b[0] }, { label: "Tanggal Pengisian", val: b[1] ? new Date(b[1]).toLocaleDateString('id-ID') : "-" },
+          { label: "No Absen", val: b[2] }, { label: "Kelas", val: b[3] },
+          { label: "Nama Lengkap", val: b[4] }, { label: "Nama Panggilan", val: b[5] },
+          { label: "Gender", val: b[6] }, { label: "Tempat Lahir", val: b[7] },
+          { label: "Tgl Lahir", val: b[8] }, { label: "Alamat", val: b[9] },
+          { label: "WA Siswa", val: b[10] }, { label: "WA Ortu", val: b[11] },
+          { label: "Prestasi", val: b[12] }, { label: "Hobi", val: b[13] },
+          { label: "Cita-cita", val: b[14] }, { label: "Pelajaran Suka", val: b[17] },
+          { label: "Pelajaran Benci", val: b[18] }, { label: "Ekskul", val: b[19] },
+          { label: "Motivasi", val: b[20] }, { label: "Gaya Belajar", val: b[21] },
+          { label: "Ayah", val: b[22] }, { label: "Pekerjaan Ayah", val: b[23] },
+          { label: "Pendidikan Ayah", val: b[24] }, { label: "Ibu", val: b[25] },
+          { label: "Pekerjaan Ibu", val: b[26] }, { label: "Pendidikan Ibu", val: b[27] },
+          { label: "Topik Obrolan", val: b[28] }, { label: "Harapan Ortu", val: b[29] },
+          { label: "KIP", val: b[30] }, { label: "Status Yatim", val: b[31] },
+          { label: "Riwayat Sakit", val: b[32] }
+        ];
+
+        const tableBody = document.getElementById('tableDetailBiodata');
+        tableBody.innerHTML = "";
+        strukturBiodata.forEach(item => {
+          if(item.val) tableBody.innerHTML += `<tr class="border-b"><td class="p-2 font-semibold text-gray-500">${item.label}</td><td class="p-2">: ${item.val}</td></tr>`;
+        });
+
+        const pList = document.getElementById('listPrestasi');
+        pList.innerHTML = res.prestasi.length ? "" : "<li>Belum ada data</li>";
+        res.prestasi.forEach(r => pList.innerHTML += `<li><strong>${r[2]}</strong></li>`);
+
+        const pelList = document.getElementById('listPelanggaran');
+        pelList.innerHTML = res.pelanggaran.length ? "" : "<tr><td colspan='2' class='p-2 text-center'>Bersih</td></tr>";
+        res.pelanggaran.forEach(r => pelList.innerHTML += `<tr class='border-b'><td class='p-1'>${r[2]}</td><td class='p-1 text-right text-red-500 font-bold'>${r[3]}</td></tr>`);
+
+      } else {
+        Swal.fire({ icon: 'info', title: 'Tidak Ditemukan', text: 'Data tidak terdaftar.' });
+      }
+    };
+    const scriptTag = document.createElement('script');
+    scriptTag.src = `${URL_GAS}?aksi=getRiwayatSiswa&nis=${nis}&callback=handleGasResponse`;
+    document.body.appendChild(scriptTag);
+  }
+
+  window.onload = function() { muatInfoKelasMaster(); }
+</script>
