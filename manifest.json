@@ -1,0 +1,12 @@
+{
+  "name": "MyClass 9I",
+  "short_name": "MyClass 9I",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0B409C",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "https://apxid.github.io/kelas9i/assets/9i.png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "https://apxid.github.io/kelas9i/assets/9i.png" }
+  ]
+}
