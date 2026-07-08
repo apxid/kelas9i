@@ -5,14 +5,19 @@ let masterSidata = [];        // Menyimpan data BIODATA terurut di memori aplika
 let currentSiswaIndex = -1;   // Menyimpan indeks siswa yang sedang aktif dilihat
 
 window.addEventListener('DOMContentLoaded', () => {
-  runClock();
-  setInterval(runClock, 60000);
+  // Fungsi pembaruan jam dinonaktifkan karena elemen status bar telah dihilangkan dari index.html
+  // runClock();
+  // setInterval(runClock, 60000);
+  
   switchView('dashboard'); // Membuka dashboard pertama kali
 });
 
 function runClock() {
   const now = new Date();
-  document.getElementById('app-clock').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  const clockEl = document.getElementById('app-clock');
+  if (clockEl) {
+    clockEl.innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  }
 }
 
 // Fungsi Inti Memuat File HTML Secara Dinamis
