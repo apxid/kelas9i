@@ -1,109 +1,92 @@
-// Tambahkan atau pastikan variabel penampung global ini ada di baris atas Scripts.js
-let masterSidata = []; 
-let currentSiswaIndex = -1; // Menyimpan indeks siswa yang sedang aktif dilihat
+<div class="p-5 fade-in pb-24 space-y-4">
+  <div class="mb-2">
+    <h4 class="text-base font-black text-slate-800 tracking-tight">Profil Lengkap Siswa</h4>
+    <p class="text-[11px] text-gray-400">Gunakan dropdown atau tombol navigasi di bawah untuk melihat isi data sheet BIODATA.</p>
+  </div>
 
-// FUNGSI: Mengisi list nama siswa ke elemen dropdown <select>
-function loadDropdownDaftarSiswa() {
-  const selectNode = document.getElementById('select-profil-siswa');
-  
-  callBackend('getData', { sheetName: 'BIODATA' }).then(data => {
-    if (!data || data.length === 0) {
-      selectNode.innerHTML = '<option value="">Gagal/Data BIODATA kosong</option>';
-      return;
-    }
+  <div class="relative bg-white border border-gray-200 p-2 text-xs">
+    <select id="select-profil-siswa" onchange="renderDetailProfilSiswa(this.value)" class="w-full p-2 bg-gray-50 border border-gray-100 font-bold text-slate-700 focus:outline-none">
+      <option value="">-- Memuat Daftar Siswa... --</option>
+    </select>
+  </div>
+
+  <div id="detail-profil-container" class="space-y-4 hidden">
     
-    // Urutkan siswa berdasarkan Nomor Absen dari terkecil ke terbesar
-    data.sort((a, b) => {
-      return parseInt(a['No Absen'] || 99) - parseInt(b['No Absen'] || 99);
-    });
-    
-    masterSidata = data; // Simpan data terurut ke dalam memori aplikasi
+    <div class="bg-white border border-gray-200 p-4 flex flex-col items-center text-center space-y-3">
+      <img id="prof-Foto" src="" class="w-28 h-36 object-cover border border-gray-200 bg-gray-50 shadow-sm" alt="Foto Siswa" onerror="this.src='https://via.placeholder.com/150x200?text=Tanpa+Foto'">
+      <div>
+        <h3 id="prof-Nama_Lengkap" class="text-sm font-black text-slate-800 uppercase tracking-tight">-</h3>
+        <p class="text-[11px] text-gray-400 font-bold mt-0.5">NISN: <span id="prof-NISN">-</span> | NIS: <span id="prof-NIS">-</span></p>
+      </div>
+    </div>
 
-    let optionsHtml = '<option value="">-- PILIH NAMA SISWA --</option>';
-    data.forEach(siswa => {
-      optionsHtml += `<option value="${siswa.NISN}">Absen ${siswa['No Absen'] || '-'} : ${siswa['Nama Lengkap']}</option>`;
-    });
-    selectNode.innerHTML = optionsHtml;
-    
-    // Jika sebelumnya sudah ada profil terpilih, kembalikan posisi select-nya
-    if (currentSiswaIndex !== -1 && masterSidata[currentSiswaIndex]) {
-      selectNode.value = masterSidata[currentSiswaIndex].NISN;
-    }
-  });
-}
+    <div class="bg-white border border-gray-200 p-4 space-y-2.5 text-xs">
+      <span class="text-[10px] bg-blue-50 text-smpprimary px-2 py-0.5 font-black uppercase tracking-wide inline-block">1. Data Pribadi & Kontak</span>
+      <div class="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-gray-100 pt-2 text-slate-700">
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">No Absen</p><p id="prof-No_Absen" class="font-bold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Kelas</p><p id="prof-Kelas" class="font-bold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Nama Panggilan</p><p id="prof-Nama_Panggilan" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Jenis Kelamin</p><p id="prof-Jenis_Kelamin" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Tempat Lahir</p><p id="prof-Tempat_Lahir" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Tanggal Lahir</p><p id="prof-Tanggal_Lahir" class="font-semibold">-</p></div>
+        <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Alamat</p><p id="prof-Alamat" class="font-semibold text-slate-600">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">No WA Siswa</p><p id="prof-No_WA_Siswa" class="font-bold text-smpprimary">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">No WA Ortu</p><p id="prof-No_WA_Ortu" class="font-bold text-smpprimary">-</p></div>
+      </div>
+    </div>
 
-// FUNGSI: Memetakan (mapping) seluruh data ke elemen halaman profil
-function renderDetailProfilSiswa(nisnSelected) {
-  const container = document.getElementById('detail-profil-container');
-  const placeholder = document.getElementById('profil-placeholder');
-  const selectNode = document.getElementById('select-profil-siswa');
+    <div class="bg-white border border-gray-200 p-4 space-y-2.5 text-xs">
+      <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 font-black uppercase tracking-wide inline-block">2. Profil Akademik & Minat</span>
+      <div class="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-gray-100 pt-2 text-slate-700">
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Pelajaran Disukai</p><p id="prof-Pelajaran_Disukai" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Pelajaran Dibenci</p><p id="prof-Pelajaran_Tidak_Disukai" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Hobi</p><p id="prof-Hobi" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Cita-Cita</p><p id="prof-Cita-cita" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Ekstrakurikuler</p><p id="prof-Ekskul" class="font-semibold">-</p></div>
+        <div><p class="text-[10px] text-gray-400 font-bold uppercase">Cara Belajar</p><p id="prof-Cara_Belajar" class="font-semibold">-</p></div>
+        <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Kegiatan Motivasi</p><p id="prof-Kegiatan_Motivasi" class="font-semibold text-slate-600">-</p></div>
+        <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Prestasi Ringkas</p><p id="prof-Prestasi_Ringkas" class="font-semibold text-slate-600">-</p></div>
+      </div>
+    </div>
 
-  if (!nisnSelected) {
-    currentSiswaIndex = -1;
-    container.classList.add('hidden');
-    placeholder.classList.remove('hidden');
-    return;
-  }
+    <div class="bg-white border border-gray-200 p-4 space-y-2.5 text-xs">
+      <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 font-black uppercase tracking-wide inline-block">3. Latar Belakang Keluarga & Medis</span>
+      <div class="space-y-3 border-t border-gray-100 pt-2 text-slate-700">
+        <div class="grid grid-cols-3 gap-2 bg-gray-50 p-2 border border-gray-100">
+          <div class="col-span-3 text-[9px] text-gray-400 font-black uppercase">Data Ayah</div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Nama</p><p id="prof-Nama_Ayah" class="font-bold text-slate-800">-</p></div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Pekerjaan</p><p id="prof-Pekerjaan_Ayah" class="font-semibold text-slate-700">-</p></div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Pendidikan</p><p id="prof-Pendidikan_Ayah" class="font-semibold text-slate-700">-</p></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 bg-gray-50 p-2 border border-gray-100">
+          <div class="col-span-3 text-[9px] text-gray-400 font-black uppercase">Data Ibu</div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Nama</p><p id="prof-Nama_Ibu" class="font-bold text-slate-800">-</p></div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Pekerjaan</p><p id="prof-Pekerjaan_Ibu" class="font-semibold text-slate-700">-</p></div>
+          <div><p class="text-[9px] text-gray-400 font-medium">Pendidikan</p><p id="prof-Pendidikan_Ibu" class="font-semibold text-slate-700">-</p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div><p class="text-[10px] text-gray-400 font-bold uppercase">Punya KIP</p><p id="prof-Punya_KIP" class="font-bold">-</p></div>
+          <div><p class="text-[10px] text-gray-400 font-bold uppercase">Status Yatim/Piatu</p><p id="prof-Status_Yatim_Piatu" class="font-bold">-</p></div>
+          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Riwayat Sakit / Komorbid</p><p id="prof-Riwayat_Sakit" class="font-semibold text-rose-700">-</p></div>
+          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Topik Sering Dibicarakan</p><p id="prof-Topik_Sering_Dibicarakan" class="font-semibold text-slate-600">-</p></div>
+          <div class="col-span-2"><p class="text-[10px] text-gray-400 font-bold uppercase">Harapan Orang Tua</p><p id="prof-Harapan_Orang_Tua" class="font-semibold text-slate-600">-</p></div>
+        </div>
+      </div>
+    </div>
 
-  // Cari indeks siswa di dalam data masterSidata
-  currentSiswaIndex = masterSidata.findIndex(item => item.NISN.toString() === nisnSelected.toString());
-  
-  if (currentSiswaIndex === -1) return;
-  const s = masterSidata[currentSiswaIndex];
+    <div class="grid grid-cols-2 gap-2 pt-2 pb-6">
+      <button onclick="navigateProfilSiswa(-1)" class="bg-white border border-gray-300 text-slate-700 py-3 font-bold text-xs uppercase tracking-wider flex items-center justify-center active:bg-gray-100">
+        <i class="fas fa-chevron-left mr-2"></i> Sebelumnya
+      </button>
+      <button onclick="navigateProfilSiswa(1)" class="bg-smpprimary text-white py-3 font-bold text-xs uppercase tracking-wider flex items-center justify-center active:bg-blue-800">
+        Berikutnya <i class="fas fa-chevron-right ml-2"></i>
+      </button>
+    </div>
 
-  placeholder.classList.add('hidden');
-  container.classList.remove('hidden');
-  if (selectNode) selectNode.value = nisnSelected; // Selaraskan dropdown dengan tombol prev/next
+  </div>
 
-  // Kolom fields pemetaan data
-  const fields = [
-    'No Absen', 'Kelas', 'Nama Lengkap', 'Nama Panggilan', 'Jenis Kelamin', 
-    'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'No WA Siswa', 'No WA Ortu', 
-    'Prestasi Ringkas', 'Hobi', 'Cita-cita', 'NIS', 'NISN', 'Pelajaran Disukai', 
-    'Pelajaran Tidak Disukai', 'Ekskul', 'Kegiatan Motivasi', 'Cara Belajar', 
-    'Nama Ayah', 'Pekerjaan Ayah', 'Pendidikan Ayah', 'Nama Ibu', 'Pekerjaan Ibu', 
-    'Pendidikan Ibu', 'Topik Sering Dibicarakan', 'Harapan Orang Tua', 'Punya KIP', 
-    'Status Yatim Piatu', 'Riwayat Sakit'
-  ];
-
-  fields.forEach(field => {
-    const elementId = `prof-${field.replace(/\s+/g, '_').replace(/-/g, '_')}`;
-    const targetEl = document.getElementById(elementId);
-    if (targetEl) {
-      targetEl.innerText = s[field] !== undefined && s[field] !== "" ? s[field] : "-";
-    }
-  });
-
-  // FOTO: Mengambil data tautan URL dari kolom Foto (Kolom AH)
-  const imgEl = document.getElementById('prof-Foto');
-  if (imgEl) {
-    if (s['Foto'] && s['Foto'].toString().trim().startsWith('http')) {
-      imgEl.src = s['Foto'].toString().trim();
-    } else {
-      // Gambar cadangan jika link kosong atau rusak
-      imgEl.src = 'https://via.placeholder.com/150x200?text=Tanpa+Foto';
-    }
-  }
-}
-
-// FUNGSI BARU: Logika Tombol Navigasi Geser Kanan-Kiri (Prev & Next)
-function navigateProfilSiswa(direction) {
-  if (masterSidata.length === 0 || currentSiswaIndex === -1) return;
-
-  // Hitung indeks target berikutnya
-  let nextIndex = currentSiswaIndex + direction;
-
-  // Proteksi jika melampaui batas awal atau batas akhir daftar absen siswa
-  if (nextIndex < 0) {
-    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen pertama.', 'success');
-    return;
-  }
-  if (nextIndex >= masterSidata.length) {
-    showAlert('Info', 'Ini adalah profil siswa dengan nomor absen terakhir.', 'success');
-    return;
-  }
-
-  // Jalankan render profil untuk target siswa yang baru
-  const targetSiswa = masterSidata[nextIndex];
-  renderDetailProfilSiswa(targetSiswa.NISN);
-}
+  <div id="profil-placeholder" class="bg-white border border-gray-200 p-8 text-center text-xs text-gray-400">
+    <i class="fas fa-user-graduate text-3xl text-gray-200 mb-2 block"></i>
+    Silakan pilih nama siswa pada kolom di atas untuk menampilkan profil.
+  </div>
+</div>
