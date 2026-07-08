@@ -3,40 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aplikasi Manajemen Sekolah - SMP</title>
+  <title>SIAKAD - Dashboard Wali Kelas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            smpprimary: '#0B409C',
-            osisyellow: '#F4CE14',
-            appbg: '#F3F4F6',
-            appdark: '#1F2937'
-          }
+          colors: { smpprimary: '#0B409C', osisyellow: '#F4CE14', appbg: '#F3F4F6' }
         }
       }
     }
   </script>
   
   <style>
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-    .nav-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .nav-item.active { color: #0B409C !important; }
-    .nav-item.active i { transform: translateY(-2px); color: #0B409C; filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
-    .nav-item.active::after { content: ''; position: absolute; bottom: -2px; width: 16px; height: 3px; background-color: #F4CE14; border-radius: 99px; }
-    .fade-in { animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes slideUpFade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .shimmer { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: loadingShimmer 1.5s infinite; }
-    @keyframes loadingShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .nav-item.active i { transform: translateY(-1px); filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
+    .fade-in { animation: slideUp 0.35s ease forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .shimmer { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: load 1.5s infinite; }
+    @keyframes load { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   </style>
 </head>
-<body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased selection:bg-smpprimary/20">
+<body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
 
   <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col sm:rounded-[36px] border border-slate-800/50">
     
@@ -49,48 +40,39 @@
       </div>
     </div>
 
-    <div id="screen-container" class="flex-1 overflow-y-auto pb-24 bg-gray-50/50">
-      <div id="active-view">
-        <div class="flex flex-col items-center justify-center min-h-[600px] p-6 text-center">
-          <div class="w-12 h-12 border-4 border-smpprimary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p class="text-sm font-bold text-slate-600">Menyiapkan Aplikasi...</p>
-        </div>
-      </div>
+    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
+      <div id="active-view"></div>
     </div>
 
-    <nav id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-gray-200/80 px-4 py-2.5 flex justify-around items-center z-40 sm:rounded-b-[36px]">
-      <button onclick="switchView('dashboard')" class="nav-item active flex flex-col items-center justify-center text-gray-400 relative py-1 flex-1">
-        <i class="fas fa-th-large text-xl mb-0.5"></i> <span class="text-[10px] font-bold tracking-wide">Beranda</span>
+    <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-2 py-2.5 flex justify-around items-center z-40 sm:rounded-b-[36px]">
+      <button onclick="switchView('berandaKelas')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-school text-lg mb-0.5"></i>
+        <span class="text-[9px] font-bold uppercase tracking-wider">Beranda</span>
       </button>
-      <button onclick="switchView('biodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 relative py-1 flex-1">
-        <i class="fas fa-id-card text-xl mb-0.5"></i> <span class="text-[10px] font-bold tracking-wide">Biodata</span>
+      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
+        <span class="text-[9px] font-bold uppercase tracking-wider">Isi Biodata</span>
       </button>
-      <button onclick="switchView('prestasi')" class="nav-item flex flex-col items-center justify-center text-gray-400 relative py-1 flex-1">
-        <i class="fas fa-trophy text-xl mb-0.5"></i> <span class="text-[10px] font-bold tracking-wide">Prestasi</span>
-      </button>
-      <button onclick="switchView('konseling')" class="nav-item flex flex-col items-center justify-center text-gray-400 relative py-1 flex-1">
-        <i class="fas fa-comments text-xl mb-0.5"></i> <span class="text-[10px] font-bold tracking-wide">Konseling</span>
+      <button onclick="switchView('rekamJejak')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-trophy text-lg mb-0.5"></i>
+        <span class="text-[9px] font-bold uppercase tracking-wider">Prestasi</span>
       </button>
     </nav>
 
   </div>
 
   <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div id="alert-card" class="bg-white rounded-2xl p-6 w-full max-w-xs text-center transform scale-75 transition-transform duration-300 shadow-2xl border border-gray-100">
-      <div id="alert-icon" class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full text-2xl font-bold"></div>
-      <h3 id="alert-title" class="text-lg font-extrabold text-gray-800 mb-1"></h3>
-      <p id="alert-msg" class="text-xs text-gray-500 mb-5 leading-relaxed px-2"></p>
-      <button onclick="closeAlert()" class="w-full py-3 bg-smpprimary text-white font-bold rounded-xl hover:bg-blue-800 text-sm">Selesai</button>
+    <div class="bg-white rounded-2xl p-5 w-full max-w-xs text-center shadow-2xl">
+      <h3 id="alert-title" class="text-sm font-black text-slate-800 mb-1"></h3>
+      <p id="alert-msg" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
+      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold rounded-xl text-xs">Selesai</button>
     </div>
   </div>
 
-  <div id="template-storage" style="display:none;"></div>
-
   <script>
-    // MASUKKAN URL WEB APP GAS (YANG BERAKHIRAN /exec) DI SINI
+    // URL WEB APP GAS ANDA (?action=...)
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
   </script>
-
   <script src="TemplateViews.js"></script>
   <script src="Scripts.js"></script>
 </body>
