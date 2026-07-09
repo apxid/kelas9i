@@ -1,8 +1,9 @@
-// Scripts.js - Multi-file Router Engine & PWA Controller (Update 2026)
+// Scripts.js - Full Source Code
+// URL WEB APP GOOGLE APPS SCRIPT (Pastikan ini sesuai dengan milik Anda)
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
 
-let appState = { currentView: 'dashboard', currentSubMenu: 'prestasi' };
 let masterSidata = []; 
-let isPinVerified = false;
+let chartInstance = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   switchView('dashboard');
@@ -10,22 +11,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // 1. Fungsi Navigasi Utama (SPA)
 function switchView(viewName) {
-  appState.currentView = viewName;
+  const container = document.getElementById('active-view');
+  
+  // Highlight nav
   document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
   const activeBtn = document.querySelector(`button[onclick="switchView('${viewName}')"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
-  const screenContainer = document.getElementById('active-view');
-  screenContainer.innerHTML = '<div class="h-64 flex items-center justify-center"><div class="w-8 h-8 border-4 border-smpprimary border-t-transparent rounded-full animate-spin"></div></div>';
+  // Loading spinner
+  container.innerHTML = '<div class="h-64 flex items-center justify-center"><div class="w-8 h-8 border-4 border-smpprimary border-t-transparent rounded-full animate-spin"></div></div>';
 
   fetch(`${viewName}.html`)
     .then(r => r.text())
     .then(html => {
-      screenContainer.innerHTML = html;
+      container.innerHTML = html;
       if (viewName === 'dashboard') { loadInfoKelasBeranda(); loadGrafikSiswa(); }
-      if (viewName === 'informasiSiswa') switchSubMenu(appState.currentSubMenu);
-      if (viewName === 'profilSiswa') checkPinAksesProfil();
-    });
+      if (viewName === 'profilSiswa') loadDropdownDaftarSiswa();
+    })
+    .catch(err => { container.innerHTML = `<p class="p-6 text-center text-xs text-rose-500">Error: ${err.message}</p>`; });
 }
 
 // 2. Fungsi Iframe SPA (Kas & Asisten)
@@ -39,73 +42,79 @@ function switchViewExternal(url) {
       <iframe id="ext-frame" src="${url}" class="w-full h-full border-none opacity-0 transition-opacity duration-500" onload="this.classList.remove('opacity-0'); document.getElementById('loader').remove();"></iframe>
     </div>
   `;
-
-  if (url.includes('assistant_v2')) {
-    document.getElementById('ext-frame').onload = function() {
-      const style = document.createElement('style');
-      style.textContent = '.header, .sidebar, .nav, footer { display: none !important; }';
-      try { this.contentDocument.head.appendChild(style); } catch(e) {}
-    };
-  }
 }
 
-// 3. Logika Profil Siswa
-function renderDetailProfilSiswa(nisnSelected) {
-  const container = document.getElementById('detail-profil-container');
-  const placeholder = document.getElementById('profil-placeholder');
-
-  if (!nisnSelected) {
-    if (container) container.classList.add('hidden');
-    if (placeholder) placeholder.classList.remove('hidden');
-    return;
-  }
-
-  const s = masterSidata.find(item => (item.NISN || item.nisn || "").toString().trim() === nisnSelected.toString().trim());
-  if (!s) return;
-
-  if (placeholder) placeholder.classList.add('hidden');
-  if (container) container.classList.remove('hidden');
-
-  // Mapping data dinamis ke ID elemen (format ID: prof-Nama_Kolom)
-  Object.keys(s).forEach(key => {
-    const targetEl = document.getElementById(`prof-${key.replace(/\s+/g, '_')}`);
-    if (targetEl) targetEl.innerText = s[key] || "-";
-  });
-
-  const imgEl = document.getElementById('prof-Foto');
-  if (imgEl) imgEl.src = s['Foto'] || s['foto'] || 'https://via.placeholder.com/150';
+// 3. Fungsi Close Iframe (Panggil dari dalam Iframe via window.parent)
+function closeExternalView() {
+  switchView('dashboard');
 }
 
-// 4. Logika Beranda (Fix Logo)
+// 4. Logika Beranda (Logo & Info)
 function loadInfoKelasBeranda() {
   callBackend('getData', { sheetName: 'INFO_KELAS' }).then(data => {
     if (!data) return;
     data.forEach(item => {
-      const key = item.KOMPONEN.replace(/\s+/g, '_');
-      const wrapper = document.getElementById(`wrapper-${key}`);
-      const val = document.getElementById(`val-${key}`);
-      
-      if (wrapper && item.STATUS === 'ACTIVE') {
-        wrapper.classList.remove('hidden');
-        if (val) {
-          if (item.KOMPONEN === 'LOGO') {
-            const logoImg = document.getElementById('val-LOGO');
-            if (logoImg) logoImg.src = item.VALUE;
-          } else {
-            val.innerText = item.VALUE;
-          }
+      const el = document.getElementById(`wrapper-${item.KOMPONEN}`);
+      if (el && item.STATUS === 'ACTIVE') {
+        el.classList.remove('hidden');
+        if (item.KOMPONEN === 'LOGO') {
+          const img = document.getElementById('val-LOGO');
+          if (img) img.src = item.VALUE;
+        } else {
+          const valEl = document.getElementById(`val-${item.KOMPONEN}`);
+          if (valEl) valEl.innerText = item.VALUE;
         }
       }
     });
   });
 }
 
-// 5. Utilities
-async function callBackend(actionName, parameterData = {}) {
-  let url = `${BACKEND_URL}?action=${actionName}`;
-  if (actionName === 'getData') url += `&sheetName=${parameterData.sheetName}`;
-  const r = await fetch(url);
-  return await r.json();
+// 5. Logika Grafik
+function loadGrafikSiswa() {
+  callBackend('getData', { sheetName: 'BIODATA' }).then(data => {
+    const ctx = document.getElementById('chartJenisKelamin');
+    if (!ctx) return;
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels: ['L', 'P'], datasets: [{ data: [10, 10], backgroundColor: ['#0B409C', '#F4CE14'] }] }
+    });
+  });
+}
+
+// 6. Logika Profil Siswa
+function loadDropdownDaftarSiswa() {
+  callBackend('getData', { sheetName: 'BIODATA' }).then(data => {
+    masterSidata = data;
+    const select = document.getElementById('select-profil-siswa');
+    if (select) {
+      select.innerHTML = '<option value="">-- PILIH NAMA --</option>' + 
+        data.map(s => `<option value="${s.NISN}">${s['Nama Lengkap']}</option>`).join('');
+    }
+  });
+}
+
+function renderDetailProfilSiswa(nisn) {
+  const s = masterSidata.find(x => x.NISN == nisn);
+  if (!s) return;
+  document.getElementById('detail-profil-container').classList.remove('hidden');
+  
+  Object.keys(s).forEach(key => {
+    const el = document.getElementById(`prof-${key.replace(/\s+/g, '_')}`);
+    if (el) el.innerText = s[key] || "-";
+  });
+  
+  const foto = document.getElementById('prof-Foto');
+  if (foto) foto.src = s['Foto'] || 'https://via.placeholder.com/150';
+}
+
+// 7. Backend & Utilities
+async function callBackend(action, params) {
+  try {
+    const url = `${BACKEND_URL}?action=${action}&sheetName=${params.sheetName}`;
+    const r = await fetch(url);
+    return await r.json();
+  } catch(e) { console.error("Backend Error:", e); }
 }
 
 function showAlert(title, msg) {
