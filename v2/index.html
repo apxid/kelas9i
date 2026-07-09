@@ -44,6 +44,14 @@
         <i class="fas fa-clipboard-list text-base mb-0.5"></i>
         <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
       </button>
+      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-id-card text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
+      </button>
+      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+        <i class="fas fa-folder-open text-base mb-0.5"></i>
+        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
+      </button>
       <button onclick="openKas()" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
         <i class="fas fa-wallet text-base mb-0.5"></i>
         <span class="text-[8px] font-bold uppercase tracking-wider">Kas</span>
@@ -78,7 +86,6 @@
   <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
 
-    // Fungsi Kas
     function openKas() {
       const container = document.getElementById('view-kas-container');
       const iframe = document.getElementById('iframe-kas');
@@ -88,8 +95,6 @@
     function closeKas() {
       document.getElementById('view-kas-container').classList.add('hidden');
     }
-
-    // Fungsi Asisten
     function toggleChat() {
       const wrapper = document.getElementById('chat-wrapper');
       const iframe = document.getElementById('iframe-asisten');
