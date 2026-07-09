@@ -175,6 +175,44 @@ function showAlert(title, msg) {
   overlay.classList.remove('opacity-0', 'pointer-events-none');
 }
 
-function closeAlert() {
+function closeAlert() 
+/* ==========================================================
+   EMBEDDED APP (Kas Kelas & Asisten)
+========================================================== */
+
+const APP_URL = {
+  kas: "https://apxid.github.io/kelas9i/kas/",
+  assistant: "https://apxid.github.io/assistant_v2/"
+};
+
+function bukaKas() {
+  openEmbeddedApp("Kas Kelas", APP_URL.kas);
+}
+
+function bukaAsisten() {
+  openEmbeddedApp("Asisten AI", APP_URL.assistant);
+}
+
+// menerima pesan dari iframe
+window.addEventListener("message", (event) => {
+
+  // abaikan pesan yang bukan milik aplikasi
+  if (!event.data) return;
+
+  switch (event.data) {
+
+    case "close-app":
+      closeEmbeddedApp();
+      break;
+
+    case "reload-dashboard":
+      closeEmbeddedApp();
+      switchView("dashboard");
+      break;
+
+  }
+
+});
+{
   document.getElementById('custom-alert').classList.add('opacity-0', 'pointer-events-none');
 }
