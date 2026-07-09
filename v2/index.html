@@ -1,107 +1,328 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MyClass 9I - Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: { smpprimary: '#0B409C', osisyellow: '#F4CE14', appbg: '#F3F4F6' }
-        }
-      }
-    }
-  </script>
-  
-  <style>
-    .nav-item.active { color: #0B409C !important; }
-    .nav-item.active i { transform: translateY(-1px); filter: drop-shadow(0 4px 6px rgba(11, 64, 156, 0.25)); }
-    .fade-in { animation: slideUp 0.35s ease forwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>MyClass 9I - Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+colors:{
+smpprimary:'#0B409C',
+osisyellow:'#F4CE14',
+appbg:'#F3F4F6'
+}
+}
+}
+}
+</script>
+
+<style>
+
+.nav-item.active{
+color:#0B409C!important;
+}
+
+.nav-item.active i{
+transform:translateY(-1px);
+filter:drop-shadow(0 4px 6px rgba(11,64,156,.25));
+}
+
+.fade-in{
+animation:slideUp .35s ease forwards;
+}
+
+@keyframes slideUp{
+from{
+opacity:0;
+transform:translateY(8px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.shimmer{
+background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%);
+background-size:200% 100%;
+animation:load 1.5s infinite;
+}
+
+@keyframes load{
+0%{background-position:200% 0;}
+100%{background-position:-200% 0;}
+}
+
+.scrollbar-hide::-webkit-scrollbar{
+display:none;
+}
+
+.scrollbar-hide{
+-ms-overflow-style:none;
+scrollbar-width:none;
+}
+
+/* ===========================
+   EMBEDDED APP
+=========================== */
+
+#embedded-app{
+
+position:absolute;
+
+inset:0;
+
+background:#fff;
+
+z-index:999;
+
+display:none;
+
+flex-direction:column;
+
+animation:slideLeft .25s;
+
+}
+
+@keyframes slideLeft{
+
+from{
+
+transform:translateX(100%);
+
+}
+
+to{
+
+transform:translateX(0);
+
+}
+
+}
+
+#embedded-header{
+
+height:52px;
+
+background:#0B409C;
+
+color:white;
+
+display:flex;
+
+align-items:center;
+
+padding:0 12px;
+
+font-weight:bold;
+
+}
+
+#embedded-header button{
+
+margin-right:10px;
+
+font-size:18px;
+
+}
+
+#embedded-frame{
+
+flex:1;
+
+border:none;
+
+width:100%;
+
+}
+
+#embedded-loading{
+
+position:absolute;
+
+inset:52px 0 0 0;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:white;
+
+font-size:13px;
+
+color:#666;
+
+}
+
+</style>
+
 </head>
+
 <body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
 
-  <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
-    
-    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
-      <div id="active-view"></div>
-    </div>
+<div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
 
-    <nav id="bottom-nav" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
-      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-school text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
-      </button>
-      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-clipboard-list text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
-      </button>
-      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-id-card text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
-      </button>
-      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-folder-open text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
-      </button>
-      <button onclick="openKas()" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-wallet text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Kas</span>
-      </button>
-      <button onclick="toggleChat()" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-robot text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Asisten</span>
-      </button>
-    </nav>
-  </div>
+<div id="screen-container"
+class="flex-1 overflow-y-auto bg-gray-50/50">
 
-  <div id="view-kas-container" class="hidden fixed inset-0 z-50 bg-white">
-    <button onclick="closeKas()" class="absolute top-4 left-4 z-50 text-slate-800 p-2"><i class="fas fa-arrow-left text-xl"></i></button>
-    <iframe id="iframe-kas" class="w-full h-full border-none" src=""></iframe>
-  </div>
+<div id="active-view"></div>
 
-  <div id="chat-wrapper" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-    <div class="w-full max-w-sm h-[80vh] bg-white rounded-2xl overflow-hidden shadow-2xl relative">
-      <button onclick="toggleChat()" class="absolute top-3 right-4 z-50 text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
-      <iframe id="iframe-asisten" class="w-full h-full border-none" src=""></iframe>
-    </div>
-  </div>
+</div>
 
-  <div id="custom-alert" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-white p-5 w-full max-w-xs text-center shadow-2xl rounded-2xl">
-      <h3 id="alert-title" class="text-sm font-black text-slate-800 mb-1"></h3>
-      <p id="alert-msg" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
-      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs rounded-xl">Selesai</button>
-    </div>
-  </div>
+<nav id="bottom-nav"
+class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
 
-  <script>
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
+<button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+<i class="fas fa-school text-base mb-0.5"></i>
+<span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
+</button>
 
-    function openKas() {
-      const container = document.getElementById('view-kas-container');
-      const iframe = document.getElementById('iframe-kas');
-      if(!iframe.src) iframe.src = "https://apxid.github.io/kelas9i/kas/";
-      container.classList.remove('hidden');
-    }
-    function closeKas() {
-      document.getElementById('view-kas-container').classList.add('hidden');
-    }
-    function toggleChat() {
-      const wrapper = document.getElementById('chat-wrapper');
-      const iframe = document.getElementById('iframe-asisten');
-      if(!iframe.src) iframe.src = "https://apxid.github.io/assistant_v2/";
-      wrapper.classList.toggle('hidden');
-    }
-  </script>
-  <script src="Scripts.js"></script>
+<button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+<i class="fas fa-clipboard-list text-base mb-0.5"></i>
+<span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
+</button>
+
+<button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+<i class="fas fa-id-card text-base mb-0.5"></i>
+<span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
+</button>
+
+<button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
+<i class="fas fa-folder-open text-base mb-0.5"></i>
+<span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
+</button>
+
+</nav>
+
+<!-- ===================================================
+     EMBEDDED APP
+=================================================== -->
+
+<div id="embedded-app">
+
+<div id="embedded-header">
+
+<button onclick="closeEmbeddedApp()">
+
+<i class="fas fa-arrow-left"></i>
+
+</button>
+
+<span id="embedded-title">
+
+Aplikasi
+
+</span>
+
+</div>
+
+<div id="embedded-loading">
+
+Memuat aplikasi...
+
+</div>
+
+<iframe
+id="embedded-frame"
+allow="clipboard-read; clipboard-write"
+loading="lazy">
+</iframe>
+
+</div>
+
+</div>
+
+<div id="custom-alert"
+class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+
+<div class="bg-white p-5 w-full max-w-xs text-center shadow-2xl rounded-2xl">
+
+<h3 id="alert-title"
+class="text-sm font-black text-slate-800 mb-1"></h3>
+
+<p id="alert-msg"
+class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
+
+<button onclick="closeAlert()"
+class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs rounded-xl">
+
+Selesai
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const BACKEND_URL="https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
+
+/* ===================================
+   EMBEDDED APP
+=================================== */
+
+function openEmbeddedApp(title,url){
+
+document.getElementById("embedded-title").innerText=title;
+
+document.getElementById("embedded-app").style.display="flex";
+
+document.getElementById("embedded-loading").style.display="flex";
+
+document.getElementById("bottom-nav").style.display="none";
+
+const frame=document.getElementById("embedded-frame");
+
+frame.src=url;
+
+frame.onload=function(){
+
+document.getElementById("embedded-loading").style.display="none";
+
+};
+
+}
+
+function closeEmbeddedApp(){
+
+document.getElementById("embedded-app").style.display="none";
+
+document.getElementById("bottom-nav").style.display="flex";
+
+document.getElementById("embedded-frame").src="";
+
+}
+
+/* menerima pesan dari iframe */
+
+window.addEventListener("message",function(e){
+
+if(e.data==="close-app"){
+
+closeEmbeddedApp();
+
+}
+
+});
+
+</script>
+
+<script src="Scripts.js"></script>
+
 </body>
 </html>
