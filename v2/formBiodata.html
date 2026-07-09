@@ -1,0 +1,90 @@
+<div class="p-5 fade-in pb-20">
+  <div class="mb-4">
+    <h4 class="text-base font-black text-slate-800 tracking-tight">Formulir Data Siswa</h4>
+    <p class="text-[11px] text-gray-400">Lengkapi data rekam jejak instrumen pendampingan wali kelas.</p>
+  </div>
+
+  <form id="main-bio-form" onsubmit="event.preventDefault(); submitFormBiodata();" class="space-y-4">
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+      <span class="text-[10px] bg-blue-50 text-smpprimary px-2 py-1 rounded font-black uppercase tracking-wide block mb-1">Bagian 1: Kredensial & Kontak</span>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">No Absen</label><input type="number" name="No Absen" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Kelas</label><input type="text" name="Kelas" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Lengkap</label><input type="text" name="Nama Lengkap" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Panggilan</label><input type="text" name="Nama Panggilan" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">NIS</label><input type="text" name="NIS" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">NISN</label><input type="text" name="NISN" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Jenis Kelamin</label>
+        <select name="Jenis Kelamin" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs">
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tempat Lahir</label><input type="text" name="Tempat Lahir" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tanggal Lahir</label><input type="date" name="Tanggal Lahir" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Alamat Rumah</label><textarea name="Alamat" rows="2" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">No WA Siswa</label><input type="text" name="No WA Siswa" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs" placeholder="628xx"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">No WA Ortu</label><input type="text" name="No WA Ortu" required class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs" placeholder="628xx"></div>
+      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Foto URL</label><input type="url" name="Foto" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs" placeholder="https://link-foto-anda"></div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+      <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-black uppercase tracking-wide block mb-1">Bagian 2: Karakter & Akademik</span>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pelajaran Disukai</label><input type="text" name="Pelajaran Disukai" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pelajaran Tak Disukai</label><input type="text" name="Pelajaran Tidak Disukai" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Hobi</label><input type="text" name="Hobi" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+        <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Cita-Cita</label><input type="text" name="Cita-cita" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Ekstrakurikuler</label><input type="text" name="Ekskul" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Cara Belajar</label><input type="text" name="Cara Belajar" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs" placeholder="Visual/Auditori/Kinestetik"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Kegiatan Motivasi</label><input type="text" name="Kegiatan Motivasi" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Prestasi Ringkas</label><input type="text" name="Prestasi Ringkas" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+      <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-1 rounded font-black uppercase tracking-wide block mb-1">Bagian 3: Profil Keluarga & Khusus</span>
+      <div class="border-b border-gray-50 pb-2">
+        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Profil Ayah</label>
+        <div class="grid grid-cols-3 gap-2">
+          <input type="text" name="Nama Ayah" placeholder="Nama" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+          <input type="text" name="Pekerjaan Ayah" placeholder="Pekerjaan" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+          <input type="text" name="Pendidikan Ayah" placeholder="Pendidikan" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+        </div>
+      </div>
+      <div class="border-b border-gray-50 pb-2">
+        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Profil Ibu</label>
+        <div class="grid grid-cols-3 gap-2">
+          <input type="text" name="Nama Ibu" placeholder="Nama" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+          <input type="text" name="Pekerjaan Ibu" placeholder="Pekerjaan" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+          <input type="text" name="Pendidikan Ibu" placeholder="Pendidikan" class="p-2 bg-gray-50 border rounded-xl text-[11px]">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Punya KIP?</label>
+          <select name="Punya KIP" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"><option value="Tidak">Tidak</option><option value="Ya">Ya</option></select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Status Yatim/Piatu</label>
+          <select name="Status Yatim Piatu" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"><option value="Lengkap">Lengkap</option><option value="Yatim">Yatim</option><option value="Piatu">Piatu</option><option value="Yatim Piatu">Yatim Piatu</option></select>
+        </div>
+      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Riwayat Sakit</label><input type="text" name="Riwayat Sakit" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs" placeholder="Isi jika ada penyakit bawaan"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Topik Sering Dibicarakan</label><input type="text" name="Topik Sering Dibicarakan" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Harapan Orang Tua</label><input type="text" name="Harapan Orang Tua" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"></div>
+    </div>
+
+    <button type="submit" class="w-full py-4 bg-smpprimary text-white font-black rounded-2xl shadow-xl hover:bg-blue-800 text-xs tracking-wider uppercase">Simpan & Daftarkan Data</button>
+  </form>
+</div>
