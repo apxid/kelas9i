@@ -4,9 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MyClass 9I - Dashboard</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B409C">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   
   <script>
     tailwind.config = {
@@ -25,8 +32,6 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .shimmer { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: load 1.5s infinite; }
     @keyframes load { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
-    /* Sembunyikan scrollbar bawaan browser pada navigasi tab internal */
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -35,29 +40,43 @@
 
   <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
     
-    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
+    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50 scrollbar-hide">
       <div id="active-view"></div>
     </div>
 
-    <nav id="bottom-nav" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
-      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-school text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
+    <nav id="bottom-nav" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2 grid grid-cols-6 items-center z-40">
+      
+      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-home text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Home</span>
       </button>
-      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-clipboard-list text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
-      </button>
-      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-id-card text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
-      </button>
-      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-folder-open text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
-      </button>
-    </nav>
 
+      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-user-circle text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Profil</span>
+      </button>
+
+      <button onclick="window.location.href='https://apxid.github.io/kelas9i/kas/'" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-wallet text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Kas</span>
+      </button>
+
+      <button onclick="window.location.href='https://apxid.github.io/assistant_v2/'" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-robot text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Asisten</span>
+      </button>
+
+      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-scroll text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Jejak</span>
+      </button>
+
+      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+        <i class="fas fa-edit text-sm mb-0.5"></i>
+        <span class="text-[7px] font-bold uppercase">Isi</span>
+      </button>
+      
+    </nav>
   </div>
 
   <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
@@ -69,9 +88,19 @@
   </div>
 
   <script>
-    // URL WEB APP GOOGLE APPS SCRIPT
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('PWA Service Worker Registered'))
+          .catch(err => console.log('SW Registration Failed:', err));
+      });
+    }
+  </script>
+
+  <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
   </script>
+  
   <script src="Scripts.js"></script>
 </body>
 </html>
