@@ -11,6 +11,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
     tailwind.config = {
@@ -49,12 +50,12 @@
         <span class="text-[7px] font-bold uppercase">Profil</span>
       </button>
 
-      <button onclick="switchViewExternal('https://apxid.github.io/kelas9i/kas/')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+      <button onclick="switchView('kas')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
         <i class="fas fa-wallet text-sm mb-0.5"></i>
         <span class="text-[7px] font-bold uppercase">Kas</span>
       </button>
 
-      <button onclick="switchViewExternal('https://apxid.github.io/assistant_v2/')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+      <button onclick="switchView('assisten')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
         <i class="fas fa-robot text-sm mb-0.5"></i>
         <span class="text-[7px] font-bold uppercase">Asisten</span>
       </button>
@@ -64,7 +65,7 @@
         <span class="text-[7px] font-bold uppercase">Jejak</span>
       </button>
 
-      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
+      <button onclick="switchView('isi')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 transition-all">
         <i class="fas fa-edit text-sm mb-0.5"></i>
         <span class="text-[7px] font-bold uppercase">Isi</span>
       </button>
@@ -83,5 +84,13 @@
   </script>
   
   <script src="Scripts.js"></script>
+
+  <script src="js/module-dashboard.js"></script>
+  <script src="js/module-profil.js"></script>
+  <script src="js/module-kas.js"></script>
+  <script src="js/module-assisten.js"></script>
+  <script src="js/module-jejak.js"></script>
+  <script src="js/module-isi.js"></script>
+
 </body>
 </html>
