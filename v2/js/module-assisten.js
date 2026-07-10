@@ -1,18 +1,3 @@
-console.log("Modul Asisten Siap");
-
-// Event Listener Global
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.id === 'btn-send') {
-        prosesKirim();
-    }
-});
-
-document.addEventListener('keypress', function(e) {
-    if (e.target && e.target.id === 'chat-input' && e.key === 'Enter') {
-        prosesKirim();
-    }
-});
-
 async function prosesKirim() {
     const input = document.getElementById('chat-input');
     const chatBody = document.getElementById('chat-body');
@@ -20,7 +5,7 @@ async function prosesKirim() {
     
     if (!msg || !chatBody) return;
 
-    // 1. Tampilkan pesan user ke layar
+    // Tampilkan pesan user
     chatBody.innerHTML += `
         <div class="flex justify-end mb-2">
             <div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div>
@@ -28,37 +13,35 @@ async function prosesKirim() {
     input.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // 2. Fetch ke API 
-    // Kita hapus parameter 'action' untuk menghindari error "Action tidak dikenal"
     try {
         const BASE_URL = "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec";
-        const url = `${BASE_URL}?pesan=${encodeURIComponent(msg)}`;
         
-        console.log("Mengirim ke:", url);
+        // 1. Tentukan apakah ini Command atau FAQ
+        // Jika dimulai dengan '/', gunakan action=getCommand
+        const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
+        
+        // 2. Panggil API dengan parameter yang benar (keyword, bukan pesan)
+        const url = `${BASE_URL}?action=${action}&keyword=${encodeURIComponent(msg)}`;
+        
         const res = await fetch(url);
+        const data = await res.json();
         
-        // Cek apakah response berupa JSON
-        const textRes = await res.text();
-        let data;
-        try {
-            data = JSON.parse(textRes);
-        } catch (e) {
-            console.error("Response bukan JSON:", textRes);
-            throw new Error("Format respon salah dari server.");
+        // 3. Ambil jawaban (GAS Anda menggunakan field 'answer')
+        let reply = "Panda tidak mengerti pertanyaan tersebut.";
+        if (data.status === "success" && data.answer) {
+            reply = data.answer;
+        } else if (data.status === "not_found") {
+            reply = "Maaf, Panda belum punya jawaban untuk itu.";
         }
-        
-        // 3. Tampilkan balasan
-        const replyText = data.reply || data.message || "Panda tidak merespon.";
+
         chatBody.innerHTML += `
             <div class="flex justify-start mb-2">
-                <div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 ${replyText}</div>
+                <div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>
             </div>`;
         chatBody.scrollTop = chatBody.scrollHeight;
         
     } catch (e) {
-        console.error("Error Detail:", e);
-        chatBody.innerHTML += `
-            <div class="text-red-500 text-xs p-2">Error: ${e.message}</div>`;
-        chatBody.scrollTop = chatBody.scrollHeight;
+        console.error(e);
+        chatBody.innerHTML += `<div class="text-red-500 text-xs p-2">Error koneksi ke server.</div>`;
     }
 }
