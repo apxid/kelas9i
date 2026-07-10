@@ -1,109 +1,70 @@
-// Scripts.js - Optimized & Stabilized Version
-
+// Scripts.js - V3 (Self-Healing System)
 let appState = { currentView: 'dashboard', currentSubMenu: 'prestasi' };
-let chartInstance = null;
-let masterSidata = [];
-let currentSiswaIndex = -1;
-let isPinVerified = false;
 
-window.addEventListener('DOMContentLoaded', () => {
-    switchView('dashboard');
-});
-
-// Fungsi Utama Navigasi
-function switchView(viewName) {
-    appState.currentView = viewName;
-    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.querySelector(`button[onclick="switchView('${viewName}')"]`);
-    if (activeBtn) activeBtn.classList.add('active');
-
-    const screenContainer = document.getElementById('active-view');
-    if (!screenContainer) return;
-
-    screenContainer.innerHTML = '<div class="p-6 flex flex-col items-center justify-center min-h-[400px]"><div class="w-10 h-10 border-4 border-smpprimary border-t-transparent rounded-full animate-spin"></div></div>';
-
-    fetch(`${viewName}.html`)
-        .then(response => {
-            if (!response.ok) throw new Error(`Gagal memuat ${viewName}.html`);
-            return response.text();
-        })
-        .then(htmlContent => {
-            screenContainer.innerHTML = htmlContent;
-            
-            // Inisialisasi spesifik per halaman
-            if (viewName === 'dashboard') { 
-                loadInfoKelasBeranda(); 
-                // Tambahkan pengecekan Chart agar tidak crash jika library belum terload
-                if (typeof Chart !== 'undefined') loadGrafikSiswa(); 
-            }
-            if (viewName === 'informasiSiswa') switchSubMenu(appState.currentSubMenu);
-            if (viewName === 'profilSiswa') checkPinAksesProfil();
-        })
-        .catch(err => {
-            screenContainer.innerHTML = `<p class="p-6 text-center text-rose-500">Error: ${err.message}</p>`;
-        });
-}
-
-// Fungsi Pindah ke Eksternal (Iframe)
-function switchViewExternal(url) {
-    const screenContainer = document.getElementById('active-view');
-    screenContainer.innerHTML = `
-        <div class="h-full w-full relative">
-            <iframe src="${url}" class="w-full h-full border-none" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
-        </div>
-    `;
-}
-
-// Fungsi Sub-Menu (Rekam Jejak)
-function switchSubMenu(subName) {
-    appState.currentSubMenu = subName;
-    document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('bg-smpprimary', 'text-white', 'active'));
-    const activeSubBtn = document.getElementById(`subbtn-${subName}`);
-    if (activeSubBtn) activeSubBtn.classList.add('bg-smpprimary', 'text-white', 'active');
-
-    const subContainer = document.getElementById('sub-menu-content-container');
-    if (!subContainer) return;
-    
-    subContainer.innerHTML = '<div class="shimmer h-20 rounded-xl w-full"></div>';
-
-    const loaders = {
-        'prestasi': loadDataPrestasiMenu3,
-        'informasi': loadDataInformasiMenu3,
-        'pelanggaran': loadDataPelanggaranMenu3,
-        'jadwal': loadDataJadwalMenu3
-    };
-    
-    if (loaders[subName]) loaders[subName](subContainer);
-}
-
-// Backend Helper (Optimasi agar tidak error jika JSON kosong)
-async function callBackend(actionName, parameterData = {}) {
+// Fungsi Global untuk panggil API
+async function callBackend(action, params = {}) {
     try {
-        let url = `${BACKEND_URL}?action=${actionName}`;
-        if (actionName === 'getData') url += `&sheetName=${parameterData.sheetName}`;
-        const r = await fetch(url);
-        const data = await r.json();
-        return data || []; 
+        const url = `${BACKEND_URL}?action=${action}&sheetName=${params.sheetName || ''}`;
+        const response = await fetch(url);
+        return await response.json();
     } catch (e) {
-        console.error("Backend Error:", e);
+        console.error("Gagal panggil backend:", e);
         return [];
     }
 }
 
-// Fungsi Alert (Agar UI tetap responsif)
-function showAlert(title, msg) {
-    const overlay = document.getElementById('custom-alert');
-    if(overlay) {
-        document.getElementById('alert-title').innerText = title;
-        document.getElementById('alert-msg').innerText = msg;
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-    }
+// Navigasi Utama
+function switchView(viewName) {
+    const container = document.getElementById('active-view');
+    fetch(`${viewName}.html`)
+        .then(r => r.text())
+        .then(html => {
+            container.innerHTML = html;
+            // Inisialisasi sesuai halaman
+            if (viewName === 'dashboard') { initDashboard(); }
+            if (viewName === 'informasiSiswa') { switchSubMenu('prestasi'); }
+            if (viewName === 'profilSiswa') { checkPinAksesProfil(); }
+        });
 }
 
-function closeAlert() {
-    const overlay = document.getElementById('custom-alert');
-    if(overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
+// Inisialisasi Dashboard Aman
+function initDashboard() {
+    loadInfoKelasBeranda();
+    // Gunakan try-catch agar chart gagal tidak mematikan fungsi lain
+    try { loadGrafikSiswa(); } catch(e) { console.log("Chart gagal dimuat"); }
 }
 
-// [Fungsi lainnya seperti loadDropdownDaftarSiswa, renderDetailProfilSiswa, dll] 
-// tetap sama seperti kode Anda sebelumnya karena sudah benar.
+// Logika PIN (Self-Checking)
+function checkPinAksesProfil() {
+    const lock = document.getElementById('pin-lock-screen');
+    if (!lock) return;
+    lock.classList.remove('hidden'); // Paksa muncul
+}
+
+function verifikasiPinProfil() {
+    const pin = document.getElementById('input-pin-akses').value;
+    fetch(`${BACKEND_URL}?action=verifikasiPin&pin=${encodeURIComponent(pin)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                document.getElementById('pin-lock-screen').classList.add('hidden');
+                loadDropdownDaftarSiswa();
+            } else {
+                alert("PIN Salah");
+            }
+        });
+}
+
+// SubMenu Jejak (Logika Aman)
+function switchSubMenu(kategori) {
+    const container = document.getElementById('sub-menu-content-container');
+    container.innerHTML = "Memuat...";
+    callBackend('getData', { sheetName: kategori.toUpperCase() }).then(data => {
+        if (!data || data.length === 0) { container.innerHTML = "Data kosong"; return; }
+        // Render data sederhana
+        container.innerHTML = data.map(item => `
+            <div class="p-3 bg-white mb-2 rounded shadow text-xs">
+                ${JSON.stringify(item)}
+            </div>`).join('');
+    });
+}
