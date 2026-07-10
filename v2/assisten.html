@@ -1,31 +1,25 @@
 <script>
-    // Memastikan skrip tetap berjalan meskipun dimuat via fetch
-    function initChat() {
-        const input = document.getElementById('chat-input');
-        const btn = document.getElementById('btn-send');
-        const body = document.getElementById('chat-body');
+    (function() {
+        console.log("Panda Listener Terpasang!");
+        const API = "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec";
 
-        if (!input || !btn) {
-            console.log("Menunggu elemen chat...");
-            setTimeout(initChat, 100); // Coba lagi jika elemen belum ada
-            return;
-        }
+        // Fungsi Global untuk mengirim
+        window.prosesPesanPanda = async function() {
+            const input = document.getElementById('chat-input');
+            const body = document.getElementById('chat-body');
+            const msg = input ? input.value.trim() : "";
+            
+            if (!msg || !body) return;
 
-        console.log("Chat siap digunakan.");
-
-        async function kirim() {
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            // Tampilkan pesan user
+            // 1. Tampilkan pesan user
             body.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div></div>`;
             input.value = "";
             body.scrollTop = body.scrollHeight;
 
+            // 2. Kirim ke API
             try {
                 const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
-                const url = `https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec?action=${action}&keyword=${encodeURIComponent(msg)}`;
-                
+                const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
@@ -33,14 +27,18 @@
                 body.innerHTML += `<div class="flex justify-start mb-2"><div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 ${reply}</div></div>`;
                 body.scrollTop = body.scrollHeight;
             } catch (e) {
-                body.innerHTML += `<div class="text-red-500 text-xs p-2">Error koneksi ke server.</div>`;
+                body.innerHTML += `<div class="text-red-500 text-xs p-2">Error koneksi.</div>`;
             }
-        }
+        };
 
-        btn.onclick = kirim;
-        input.onkeypress = (e) => { if (e.key === 'Enter') kirim(); };
-    }
+        // Deteksi Klik tombol kirim
+        document.onclick = function(e) {
+            if (e.target.id === 'btn-send') window.prosesPesanPanda();
+        };
 
-    // Panggil fungsi segera
-    initChat();
+        // Deteksi tombol Enter
+        document.onkeypress = function(e) {
+            if (e.key === 'Enter' && e.target.id === 'chat-input') window.prosesPesanPanda();
+        };
+    })();
 </script>
