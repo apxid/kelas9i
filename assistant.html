@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Assistant</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
+
+        #panda-icon { position: fixed; bottom: 20px; right: 20px; cursor: pointer; z-index: 9999; }
+        #panda-icon img { width: 70px; transition: transform 0.2s; }
+        #panda-icon img:hover { transform: scale(1.1); }
+        
+        #panda-chat { 
+            position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; 
+            background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            display: flex; flex-direction: column; overflow: visible; z-index: 9999;
+            will-change: transform, opacity;
+        }
+        
+        #panda-chat.open { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        #panda-chat.closing { animation: tvOff 0.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards; }
+        .hidden { display: none !important; }
+        
+        .header { background: #075E54; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-radius: 20px 20px 0 0; }
+        .header-logo { width: 60px; margin-right: 10px; margin-top: -30px; }
+        
+        #chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #e5ddd5; display: flex; flex-direction: column; }
+        
+        .bubble { 
+            padding: 10px 14px; margin: 8px 15px; border-radius: 15px; 
+            max-width: 80%; font-size: 14.5px; line-height: 1.4; position: relative; word-wrap: break-word;
+        }
+        .bubble::after { content: ""; position: absolute; bottom: 0; width: 15px; height: 15px; }
+
+        .panda { background: white; align-self: flex-start; border-bottom-left-radius: 0; color: #303030; }
+        .panda::after { left: -7px; background: white; clip-path: polygon(0 100%, 100% 100%, 100% 0); }
+
+        .user { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 0; color: #303030; }
+        .user::after { right: -7px; background: #dcf8c6; clip-path: polygon(0 100%, 100% 100%, 0 0); }
+        
+        #input-area { padding: 10px; background: white; display: flex; border-radius: 0 0 20px 20px; align-items: center; }
+        #user-input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
+        #send-btn { background: none; border: none; color: #075E54; font-size: 24px; cursor: pointer; padding: 0 10px; }
+    </style>
+</head>
+<body>
+
+    <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+    <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+    <div id="panda-icon" onclick="openChat()"><img src="https://yanuar-moga.github.io/panda/assistant/assets/mypanda.png"></div>
+
+    <div id="panda-chat" class="hidden">
+        <div class="header">
+            <div style="display:flex; align-items:center;">
+                <img src="https://yanuar-moga.github.io/panda/assistant/assets/mypanda.png" class="header-logo">
+                <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+            </div>
+            <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
+        </div>
+        <div id="chat-body"></div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
+        
+        let isWaitingForName = false;
+        let typeTimer;
+
+        function startTypewriter() {
+            const el = document.getElementById('app-name');
+            const text = "PANDA ASSISTANT   ";
+            let i = 0;
+            function type() {
+                el.innerText = text.substring(0, i);
+                i = (i + 1) % (text.length + 1);
+                typeTimer = setTimeout(type, 150);
+            }
+            type();
+        }
+
+        function openChat() {
+            document.getElementById('sound-open').play();
+            document.getElementById('panda-icon').style.display = 'none';
+            const chat = document.getElementById('panda-chat');
+            chat.classList.remove('hidden', 'closing');
+            chat.classList.add('open');
+            startTypewriter();
+            
+            if (document.getElementById('chat-body').innerHTML === "") {
+                const savedName = localStorage.getItem('panda_user');
+                if (savedName) {
+                    addMessage(`Halo kembali ${savedName}! Ada yang bisa saya bantu?`, 'panda');
+                    isWaitingForName = false;
+                } else {
+                    addMessage("Halo! Saya Panda. Siapa nama kamu?", 'panda');
+                    isWaitingForName = true;
+                }
+            }
+        }
+
+        function closeChat() {
+            document.getElementById('sound-close').play();
+            clearTimeout(typeTimer);
+            const chat = document.getElementById('panda-chat');
+            chat.classList.remove('open');
+            chat.classList.add('closing');
+            setTimeout(() => {
+                chat.classList.add('hidden');
+                document.getElementById('panda-icon').style.display = 'block';
+            }, 500);
+        }
+
+        function addMessage(text, sender) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `bubble ${sender}`;
+            div.innerText = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            addMessage(val, 'user');
+            input.value = '';
+
+            if (isWaitingForName) {
+                localStorage.setItem('panda_user', val);
+                isWaitingForName = false;
+                addMessage(`Halo ${val}! Apa yang ingin ditanyakan?`, 'panda');
+                return;
+            }
+
+            const typing = document.createElement('div');
+            typing.className = 'bubble panda';
+            typing.innerHTML = "<i>Panda sedang mengetik...</i>";
+            document.getElementById('chat-body').appendChild(typing);
+            document.getElementById('chat-body').scrollTop = document.getElementById('chat-body').scrollHeight;
+
+            try {
+                const url = `${GAS_URL}?question=${encodeURIComponent(val)}&userName=${encodeURIComponent(localStorage.getItem('panda_user') || 'Pengunjung')}`;
+                const res = await fetch(url, { method: 'GET' });
+                const data = await res.json();
+                
+                typing.remove();
+                addMessage(data.answer, 'panda');
+            } catch(err) {
+                typing.remove();
+                addMessage("Maaf, koneksi gagal.", 'panda');
+            }
+        }
+    </script>
+</body>
+</html>
