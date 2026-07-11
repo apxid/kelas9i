@@ -3,9 +3,12 @@ async function prosesKirim() {
     const chatBody = document.getElementById('chat-body');
     const msg = input ? input.value.trim() : "";
     
+    // Ambil nama user dari localStorage (seperti pada implementasi HTML yang baru)
+    const userName = localStorage.getItem('panda_user') || 'Pengunjung';
+    
     if (!msg || !chatBody) return;
 
-    // Tampilkan pesan user
+    // 1. Tampilkan pesan user ke layar
     chatBody.innerHTML += `
         <div class="flex justify-end mb-2">
             <div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div>
@@ -14,26 +17,27 @@ async function prosesKirim() {
     chatBody.scrollTop = chatBody.scrollHeight;
 
     try {
-        const BASE_URL = "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec";
+        const BASE_URL = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
         
-        // 1. Tentukan apakah ini Command atau FAQ
-        // Jika dimulai dengan '/', gunakan action=getCommand
+        // 2. Tentukan action (Command jika dimulai '/', selain itu FAQ)
         const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
         
-        // 2. Panggil API dengan parameter yang benar (keyword, bukan pesan)
-        const url = `${BASE_URL}?action=${action}&keyword=${encodeURIComponent(msg)}`;
+        // 3. Panggil API dengan parameter: action, keyword, dan userName
+        const url = `${BASE_URL}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
         
         const res = await fetch(url);
         const data = await res.json();
         
-        // 3. Ambil jawaban (GAS Anda menggunakan field 'answer')
+        // 4. Proses jawaban berdasarkan struktur JSON dari GAS Anda
         let reply = "Panda tidak mengerti pertanyaan tersebut.";
+        
         if (data.status === "success" && data.answer) {
             reply = data.answer;
         } else if (data.status === "not_found") {
             reply = "Maaf, Panda belum punya jawaban untuk itu.";
         }
 
+        // Tampilkan balasan AI
         chatBody.innerHTML += `
             <div class="flex justify-start mb-2">
                 <div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>
@@ -41,7 +45,9 @@ async function prosesKirim() {
         chatBody.scrollTop = chatBody.scrollHeight;
         
     } catch (e) {
-        console.error(e);
-        chatBody.innerHTML += `<div class="text-red-500 text-xs p-2">Error koneksi ke server.</div>`;
+        console.error("Error Detail:", e);
+        chatBody.innerHTML += `
+            <div class="text-red-500 text-xs p-2">Error: Koneksi ke server gagal.</div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
     }
 }
