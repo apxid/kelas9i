@@ -21,41 +21,54 @@
 </div>
 
 <script>
-    // Logika ini akan berjalan otomatis saat fetch selesai
-    const input = document.getElementById('chat-input');
-    const btn = document.getElementById('btn-send');
-    const chatBody = document.getElementById('chat-body');
-    const API = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
+    // Gunakan fungsi ini untuk memastikan event selalu terpasang
+    function setupPandaChat() {
+        const chatBox = document.getElementById('panda-chat');
+        if (!chatBox) return;
 
-    async function prosesKirim() {
-        const msg = input.value.trim();
-        const userName = localStorage.getItem('panda_user') || 'Pengunjung';
-        if (!msg) return;
+        const input = document.getElementById('chat-input');
+        const btn = document.getElementById('btn-send');
+        const chatBody = document.getElementById('chat-body');
+        const API = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
 
-        chatBody.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div></div>`;
-        input.value = "";
-        chatBody.scrollTop = chatBody.scrollHeight;
+        // Fungsi kirim
+        async function kirimPesan() {
+            const msg = input.value.trim();
+            const userName = localStorage.getItem('panda_user') || 'Pengunjung';
+            if (!msg) return;
 
-        if (!localStorage.getItem('panda_user')) {
-            localStorage.setItem('panda_user', msg);
-            chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">Halo ${msg}! Apa yang ingin ditanyakan?</div>`;
-            return;
-        }
-
-        try {
-            const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
-            const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            
-            const reply = (data.status === "success" && data.answer) ? data.answer : "Maaf, Panda belum mengerti.";
-            chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>`;
+            // Tampilkan pesan user
+            chatBody.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div></div>`;
+            input.value = "";
             chatBody.scrollTop = chatBody.scrollHeight;
-        } catch (e) {
-            chatBody.innerHTML += `<div class="text-red-500 text-xs p-2 text-center">Error koneksi.</div>`;
+
+            if (!localStorage.getItem('panda_user')) {
+                localStorage.setItem('panda_user', msg);
+                chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">Halo ${msg}! Apa yang ingin ditanyakan?</div>`;
+                return;
+            }
+
+            try {
+                const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
+                const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                const reply = (data.status === "success" && data.answer) ? data.answer : "Maaf, Panda belum mengerti.";
+                chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>`;
+                chatBody.scrollTop = chatBody.scrollHeight;
+            } catch (e) {
+                chatBody.innerHTML += `<div class="text-red-500 text-xs p-2 text-center">Error koneksi.</div>`;
+            }
         }
+
+        // Paksa pasang event listener (karena kadang fetch memutus hubungan onclick)
+        btn.onclick = kirimPesan;
+        input.onkeypress = (e) => { if (e.key === 'Enter') kirimPesan(); };
+        
+        console.log("Panda Chat siap!");
     }
 
-    btn.onclick = prosesKirim;
-    input.onkeypress = (e) => { if (e.key === 'Enter') prosesKirim(); };
+    // Jalankan setup setelah file selesai dimuat oleh Scripts.js
+    setTimeout(setupPandaChat, 500); 
 </script>
