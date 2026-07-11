@@ -3,9 +3,6 @@ async function prosesKirim() {
     const chatBody = document.getElementById('chat-body');
     const msg = input ? input.value.trim() : "";
     
-    // Ambil nama user dari localStorage (seperti pada implementasi HTML yang baru)
-    const userName = localStorage.getItem('panda_user') || 'Pengunjung';
-    
     if (!msg || !chatBody) return;
 
     // 1. Tampilkan pesan user ke layar
@@ -16,21 +13,30 @@ async function prosesKirim() {
     input.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
+    // 2. Logika Registrasi Nama (Jika belum ada di localStorage)
+    if (!localStorage.getItem('panda_user')) {
+        localStorage.setItem('panda_user', msg);
+        chatBody.innerHTML += `
+            <div class="flex justify-start mb-2">
+                <div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 Halo ${msg}! Ada yang bisa saya bantu?</div>
+            </div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+        return;
+    }
+
+    const userName = localStorage.getItem('panda_user');
+
+    // 3. Panggilan API
     try {
         const BASE_URL = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
         
-        // 2. Tentukan action (Command jika dimulai '/', selain itu FAQ)
         const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
-        
-        // 3. Panggil API dengan parameter: action, keyword, dan userName
         const url = `${BASE_URL}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
         
         const res = await fetch(url);
         const data = await res.json();
         
-        // 4. Proses jawaban berdasarkan struktur JSON dari GAS Anda
         let reply = "Panda tidak mengerti pertanyaan tersebut.";
-        
         if (data.status === "success" && data.answer) {
             reply = data.answer;
         } else if (data.status === "not_found") {
