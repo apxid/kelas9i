@@ -29,7 +29,7 @@ async function prosesKirim() {
     input.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // Proses Registrasi Nama
+    // Registrasi Nama (tetap simpan di browser)
     if (!localStorage.getItem('panda_user')) {
         localStorage.setItem('panda_user', msg);
         chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">Halo ${msg}! Apa yang bisa saya bantu?</div>`;
@@ -39,18 +39,18 @@ async function prosesKirim() {
 
     const userName = localStorage.getItem('panda_user');
 
-    // Kirim API (Disesuaikan dengan parameter 'question' di Google Apps Script Anda)
+    // Kirim API
     try {
-        // Menggunakan 'question' sebagai parameter agar sesuai dengan kode GAS Anda
+        // PENTING: Mengirim parameter 'question' agar sinkron dengan GAS Anda
         const url = `${API}?question=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
         
         const res = await fetch(url);
         const data = await res.json();
         
-        // Log ke console untuk debugging
+        // Log untuk memverifikasi isi data
         console.log("Respon API:", data);
 
-        // Mengambil jawaban dari properti 'answer' sesuai return GAS Anda
+        // Mengambil jawaban dari properti 'answer'
         const reply = data.answer || "Maaf, Panda belum mengerti.";
         
         chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>`;
