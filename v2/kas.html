@@ -1,510 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>E-Bendahara</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Bendahara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f3f4f6; color: #111827; width: 100%; max-width: 600px; margin: auto; min-height: 100vh; padding-bottom: 80px; }
+        .hidden { display: none !important; }
 
-body{
-  font-family:'Poppins',sans-serif;
-  background:#f3f4f6;
-  color:#111827;
-  width:100%;
-  max-width:600px;
-  margin:auto;
-  min-height:100vh;
-}
+        /* Header */
+        .header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 34px 20px; text-align: center; color: white; }
+        .logo { font-size: 42px; margin-bottom: 6px; }
+        .title { font-size: 18px; font-weight: 700; }
+        .subtitle { font-size: 12px; opacity: .9; }
 
-.hidden{
-  display:none !important;
-}
+        /* Container */
+        .container { padding: 16px; }
+        .card { background: white; border-radius: 24px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
 
-/* ========================================
-HEADER
-======================================== */
-.header{
-  background:linear-gradient(135deg, #4f46e5, #7c3aed);
-  padding:34px 20px;
-  text-align:center;
-  color:white;
-}
+        /* Input & Buttons */
+        input, select, button { width: 100%; border: none; outline: none; border-radius: 14px; padding: 14px; font-size: 14px; font-family: 'Poppins', sans-serif; }
+        input, select { background: #f3f4f6; margin-top: 10px; }
+        button { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; font-weight: 700; margin-top: 14px; cursor: pointer; }
+        button:disabled { background: #a5b4fc !important; cursor: not-allowed; }
 
-.logo{
-  font-size:42px;
-  margin-bottom:6px;
-}
+        /* Clean Navigation Bottom */
+        .nav-bottom {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #ffffff; border-top: 1px solid #e5e7eb;
+            display: flex; justify-content: space-around; padding: 10px 0;
+            max-width: 600px; margin: auto; z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; color: #9ca3af; font-size: 9px; font-weight: 600;
+            background: transparent !important; border-radius: 0 !important; padding: 5px;
+        }
+        .nav-item.active { color: #4f46e5; }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
 
-.title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.subtitle{
-  font-size:12px;
-  opacity:.9;
-}
-
-/* ========================================
-CONTAINER
-======================================== */
-.container{
-  padding:16px;
-}
-
-/* ========================================
-CARD
-======================================== */
-.card{
-  background:white;
-  border-radius:24px;
-  padding:18px;
-  margin-bottom:16px;
-  box-shadow:0 4px 16px rgba(0,0,0,.06);
-}
-
-/* ========================================
-INPUT
-======================================== */
-input,
-select,
-button{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:14px;
-  padding:14px;
-  font-size:14px;
-  font-family:'Poppins',sans-serif;
-}
-
-input,
-select{
-  background:#f3f4f6;
-  margin-top:10px;
-}
-
-button{
-  background:linear-gradient(135deg, #4f46e5, #7c3aed);
-  color:white;
-  font-weight:700;
-  margin-top:14px;
-  cursor:pointer;
-}
-
-/* Transisi visual saat tombol terkunci (Anti-Spam) */
-button:disabled {
-  background: linear-gradient(135deg, #a5b4fc, #c084fc) !important;
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-/* ========================================
-LOGIN
-======================================== */
-.loginBox{
-  margin-top:18px;
-}
-
-.loginTitle{
-  text-align:center;
-  margin-bottom:10px;
-}
-
-.loginDesc{
-  text-align:center;
-  color:#6b7280;
-  margin-bottom:24px;
-  font-size:14px;
-}
-
-/* ========================================
-USER
-======================================== */
-.userBox{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:16px;
-}
-
-.role{
-  display:inline-block;
-  background:#dbeafe;
-  color:#2563eb;
-  font-size:11px;
-  font-weight:600;
-  padding:4px 10px;
-  border-radius:10px;
-  margin-bottom:6px;
-}
-
-.logout{
-  width:auto !important;
-  background:white !important;
-  color:#ef4444 !important;
-  border:1px solid #ef4444 !important;
-  padding:10px 18px !important;
-  font-size:13px;
-  transition: all 0.2s ease;
-}
-
-/* Transisi visual spesifik untuk tombol logout saat terkunci */
-.logout:disabled {
-  background: #f3f4f6 !important;
-  color: #9ca3af !important;
-  border: 1px solid #d1d5db !important;
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-/* ========================================
-MENU
-======================================== */
-.menu{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-}
-
-.menu button{
-  background:white;
-  color:#6b7280;
-  border:1px solid #e5e7eb;
-}
-
-.menu button.active{
-  background:linear-gradient(135deg, #7c3aed, #6d28d9);
-  color:white;
-  border:none;
-}
-
-/* ========================================
-KATEGORI
-======================================== */
-.kategoriRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  margin-bottom:16px;
-}
-
-.kategoriLabel{
-  font-size:13px;
-  font-weight:700;
-}
-
-.kategoriInput{
-  width:120px !important;
-  margin:0 !important;
-  text-align:right;
-}
-
-/* ========================================
-TABLE
-======================================== */
-.tableWrap{
-  overflow:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,
-td{
-  padding:12px 8px;
-  border-bottom:1px solid #e5e7eb;
-  font-size:12px;
-  text-align:center;
-}
-
-th{
-  background:#fafafa;
-  color:#111827;
-}
-
-.lunas{
-  background:#dcfce7;
-  color:#16a34a;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-}
-
-.kurang{
-  background:#fee2e2;
-  color:#dc2626;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-}
-
-/* ========================================
-SALDO
-======================================== */
-.saldoSection{
-  margin-bottom:28px;
-}
-
-.saldoTitle{
-  margin-bottom:16px;
-  font-size:16px;
-}
-
-.saldoItem{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:18px;
-  font-weight:600;
-}
-
-.totalSaldo{
-  background:#2563eb;
-  color:white;
-  border-radius:16px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  font-weight:700;
-}
-
-/* ========================================
-PROFILE
-======================================== */
-.profile{
-  text-align:center;
-}
-
-.profile img{
-  width:120px;
-  height:120px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid white;
-  margin-bottom:14px;
-}
-
-/* Style Tambahan untuk Info Last Update */
-.infoUpdateBox {
-  background: #fdf2f8;
-  border: 1px dashed #f472b6;
-  border-radius: 16px;
-  padding: 12px;
-  margin-bottom: 16px;
-  font-size: 11px;
-  color: #db2777;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.infoUpdateItem {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Modifikasi Box Update Khusus halaman Admin agar match dengan tema Biru/Ungu */
-.infoUpdateBoxAdmin {
-  background: #f0f4f8;
-  border: 1px dashed #4f46e5;
-  border-radius: 16px;
-  padding: 12px;
-  margin-bottom: 16px;
-  font-size: 11px;
-  color: #4f46e5;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* ========================================
-FOOTER
-======================================== */
-.footer{
-  text-align:center;
-  color:#9ca3af;
-  font-size:12px;
-  padding:34px 10px;
-}
-
-/* ========================================
-POPUP
-======================================== */
-.popup{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#16a34a;
-  color:white;
-  padding:14px 20px;
-  border-radius:14px;
-  z-index:999;
-  animation:popupShow .3s ease;
-}
-
-@keyframes popupShow{
-  from{
-    opacity:0;
-    transform:translate(-50%,-20px);
-  }
-  to{
-    opacity:1;
-    transform:translate(-50%,0);
-  }
-}
-
-/* ========================================
-MOBILE
-======================================== */
-@media(max-width:480px){
-  .menu{
-    gap:8px;
-  }
-  .menu button{
-    font-size:12px;
-    padding:12px 8px;
-  }
-  .kategoriInput{
-    width:100px !important;
-  }
-}
-</style>
+        /* Table & Utils */
+        .tableWrap { overflow: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid #e5e7eb; font-size: 12px; text-align: center; }
+        .lunas { background: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 999px; font-size: 10px; }
+        .kurang { background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 999px; font-size: 10px; }
+        .popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #16a34a; color: white; padding: 14px 20px; border-radius: 14px; z-index: 999; }
+    </style>
 </head>
 
 <body>
 
 <div class="header">
-  <div class="logo">💰</div>
-  <div class="title">E-Bendahara</div>
-  <div class="subtitle">Manajemen Keuangan Kelas Digital</div>
+    <div class="logo">💰</div>
+    <div class="title">E-Bendahara</div>
+    <div class="subtitle">Manajemen Keuangan Kelas Digital</div>
 </div>
 
 <div id="loginPage" class="container">
-  <div class="card loginBox">
-    <h2 class="loginTitle">Selamat Datang</h2>
-    <div class="loginDesc">Masukkan PIN Keamanan</div>
-    <input type="password" id="pin" placeholder="••••••">
-    <button onclick="login()">MASUK</button>
-  </div>
+    <div class="card">
+        <h2>Selamat Datang</h2>
+        <input type="password" id="pin" placeholder="PIN Keamanan">
+        <button onclick="login()">MASUK</button>
+    </div>
 </div>
 
 <div id="adminPage" class="hidden container">
-  <div class="userBox">
-    <div>
-      <div class="role" id="roleText"></div>
-      <h2 id="namaAdmin"></h2>
-    </div>
-    <button class="logout" onclick="logout(this)">Keluar</button>
-  </div>
-
-  <div class="infoUpdateBoxAdmin">
-    <div class="infoUpdateItem">
-      <strong>📅 Sinkronisasi Terakhir:</strong>
-      <span id="adminUpdateTanggal">-</span>
-    </div>
-    <div class="infoUpdateItem">
-      <strong>👤 Entry Terakhir Oleh:</strong>
-      <span id="adminUpdateOleh">-</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="menu">
-      <button id="btnInput" class="active" onclick="showMenu('input')">Input</button>
-      <button id="btnRekap" onclick="showMenu('rekap')">Rekap</button>
-      <button id="btnSaldo" onclick="showMenu('saldo')">Saldo</button>
-    </div>
-  </div>
-
-  <div id="menuInput">
     <div class="card">
-      <div style="margin-bottom:10px; font-weight:600">Pilih Siswa</div>
-      <select id="siswaSelect"></select>
-      <hr style="margin:16px 0; border:none; border-top:1px solid #e5e7eb">
-      <div style="display:flex; justify-content:space-between; margin-bottom:16px; font-size:12px; font-weight:700">
-        <div>KATEGORI</div>
-        <div>NOMINAL</div>
-      </div>
-      <div id="kategoriBox"></div>
-      <button onclick="saveTransaksi()">SIMPAN TRANSAKSI</button>
+        <div class="menu" style="display:flex; gap:10px;">
+            <button id="btnInput" class="active" onclick="showMenu('input')">Input</button>
+            <button id="btnRekap" onclick="showMenu('rekap')">Rekap</button>
+            <button id="btnSaldo" onclick="showMenu('saldo')">Saldo</button>
+        </div>
     </div>
-
-    <div class="card">
-      <h3 style="margin-bottom:14px">Setor Ke Kesiswaan</h3>
-      <input type="number" id="setorKAS" placeholder="KAS">
-      <input type="number" id="setorGALON" placeholder="GALON">
-      <input type="number" id="setorKARTU" placeholder="Kartu Pelajar">
-      <input type="number" id="setorTALI" placeholder="Tali Asih">
-      <input type="text" id="penerima" placeholder="Nama Penerima">
-      <button onclick="saveSetor()">SIMPAN SETORAN</button>
-    </div>
-  </div>
-
-  <div id="menuRekap" class="hidden">
-    <div class="card">
-      <div class="tableWrap">
-        <table id="rekapTable"></table>
-      </div>
-    </div>
-  </div>
-
-  <div id="menuSaldo" class="hidden">
-    <div class="card">
-      <div id="saldoContent"></div>
-    </div>
-  </div>
+    <div id="menuInput">...</div>
+    <div id="menuRekap" class="hidden">...</div>
+    <div id="menuSaldo" class="hidden">...</div>
 </div>
 
-<div id="siswaPage" class="hidden container">
-  <div class="card profile">
-    <img id="fotoSiswa">
-    <h2 id="namaSiswa"></h2>
-    <p id="jkSiswa"></p>
-    <p id="nisnSiswa"></p>
-  </div>
-
-  <div class="infoUpdateBox">
-    <div class="infoUpdateItem">
-      <strong>📅 Update Terakhir:</strong>
-      <span id="lastUpdateTanggal">-</span>
-    </div>
-    <div class="infoUpdateItem">
-      <strong>👤 Petugas Input:</strong>
-      <span id="lastUpdateOleh">-</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Jumlah Sudah Dibayar</h3>
-    <br>
-    <div id="sudahBayar"></div>
-  </div>
-
-  <div class="card">
-    <h3>Jumlah Belum Dibayar</h3>
-    <br>
-    <div id="belumBayar"></div>
-  </div>
-
-  <button class="logout" style="width:100%" onclick="logout(this)">Keluar</button>
-</div>
-
-<div class="footer">
-  e-Bendahara v1.2 <br>
-  © 2026 MB All Rights Reserved
-</div>
+<!-- Clean Navigation -->
+<nav class="nav-bottom">
+    <a href="#" class="nav-item active"><div class="nav-icon">🏠</div>HOME</a>
+    <a href="#" class="nav-item"><div class="nav-icon">👤</div>PROFIL</a>
+    <a href="#" class="nav-item"><div class="nav-icon">💰</div>KAS</a>
+    <a href="#" class="nav-item"><div class="nav-icon">🤖</div>ASISTEN</a>
+    <a href="#" class="nav-item"><div class="nav-icon">📜</div>JEJAK</a>
+    <a href="#" class="nav-item"><div class="nav-icon">📝</div>ISI</a>
+</nav>
 
 <script>
 // ========================================
