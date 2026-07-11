@@ -39,19 +39,19 @@ async function prosesKirim() {
 
     const userName = localStorage.getItem('panda_user');
 
-    // Kirim API
+    // Kirim API (Disesuaikan dengan parameter 'question' di Google Apps Script Anda)
     try {
-        const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
-        const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
+        // Menggunakan 'question' sebagai parameter agar sesuai dengan kode GAS Anda
+        const url = `${API}?question=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
         
         const res = await fetch(url);
         const data = await res.json();
         
-        // Log ke console untuk melihat apa yang sebenarnya dikirim Google Sheets
+        // Log ke console untuk debugging
         console.log("Respon API:", data);
 
-        // Mengambil jawaban (Mengecek berbagai kemungkinan field jawaban)
-        const reply = data.answer || data.jawaban || data.result || "Maaf, Panda belum mengerti.";
+        // Mengambil jawaban dari properti 'answer' sesuai return GAS Anda
+        const reply = data.answer || "Maaf, Panda belum mengerti.";
         
         chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>`;
         chatBody.scrollTop = chatBody.scrollHeight;
