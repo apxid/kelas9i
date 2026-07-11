@@ -7,48 +7,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #f3f4f6; color: #111827; width: 100%; max-width: 600px; margin: auto; min-height: 100vh; padding-bottom: 80px; }
-        .hidden { display: none !important; }
-
-        /* Header */
-        .header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 34px 20px; text-align: center; color: white; }
-        .logo { font-size: 42px; margin-bottom: 6px; }
-        .title { font-size: 18px; font-weight: 700; }
-        .subtitle { font-size: 12px; opacity: .9; }
-
-        /* Container */
-        .container { padding: 16px; }
-        .card { background: white; border-radius: 24px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
-
-        /* Input & Buttons */
-        input, select, button { width: 100%; border: none; outline: none; border-radius: 14px; padding: 14px; font-size: 14px; font-family: 'Poppins', sans-serif; }
-        input, select { background: #f3f4f6; margin-top: 10px; }
-        button { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; font-weight: 700; margin-top: 14px; cursor: pointer; }
-        button:disabled { background: #a5b4fc !important; cursor: not-allowed; }
-
-        /* Clean Navigation Bottom */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Poppins',sans-serif; background:#f3f4f6; color:#111827; width:100%; max-width:600px; margin:auto; min-height:100vh; padding-bottom:80px; }
+        .hidden { display:none !important; }
+/* Tambahkan ke dalam tag <style> Anda */
+.nav-item:focus, .nav-item:active {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent; /* Menghilangkan kilatan biru di mobile */
+}
+        /* HEADER & CARD (Style Anda tetap dipertahankan) */
+        .header { background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:34px 20px; text-align:center; color:white; }
+        .container { padding:16px; }
+        .card { background:white; border-radius:24px; padding:18px; margin-bottom:16px; box-shadow:0 4px 16px rgba(0,0,0,.06); }
+        
+        /* FIX: Menu Bawah (Tidak Ungu, Tidak Rounded) */
         .nav-bottom {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #ffffff; border-top: 1px solid #e5e7eb;
-            display: flex; justify-content: space-around; padding: 10px 0;
-            max-width: 600px; margin: auto; z-index: 1000;
+            background: #ffffff !important; 
+            border-top: 1px solid #e5e7eb;
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 8px 0; z-index: 1000;
+            margin: auto; max-width: 600px;
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; color: #9ca3af; font-size: 9px; font-weight: 600;
-            background: transparent !important; border-radius: 0 !important; padding: 5px;
+            text-decoration: none; color: #9ca3af;
+            font-size: 9px; font-weight: 600;
+            background: transparent !important; /* Paksa transparan */
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important; /* Paksa kotak */
+            flex: 1;
         }
-        .nav-item.active { color: #4f46e5; }
-        .nav-icon { font-size: 18px; margin-bottom: 2px; }
+        .nav-item.active { color: #4f46e5 !important; }
+        .nav-icon { font-size: 20px; }
 
-        /* Table & Utils */
-        .tableWrap { overflow: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 8px; border-bottom: 1px solid #e5e7eb; font-size: 12px; text-align: center; }
-        .lunas { background: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 999px; font-size: 10px; }
-        .kurang { background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 999px; font-size: 10px; }
-        .popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #16a34a; color: white; padding: 14px 20px; border-radius: 14px; z-index: 999; }
+        /* Tombol Utama (Input/Simpan) */
+        button { background:linear-gradient(135deg, #4f46e5, #7c3aed); color:white; border:none; border-radius:14px; padding:14px; font-weight:700; cursor:pointer; }
     </style>
 </head>
 
@@ -57,38 +52,35 @@
 <div class="header">
     <div class="logo">💰</div>
     <div class="title">E-Bendahara</div>
-    <div class="subtitle">Manajemen Keuangan Kelas Digital</div>
 </div>
 
 <div id="loginPage" class="container">
     <div class="card">
-        <h2>Selamat Datang</h2>
         <input type="password" id="pin" placeholder="PIN Keamanan">
         <button onclick="login()">MASUK</button>
     </div>
 </div>
 
-<div id="adminPage" class="hidden container">
-    <div class="card">
-        <div class="menu" style="display:flex; gap:10px;">
-            <button id="btnInput" class="active" onclick="showMenu('input')">Input</button>
-            <button id="btnRekap" onclick="showMenu('rekap')">Rekap</button>
-            <button id="btnSaldo" onclick="showMenu('saldo')">Saldo</button>
-        </div>
-    </div>
-    <div id="menuInput">...</div>
-    <div id="menuRekap" class="hidden">...</div>
-    <div id="menuSaldo" class="hidden">...</div>
-</div>
-
-<!-- Clean Navigation -->
+<!-- Navigasi Bawah (Bersih) -->
 <nav class="nav-bottom">
-    <a href="#" class="nav-item active"><div class="nav-icon">🏠</div>HOME</a>
-    <a href="#" class="nav-item"><div class="nav-icon">👤</div>PROFIL</a>
-    <a href="#" class="nav-item"><div class="nav-icon">💰</div>KAS</a>
-    <a href="#" class="nav-item"><div class="nav-icon">🤖</div>ASISTEN</a>
-    <a href="#" class="nav-item"><div class="nav-icon">📜</div>JEJAK</a>
-    <a href="#" class="nav-item"><div class="nav-icon">📝</div>ISI</a>
+    <a href="#" class="nav-item active">
+        <div class="nav-icon">🏠</div>HOME
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon">👤</div>PROFIL
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon">💰</div>KAS
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon">🤖</div>ASISTEN
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon">📜</div>JEJAK
+    </a>
+    <a href="#" class="nav-item">
+        <div class="nav-icon">📝</div>ISI
+    </a>
 </nav>
 
 <script>
