@@ -1,85 +1,61 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panda Assistant</title>
-    <!-- Tailwind CSS untuk styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        #chat-body::-webkit-scrollbar { width: 4px; }
-        #chat-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-    </style>
-</head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
-
-    <div id="panda-chat" class="w-full h-full max-w-sm bg-white shadow-lg flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="bg-[#075E54] p-4 flex items-center">
-            <img src="https://yanuar-moga.github.io/panda/assistant/assets/mypanda.png" class="w-10 h-10 mr-3">
-            <span class="text-white font-bold">PANDA ASSISTANT</span>
-        </div>
-
-        <!-- Chat Body -->
-        <div id="chat-body" class="flex-1 p-4 overflow-y-auto bg-[#e5ddd5] flex flex-col">
-            <!-- Pesan akan muncul di sini -->
-        </div>
-
-        <!-- Input Area -->
-        <div class="p-3 bg-white border-t flex items-center">
-            <input type="text" id="chat-input" placeholder="Ketik pesan..." 
-                   class="flex-1 border rounded-full px-4 py-2 text-sm outline-none">
-            <button id="btn-send" class="ml-2 bg-[#075E54] text-white w-10 h-10 rounded-full flex items-center justify-center">
-                ➤
-            </button>
-        </div>
+<div id="panda-chat" class="h-full w-full bg-white flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="bg-[#075E54] p-4 flex items-center shrink-0">
+        <img src="https://yanuar-moga.github.io/panda/assistant/assets/mypanda.png" class="w-10 h-10 mr-3">
+        <span class="text-white font-bold text-sm">PANDA ASSISTANT</span>
     </div>
 
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
+    <!-- Chat Body -->
+    <div id="chat-body" class="flex-1 p-4 overflow-y-auto bg-[#e5ddd5] flex flex-col space-y-2">
+        <div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">Halo! Saya Panda. Siapa nama kamu?</div>
+    </div>
 
-        const input = document.getElementById('chat-input');
-        const btn = document.getElementById('btn-send');
-        const chatBody = document.getElementById('chat-body');
+    <!-- Input Area -->
+    <div class="p-3 bg-white border-t flex items-center shrink-0">
+        <input type="text" id="chat-input" placeholder="Ketik pesan..." 
+               class="flex-1 border rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-[#075E54]">
+        <button id="btn-send" class="ml-2 bg-[#075E54] text-white w-10 h-10 rounded-full flex items-center justify-center">
+            ➤
+        </button>
+    </div>
+</div>
 
-        // Fungsi kirim pesan
-        async function prosesKirim() {
-            const msg = input.value.trim();
-            const userName = localStorage.getItem('panda_user') || 'Pengunjung';
-            
-            if (!msg) return;
+<script>
+    // Logika ini akan berjalan otomatis saat fetch selesai
+    const input = document.getElementById('chat-input');
+    const btn = document.getElementById('btn-send');
+    const chatBody = document.getElementById('chat-body');
+    const API = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
 
-            // 1. Tampilkan pesan user
-            chatBody.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div></div>`;
-            input.value = "";
-            chatBody.scrollTop = chatBody.scrollHeight;
+    async function prosesKirim() {
+        const msg = input.value.trim();
+        const userName = localStorage.getItem('panda_user') || 'Pengunjung';
+        if (!msg) return;
 
-            // 2. Kirim ke API
-            try {
-                const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
-                const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
-                
-                const res = await fetch(url);
-                const data = await res.json();
-                
-                let reply = (data.status === "success" && data.answer) ? data.answer : "Maaf, Panda belum mengerti.";
-                
-                // 3. Tampilkan balasan
-                chatBody.innerHTML += `<div class="flex justify-start mb-2"><div class="bg-white border p-2 rounded-lg text-xs text-gray-700 w-[80%]">🐼 ${reply}</div></div>`;
-                chatBody.scrollTop = chatBody.scrollHeight;
-            } catch (e) {
-                chatBody.innerHTML += `<div class="text-red-500 text-xs p-2 text-center">Error koneksi.</div>`;
-            }
+        chatBody.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-blue-600 text-white p-2 rounded-lg text-xs w-[80%]">${msg}</div></div>`;
+        input.value = "";
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        if (!localStorage.getItem('panda_user')) {
+            localStorage.setItem('panda_user', msg);
+            chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">Halo ${msg}! Apa yang ingin ditanyakan?</div>`;
+            return;
         }
 
-        // Event Listeners
-        btn.onclick = prosesKirim;
-        input.onkeypress = (e) => { if (e.key === 'Enter') prosesKirim(); };
+        try {
+            const action = msg.startsWith('/') ? 'getCommand' : 'getFAQ';
+            const url = `${API}?action=${action}&keyword=${encodeURIComponent(msg)}&userName=${encodeURIComponent(userName)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            const reply = (data.status === "success" && data.answer) ? data.answer : "Maaf, Panda belum mengerti.";
+            chatBody.innerHTML += `<div class="bg-white p-3 rounded-lg shadow text-xs text-gray-700 w-[80%]">🐼 ${reply}</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        } catch (e) {
+            chatBody.innerHTML += `<div class="text-red-500 text-xs p-2 text-center">Error koneksi.</div>`;
+        }
+    }
 
-        // Pesan pembuka
-        window.onload = () => {
-            chatBody.innerHTML = `<div class="bg-white p-2 rounded-lg text-xs text-gray-700 w-[80%]">Halo! Ada yang bisa saya bantu?</div>`;
-        };
-    </script>
-</body>
-</html>
+    btn.onclick = prosesKirim;
+    input.onkeypress = (e) => { if (e.key === 'Enter') prosesKirim(); };
+</script>
