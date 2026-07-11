@@ -21,18 +21,15 @@
 </div>
 
 <script>
-    // Gunakan fungsi ini untuk memastikan event selalu terpasang
-    function setupPandaChat() {
-        const chatBox = document.getElementById('panda-chat');
-        if (!chatBox) return;
-
-        const input = document.getElementById('chat-input');
-        const btn = document.getElementById('btn-send');
-        const chatBody = document.getElementById('chat-body');
+    (function() {
         const API = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
 
-        // Fungsi kirim
+        // Fungsi Inti Kirim Pesan
         async function kirimPesan() {
+            const input = document.getElementById('chat-input');
+            const chatBody = document.getElementById('chat-body');
+            if (!input || !chatBody) return;
+
             const msg = input.value.trim();
             const userName = localStorage.getItem('panda_user') || 'Pengunjung';
             if (!msg) return;
@@ -62,13 +59,18 @@
             }
         }
 
-        // Paksa pasang event listener (karena kadang fetch memutus hubungan onclick)
-        btn.onclick = kirimPesan;
-        input.onkeypress = (e) => { if (e.key === 'Enter') kirimPesan(); };
-        
-        console.log("Panda Chat siap!");
-    }
+        // Event Delegation: Menangkap klik di manapun di dokumen
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'btn-send') {
+                kirimPesan();
+            }
+        });
 
-    // Jalankan setup setelah file selesai dimuat oleh Scripts.js
-    setTimeout(setupPandaChat, 500); 
+        // Event Delegation: Menangkap enter di input
+        document.addEventListener('keypress', function(e) {
+            if (e.target && e.target.id === 'chat-input' && e.key === 'Enter') {
+                kirimPesan();
+            }
+        });
+    })();
 </script>
