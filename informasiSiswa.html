@@ -1,15 +1,25 @@
-<div class="p-5 fade-in pb-20">
+<div class="p-5 fade-in pb-20 relative">
   <div class="mb-4">
     <h4 class="text-base font-black text-slate-800 tracking-tight">Pusat Rekam Jejak & Akademik</h4>
     <p class="text-[11px] text-gray-400">Pilih sub-kategori informasi di bawah untuk monitoring.</p>
   </div>
 
-  <div class="flex space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-hide select-none">
-    <button onclick="switchSubMenu('PRESTASI')" id="subbtn-PRESTASI" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
-    <button onclick="switchSubMenu('PENGUMUMAN')" id="subbtn-PENGUMUMAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
-    <button onclick="switchSubMenu('PELANGGARAN')" id="subbtn-PELANGGARAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🚨 Pelanggaran</button>
-    <button onclick="switchSubMenu('JADWAL_KELAS')" id="subbtn-JADWAL_KELAS" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📅 Jadwal Kelas</button>
-    <button onclick="switchSubMenu('JADWAL_PIKET')" id="subbtn-JADWAL_PIKET" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🧹 Jadwal Piket</button>
+  <!-- Wrapper untuk tombol navigasi -->
+  <div class="relative group">
+    <!-- Tombol Prev (Hanya muncul di desktop) -->
+    <button onclick="scrollMenu(-200)" class="absolute -left-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100 z-10 hidden md:block hover:bg-gray-50 transition-all">◀</button>
+    
+    <!-- Container Menu -->
+    <div id="menu-scroll-container" class="flex space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-hide select-none scroll-smooth">
+      <button onclick="switchSubMenu('PRESTASI')" id="subbtn-PRESTASI" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
+      <button onclick="switchSubMenu('PENGUMUMAN')" id="subbtn-PENGUMUMAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
+      <button onclick="switchSubMenu('PELANGGARAN')" id="subbtn-PELANGGARAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🚨 Pelanggaran</button>
+      <button onclick="switchSubMenu('JADWAL_KELAS')" id="subbtn-JADWAL_KELAS" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📅 Jadwal Kelas</button>
+      <button onclick="switchSubMenu('JADWAL_PIKET')" id="subbtn-JADWAL_PIKET" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🧹 Jadwal Piket</button>
+    </div>
+
+    <!-- Tombol Next (Hanya muncul di desktop) -->
+    <button onclick="scrollMenu(200)" class="absolute -right-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100 z-10 hidden md:block hover:bg-gray-50 transition-all">▶</button>
   </div>
 
   <div id="sub-menu-content-container" class="space-y-3">
@@ -20,6 +30,12 @@
 <script>
   // Ganti URL ini dengan URL Web App Google Apps Script Anda
   const WEB_APP_URL = "URL_WEB_APP_ANDA_DISINI";
+
+  // Fungsi untuk scroll menu di desktop
+  function scrollMenu(offset) {
+    const container = document.getElementById('menu-scroll-container');
+    container.scrollBy({ left: offset, behavior: 'smooth' });
+  }
 
   function switchSubMenu(sheetName) {
     // 1. Update tampilan tombol aktif
@@ -42,7 +58,6 @@
         // 4. Render data secara dinamis
         let html = '<div class="grid gap-2">';
         data.forEach(item => {
-          // Mengambil semua nilai (values) dari objek tanpa peduli nama kolomnya
           const values = Object.values(item);
           html += `
             <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
