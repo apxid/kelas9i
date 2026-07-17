@@ -5,13 +5,60 @@
   </div>
 
   <div class="flex space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-hide select-none">
-    <button onclick="switchSubMenu('prestasi')" id="subbtn-prestasi" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
-    <button onclick="switchSubMenu('informasi')" id="subbtn-informasi" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
-    <button onclick="switchSubMenu('pelanggaran')" id="subbtn-pelanggaran" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🚨 Pelanggaran</button>
-    <button onclick="switchSubMenu('jadwal')" id="subbtn-jadwal" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📅 Jadwal Kelas</button>
+    <button onclick="switchSubMenu('PRESTASI')" id="subbtn-PRESTASI" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
+    <button onclick="switchSubMenu('PENGUMUMAN')" id="subbtn-PENGUMUMAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
+    <button onclick="switchSubMenu('PELANGGARAN')" id="subbtn-PELANGGARAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🚨 Pelanggaran</button>
+    <button onclick="switchSubMenu('JADWAL_KELAS')" id="subbtn-JADWAL_KELAS" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📅 Jadwal Kelas</button>
+    <button onclick="switchSubMenu('JADWAL_PIKET')" id="subbtn-JADWAL_PIKET" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🧹 Jadwal Piket</button>
   </div>
 
   <div id="sub-menu-content-container" class="space-y-3">
     <div class="shimmer h-24 rounded-2xl w-full"></div>
   </div>
 </div>
+
+<script>
+  // Ganti URL ini dengan URL Web App Google Apps Script Anda
+  const WEB_APP_URL = "URL_WEB_APP_ANDA_DISINI";
+
+  function switchSubMenu(sheetName) {
+    // 1. Update tampilan tombol aktif
+    document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('subbtn-' + sheetName).classList.add('active');
+    
+    // 2. Tampilkan loading
+    const container = document.getElementById('sub-menu-content-container');
+    container.innerHTML = '<div class="shimmer h-24 rounded-2xl w-full"></div>';
+
+    // 3. Fetch data dari GAS
+    fetch(`${WEB_APP_URL}?action=getData&sheetName=${sheetName}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length === 0) {
+          container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Data tidak tersedia.</p>';
+          return;
+        }
+
+        // 4. Render data secara dinamis
+        let html = '<div class="grid gap-2">';
+        data.forEach(item => {
+          // Mengambil semua nilai (values) dari objek tanpa peduli nama kolomnya
+          const values = Object.values(item);
+          html += `
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+              <p class="text-xs font-black text-blue-600 uppercase tracking-wider">${values[0]}</p>
+              <p class="text-sm text-slate-700 mt-1">${values[1]}</p>
+            </div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      })
+      .catch(err => {
+        container.innerHTML = '<p class="text-xs text-red-400 text-center py-4">Gagal memuat data.</p>';
+        console.error(err);
+      });
+  }
+
+  // Muat data default saat halaman dibuka
+  window.onload = () => switchSubMenu('PRESTASI');
+</script>
