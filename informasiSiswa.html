@@ -24,7 +24,6 @@
 </div>
 
 <script>
-  // PASTIKAN URL INI ADALAH URL DEPLOYMENT ANDA YANG BERAKHIR /exec
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
 
   function scrollMenu(offset) {
@@ -32,28 +31,27 @@
   }
 
   function switchSubMenu(sheetName) {
-    // 1. Update tombol
+    // 1. Update status tombol
     document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.getElementById('subbtn-' + sheetName);
-    if(activeBtn) activeBtn.classList.add('active');
+    document.getElementById('subbtn-' + sheetName).classList.add('active');
     
     // 2. Loading
     const container = document.getElementById('sub-menu-content-container');
-    container.innerHTML = '<div class="text-xs text-center text-gray-400">Memuat data...</div>';
+    container.innerHTML = '<div class="text-xs text-center text-gray-400 py-4">Memuat data...</div>';
 
-    // 3. Fetch dengan mode 'no-cors' jika terjadi masalah akses, 
-    // tapi karena kita sudah setting JSON di GAS, gunakan fetch standar:
-    fetch(WEB_APP_URL + "?action=getData&sheetName=" + sheetName)
+    // 3. Fetch Data dengan timestamp agar tidak ter-cache
+    fetch(`${WEB_APP_URL}?action=getData&sheetName=${sheetName}&t=${new Date().getTime()}`)
       .then(response => response.json())
       .then(data => {
         if (!data || data.length === 0) {
-          container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Data tidak tersedia.</p>';
+          container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Data tidak tersedia di sheet ' + sheetName + '.</p>';
           return;
         }
 
         let html = '<div class="grid gap-2">';
         data.forEach(item => {
           const vals = Object.values(item);
+          // Mengambil nilai kolom pertama dan kedua dari sheet
           html += `
             <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
               <p class="text-xs font-black text-blue-600 uppercase tracking-wider">${vals[0] || '-'}</p>
@@ -64,12 +62,10 @@
       })
       .catch(err => {
         console.error("Error Fetch:", err);
-        container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Gagal memuat data. Cek Deployment.</p>';
+        container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Gagal memuat. Periksa koneksi atau Nama Sheet.</p>';
       });
   }
 
-  // Panggil saat halaman siap
-  document.addEventListener("DOMContentLoaded", () => {
-    switchSubMenu('PRESTASI');
-  });
+  // Panggil data pertama kali
+  document.addEventListener("DOMContentLoaded", () => switchSubMenu('PRESTASI'));
 </script>
