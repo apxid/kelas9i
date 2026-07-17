@@ -4,11 +4,14 @@
     <p class="text-[11px] text-gray-400">Pilih sub-kategori informasi di bawah untuk monitoring.</p>
   </div>
 
+  <!-- Tombol dimasukkan ke dalam div class="flex" ini -->
   <div class="flex space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-hide select-none">
     <button onclick="switchSubMenu('prestasi')" id="subbtn-prestasi" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
     <button onclick="switchSubMenu('informasi')" id="subbtn-informasi" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
     <button onclick="switchSubMenu('pelanggaran')" id="subbtn-pelanggaran" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🚨 Pelanggaran</button>
     <button onclick="switchSubMenu('jadwal')" id="subbtn-jadwal" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📅 Jadwal Kelas</button>
+    <!-- Tombol Jadwal Piket di sini -->
+    <button onclick="switchSubMenu('jadwal-piket')" id="subbtn-jadwal-piket" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🧹 Jadwal Piket</button>
   </div>
 
   <div id="sub-menu-content-container" class="space-y-3">
