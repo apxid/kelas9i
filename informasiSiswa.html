@@ -4,12 +4,9 @@
     <p class="text-[11px] text-gray-400">Pilih sub-kategori informasi di bawah untuk monitoring.</p>
   </div>
 
-  <!-- Wrapper untuk tombol navigasi -->
   <div class="relative group">
-    <!-- Tombol Prev (Hanya muncul di desktop) -->
     <button onclick="scrollMenu(-200)" class="absolute -left-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100 z-10 hidden md:block hover:bg-gray-50 transition-all">◀</button>
     
-    <!-- Container Menu -->
     <div id="menu-scroll-container" class="flex space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-hide select-none scroll-smooth">
       <button onclick="switchSubMenu('PRESTASI')" id="subbtn-PRESTASI" class="sub-tab-item active bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🏆 Prestasi</button>
       <button onclick="switchSubMenu('PENGUMUMAN')" id="subbtn-PENGUMUMAN" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">📢 Pengumuman</button>
@@ -18,7 +15,6 @@
       <button onclick="switchSubMenu('JADWAL_PIKET')" id="subbtn-JADWAL_PIKET" class="sub-tab-item bg-white text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap">🧹 Jadwal Piket</button>
     </div>
 
-    <!-- Tombol Next (Hanya muncul di desktop) -->
     <button onclick="scrollMenu(200)" class="absolute -right-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100 z-10 hidden md:block hover:bg-gray-50 transition-all">▶</button>
   </div>
 
@@ -28,52 +24,52 @@
 </div>
 
 <script>
-  // Ganti URL ini dengan URL Web App Google Apps Script Anda
-  const WEB_APP_URL = "URL_WEB_APP_ANDA_DISINI";
+  // PASTIKAN URL INI ADALAH URL DEPLOYMENT ANDA YANG BERAKHIR /exec
+  const WEB_APP_URL = "https://script.google.com/macros/s/ID_DEPLOYMENT_ANDA/exec";
 
-  // Fungsi untuk scroll menu di desktop
   function scrollMenu(offset) {
-    const container = document.getElementById('menu-scroll-container');
-    container.scrollBy({ left: offset, behavior: 'smooth' });
+    document.getElementById('menu-scroll-container').scrollBy({ left: offset, behavior: 'smooth' });
   }
 
   function switchSubMenu(sheetName) {
-    // 1. Update tampilan tombol aktif
+    // 1. Update tombol
     document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('subbtn-' + sheetName).classList.add('active');
+    const activeBtn = document.getElementById('subbtn-' + sheetName);
+    if(activeBtn) activeBtn.classList.add('active');
     
-    // 2. Tampilkan loading
+    // 2. Loading
     const container = document.getElementById('sub-menu-content-container');
-    container.innerHTML = '<div class="shimmer h-24 rounded-2xl w-full"></div>';
+    container.innerHTML = '<div class="text-xs text-center text-gray-400">Memuat data...</div>';
 
-    // 3. Fetch data dari GAS
-    fetch(`${WEB_APP_URL}?action=getData&sheetName=${sheetName}`)
+    // 3. Fetch dengan mode 'no-cors' jika terjadi masalah akses, 
+    // tapi karena kita sudah setting JSON di GAS, gunakan fetch standar:
+    fetch(WEB_APP_URL + "?action=getData&sheetName=" + sheetName)
       .then(response => response.json())
       .then(data => {
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
           container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Data tidak tersedia.</p>';
           return;
         }
 
-        // 4. Render data secara dinamis
         let html = '<div class="grid gap-2">';
         data.forEach(item => {
-          const values = Object.values(item);
+          const vals = Object.values(item);
           html += `
             <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-              <p class="text-xs font-black text-blue-600 uppercase tracking-wider">${values[0]}</p>
-              <p class="text-sm text-slate-700 mt-1">${values[1]}</p>
+              <p class="text-xs font-black text-blue-600 uppercase tracking-wider">${vals[0] || '-'}</p>
+              <p class="text-sm text-slate-700 mt-1">${vals[1] || '-'}</p>
             </div>`;
         });
-        html += '</div>';
-        container.innerHTML = html;
+        container.innerHTML = html + '</div>';
       })
       .catch(err => {
-        container.innerHTML = '<p class="text-xs text-red-400 text-center py-4">Gagal memuat data.</p>';
-        console.error(err);
+        console.error("Error Fetch:", err);
+        container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Gagal memuat data. Cek Deployment.</p>';
       });
   }
 
-  // Muat data default saat halaman dibuka
-  window.onload = () => switchSubMenu('PRESTASI');
+  // Panggil saat halaman siap
+  document.addEventListener("DOMContentLoaded", () => {
+    switchSubMenu('PRESTASI');
+  });
 </script>
