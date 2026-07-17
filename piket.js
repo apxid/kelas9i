@@ -18,7 +18,7 @@ window.switchSubMenu = function(subName) {
     }
 };
 
-// Fungsi memuat data piket dengan filter cerdas untuk menghindari angka/indeks
+// Fungsi memuat data piket dengan logika pengisian hari otomatis
 function loadDataPiketMenu3(container) {
     callBackend('getData', { sheetName: 'JADWAL_PIKET' }).then(data => {
         if (!data || data.length === 0) { 
@@ -26,16 +26,20 @@ function loadDataPiketMenu3(container) {
             return; 
         }
 
-        // Logic Grouping dengan filter ketat: mengabaikan angka dan strip
+        let lastHari = ""; // Menyimpan hari terakhir agar baris kosong di sheet terisi otomatis
         const grouped = data.reduce((acc, curr) => {
-            const values = Object.values(curr);
-            const hari = values[0]; 
-            const nama = values[1]; 
+            // Jika kolom Hari ada isinya, update lastHari
+            const hariIni = curr["Hari"] ? curr["Hari"].trim() : "";
+            if (hariIni !== "") {
+                lastHari = hariIni;
+            }
             
-            // Filter: pastikan 'hari' ada dan 'nama' bukan angka/strip/kosong
-            if (hari && nama && nama !== "-" && isNaN(nama)) {
-                if (!acc[hari]) acc[hari] = [];
-                acc[hari].push(nama);
+            const nama = curr["Daftar Nama Siswa"];
+            
+            // Masukkan siswa ke grup lastHari jika nama valid
+            if (lastHari && nama && nama.trim() !== "" && nama !== "-") {
+                if (!acc[lastHari]) acc[lastHari] = [];
+                acc[lastHari].push(nama);
             }
             return acc;
         }, {});
