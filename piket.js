@@ -18,7 +18,7 @@ window.switchSubMenu = function(subName) {
     }
 };
 
-// Fungsi memuat data piket dengan pengambilan kolom dinamis
+// Fungsi memuat data piket dengan filter cerdas untuk menghindari angka/indeks
 function loadDataPiketMenu3(container) {
     callBackend('getData', { sheetName: 'JADWAL_PIKET' }).then(data => {
         if (!data || data.length === 0) { 
@@ -26,18 +26,16 @@ function loadDataPiketMenu3(container) {
             return; 
         }
 
-        // Logic Grouping Otomatis (Tidak peduli nama kolomnya)
+        // Logic Grouping dengan filter ketat: mengabaikan angka dan strip
         const grouped = data.reduce((acc, curr) => {
             const values = Object.values(curr);
-            const hari = values[0]; // Kolom A
-            const nama = values[1]; // Kolom B
+            const hari = values[0]; 
+            const nama = values[1]; 
             
-            if (hari) {
+            // Filter: pastikan 'hari' ada dan 'nama' bukan angka/strip/kosong
+            if (hari && nama && nama !== "-" && isNaN(nama)) {
                 if (!acc[hari]) acc[hari] = [];
-                // Memastikan data yang masuk bukan strip/kosong
-                if (nama && nama !== "-") {
-                    acc[hari].push(nama);
-                }
+                acc[hari].push(nama);
             }
             return acc;
         }, {});
