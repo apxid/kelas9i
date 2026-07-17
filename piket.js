@@ -1,41 +1,27 @@
-// --- File: piket.js (Versi Grouping Otomatis) ---
-
-// Patch fungsi switchSubMenu
-const originalSwitchSubMenu = window.switchSubMenu;
-window.switchSubMenu = function(subName) {
-    if (subName === 'jadwal-piket') {
-        appState.currentSubMenu = 'jadwal-piket';
-        document.querySelectorAll('.sub-tab-item').forEach(btn => btn.classList.remove('bg-smpprimary', 'text-white', 'active'));
-        const activeSubBtn = document.getElementById(`subbtn-${subName}`);
-        if (activeSubBtn) activeSubBtn.classList.add('bg-smpprimary', 'text-white', 'active');
-
-        const subContainer = document.getElementById('sub-menu-content-container');
-        subContainer.innerHTML = '<div class="shimmer h-20 rounded-xl w-full"></div>';
-        
-        loadDataPiketMenu3(subContainer);
-    } else {
-        originalSwitchSubMenu(subName);
-    }
-};
-
 function loadDataPiketMenu3(container) {
     callBackend('getData', { sheetName: 'JADWAL_PIKET' }).then(data => {
         if (!data || data.length === 0) { 
-            container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Data piket kosong.</p>'; 
+            container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Data kosong.</p>'; 
             return; 
         }
 
-        // Logic Grouping: Mengelompokkan siswa berdasarkan hari
+        // --- DEEBUGGING: Mari kita lihat apa nama kolom yang terbaca ---
+        const firstItem = data[0];
+        console.log("Struktur Data yang diterima:", firstItem); 
+        // -----------------------------------------------------------
+
         const grouped = data.reduce((acc, curr) => {
-            const hari = curr.Hari;
+            // Kita coba tebak nama kolomnya dari daftar kemungkinan yang sering terjadi
+            const namaSiswa = curr['Daftar Nama Siswa'] || curr['Daftar_Nama_Siswa'] || curr['DaftarNamaSiswa'] || curr['Nama Siswa'] || Object.values(curr)[1];
+            const hari = curr.Hari || Object.values(curr)[0];
+            
             if (!acc[hari]) acc[hari] = [];
-            acc[hari].push(curr['Daftar Nama Siswa']);
+            acc[hari].push(namaSiswa);
             return acc;
         }, {});
 
-        // Rendering hasil grouping
         let html = `<div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                      <div class="p-4 bg-gray-50 border-b border-gray-100 font-bold text-xs text-slate-700">🧹 Jadwal Piket Kelas</div>`;
+                      <div class="p-4 bg-gray-50 border-b border-gray-100 font-bold text-xs text-slate-700">🧹 Jadwal Piket (Debug)</div>`;
         
         for (const hari in grouped) {
             html += `
@@ -45,7 +31,6 @@ function loadDataPiketMenu3(container) {
                 </div>`;
         }
         
-        html += `</div>`;
         container.innerHTML = html;
     });
 }
