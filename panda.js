@@ -5,23 +5,37 @@
         /* Styling Dasar */
         #panda-chat, #panda-icon { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; }
 
-        @media (max-width: 768px) {
-            #panda-chat { width: 90% !important; max-width: 340px !important; right: 5% !important; left: 5% !important; margin: 0 auto !important; }
-        }
-        
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
 
-        /* Icon (Dinaikkan ke 90px agar tidak menutupi menu bawah) */
-        #panda-icon { position: fixed !important; bottom: 90px !important; right: 20px !important; cursor: pointer !important; z-index: 999999 !important; }
-        #panda-icon img { width: 70px !important; height: auto !important; transition: transform 0.2s !important; }
+        /* Icon: Menempel di dalam container aplikasi tepat di atas menu bawah (posisi bottom 70px) */
+        #panda-icon { 
+            position: absolute !important; 
+            bottom: 75px !important; 
+            right: 15px !important; 
+            cursor: pointer !important; 
+            z-index: 999999 !important; 
+        }
+        #panda-icon img { width: 65px !important; height: auto !important; transition: transform 0.2s !important; }
         #panda-icon img:hover { transform: scale(1.1) !important; }
         
-        /* Chatbox (Dinaikkan ke 90px agar sejajar dengan ikon) */
+        /* Chatbox: Menyesuaikan ukuran di dalam card aplikasi */
         #panda-chat { 
-            position: fixed !important; bottom: 90px !important; right: 20px !important; width: 320px !important; height: 450px !important; 
-            background: white !important; border-radius: 20px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
-            display: none !important; flex-direction: column !important; overflow: visible !important; z-index: 999999 !important;
+            position: absolute !important; 
+            bottom: 75px !important; 
+            right: 15px !important; 
+            left: 15px !important;
+            width: auto !important; 
+            max-width: 330px !important;
+            margin-left: auto !important;
+            height: 430px !important; 
+            background: white !important; 
+            border-radius: 20px !important; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+            display: none !important; 
+            flex-direction: column !important; 
+            overflow: visible !important; 
+            z-index: 999999 !important;
         }
         
         #panda-chat.open { display: flex !important; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
@@ -48,30 +62,37 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Suntikkan HTML Elemen Widget & Audio ke dalam <body>
-    const container = document.createElement('div');
-    container.innerHTML = `
-        <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-        <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+    // 2. Cari pembungkus aplikasi utama di file HTML Anda untuk disisipi elemen widget secara aman
+    const appContainer = document.querySelector('.w-full.max-w-md');
 
-        <div id="panda-icon" onclick="openChat()"><img src="https://apxid.github.io/assistant/assets/mypanda.gif"/></div>
+    if (appContainer) {
+        // Pastikan pembungkus aplikasi memiliki properti relative agar posisi absolute widget terkunci di dalam aplikasi
+        appContainer.style.position = 'relative';
 
-        <div id="panda-chat">
-            <div class="header">
-                <div style="display:flex; align-items:center;">
-                    <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
-                    <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+        const container = document.createElement('div');
+        container.innerHTML = `
+            <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+            <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+            <div id="panda-icon" onclick="openChat()"><img src="https://apxid.github.io/assistant/assets/mypanda.gif"/></div>
+
+            <div id="panda-chat">
+                <div class="header">
+                    <div style="display:flex; align-items:center;">
+                        <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
+                        <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+                    </div>
+                    <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
                 </div>
-                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
+                <div id="chat-body"></div>
+                <div id="input-area">
+                    <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+                    <button id="send-btn" onclick="sendMessage()">➤</button>
+                </div>
             </div>
-            <div id="chat-body"></div>
-            <div id="input-area">
-                <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()"/>
-                <button id="send-btn" onclick="sendMessage()">➤</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(container);
+        `;
+        appContainer.appendChild(container);
+    }
 
     // 3. Fungsi-fungsi JavaScript Widget
     window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
