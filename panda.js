@@ -12,14 +12,14 @@
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
 
-        /* Icon */
-        #panda-icon { position: fixed !important; bottom: 20px !important; right: 20px !important; cursor: pointer !important; z-index: 999999 !important; }
+        /* Icon (Dinaikkan ke 90px agar tidak menutupi menu bawah) */
+        #panda-icon { position: fixed !important; bottom: 90px !important; right: 20px !important; cursor: pointer !important; z-index: 999999 !important; }
         #panda-icon img { width: 70px !important; height: auto !important; transition: transform 0.2s !important; }
         #panda-icon img:hover { transform: scale(1.1) !important; }
         
-        /* Chatbox */
+        /* Chatbox (Dinaikkan ke 90px agar sejajar dengan ikon) */
         #panda-chat { 
-            position: fixed !important; bottom: 20px !important; right: 20px !important; width: 320px !important; height: 450px !important; 
+            position: fixed !important; bottom: 90px !important; right: 20px !important; width: 320px !important; height: 450px !important; 
             background: white !important; border-radius: 20px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
             display: none !important; flex-direction: column !important; overflow: visible !important; z-index: 999999 !important;
         }
