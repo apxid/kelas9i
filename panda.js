@@ -8,10 +8,10 @@
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
 
-        /* Icon: Menempel di dalam container aplikasi tepat di atas menu bawah (posisi bottom 70px) */
+        /* Icon: Diturunkan sedikit ke bottom: 62px agar pas di atas garis menu bawah */
         #panda-icon { 
             position: absolute !important; 
-            bottom: 75px !important; 
+            bottom: 62px !important; 
             right: 15px !important; 
             cursor: pointer !important; 
             z-index: 999999 !important; 
@@ -19,10 +19,10 @@
         #panda-icon img { width: 65px !important; height: auto !important; transition: transform 0.2s !important; }
         #panda-icon img:hover { transform: scale(1.1) !important; }
         
-        /* Chatbox: Menyesuaikan ukuran di dalam card aplikasi */
+        /* Chatbox: Menyesuaikan posisi bawahnya agar sejajar */
         #panda-chat { 
             position: absolute !important; 
-            bottom: 75px !important; 
+            bottom: 62px !important; 
             right: 15px !important; 
             left: 15px !important;
             width: auto !important; 
@@ -62,11 +62,10 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Cari pembungkus aplikasi utama di file HTML Anda untuk disisipi elemen widget secara aman
+    // 2. Cari pembungkus aplikasi utama di file HTML Anda
     const appContainer = document.querySelector('.w-full.max-w-md');
 
     if (appContainer) {
-        // Pastikan pembungkus aplikasi memiliki properti relative agar posisi absolute widget terkunci di dalam aplikasi
         appContainer.style.position = 'relative';
 
         const container = document.createElement('div');
