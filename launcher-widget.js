@@ -16,10 +16,10 @@
             100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } 
         }
 
-        /* Icon Floating Launcher */
+        /* Icon Floating Launcher (Sudah dinaikkan ke 80px) */
         #launcher-icon { 
             position: fixed !important; 
-            bottom: 20px !important; 
+            bottom: 80px !important; 
             right: 20px !important; 
             cursor: pointer !important; 
             z-index: 999999 !important; 
@@ -34,10 +34,10 @@
             transform: scale(1.1) !important; 
         }
         
-        /* Chatbox Floating Container */
+        /* Chatbox Floating Container (Diselaraskan ke 80px) */
         #launcher-chat { 
             position: fixed !important; 
-            bottom: 20px !important; 
+            bottom: 80px !important; 
             right: 20px !important; 
             width: 330px !important; 
             max-width: calc(100vw - 40px) !important;
@@ -70,7 +70,7 @@
             border-radius: 20px 20px 0 0 !important; 
         }
         .header-logo { 
-            width: 40px !important; 
+            width: 32px !important; 
             height: auto !important; 
             margin-right: 10px !important; 
         }
@@ -155,7 +155,7 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Fungsi tempel elemen langsung ke Document Body
+    // 2. Injeksi Elemen HTML ke DOM
     const initWidget = () => {
         if (document.getElementById('launcher-widget-wrapper')) return;
 
@@ -166,13 +166,13 @@
             <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
             <div id="launcher-icon" onclick="openChat()">
-                <img src="https://apxid.github.io/assistant/assets/mypanda.gif" alt="Launcher Icon"/>
+                <img src="https://apxid.github.io/kelas9i/assets/launcher.png" alt="Launcher Icon"/>
             </div>
 
             <div id="launcher-chat">
                 <div class="header">
                     <div style="display:flex; align-items:center;">
-                        <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo" alt="Logo"/>
+                        <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="header-logo" alt="Logo"/>
                         <span id="app-name" style="font-weight:600; font-size:15px;"></span>
                     </div>
                     <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
@@ -193,7 +193,7 @@
         initWidget();
     }
 
-    // 3. Logika & Metode JavaScript
+    // 3. Logika Interaksi & Fetching
     window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
     window.isWaitingForName = false;
     window.typeTimer = null;
