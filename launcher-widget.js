@@ -119,7 +119,7 @@
                 <div class="launcher-header">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <img src="https://apxid.github.io/kelas9i/assets/launcher.png" style="width:24px; height:auto;" alt="Logo"/>
-                        <span>Pilihan Tautan</span>
+                        <span>Launcher</span>
                     </div>
                     <button onclick="toggleLauncherMenu()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">×</button>
                 </div>
@@ -128,11 +128,11 @@
                     <a href="https://apxid.github.io/kelas9i/kas" target="_blank" class="external-link-btn">
                         <span>🚀</span> KAS
                     </a>
-                    <a href="https://google.com" target="_blank" class="external-link-btn">
-                        <span>📚</span> Materi Kelas
+                    <a href="https://apxid.github.io/kelas9i/" target="_blank" class="external-link-btn">
+                        <span>📚</span> Home
                     </a>
-                    <a href="https://classroom.google.com" target="_blank" class="external-link-btn">
-                        <span>📝</span> Pengumpulan Tugas
+                    <a href="https://tik-spensamo.blogspot.com/" target="_blank" class="external-link-btn">
+                        <span>📝</span> LMS Informatika
                     </a>
                 </div>
             </div>
