@@ -1,215 +1,143 @@
 (function() {
-    // 1. Injeksi CSS Khusus Menu Setengah Lingkaran (Radial Menu)
+    // 1. Injeksi CSS Khusus Menu Link External
     const style = document.createElement('style');
     style.innerHTML = `
-        .launcher-container, .launcher-container * {
-            box-sizing: border-box !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        #launcher-menu-popup, #launcher-icon { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
         }
 
-        /* Container Melayang di Kanan Bawah (Di atas posisi gambar panda) */
-        .launcher-container {
-            position: fixed !important;
+        @keyframes slideUp { 
+            from { transform: translateY(20px) scale(0.95); opacity: 0; } 
+            to { transform: translateY(0) scale(1); opacity: 1; } 
+        }
+
+        /* Icon Floating Launcher (Dinaikkan ke 80px agar pas di atas gambar panda) */
+        #launcher-icon { 
+            position: fixed !important; 
             bottom: 80px !important; 
-            right: 20px !important;
+            right: 20px !important; 
+            cursor: pointer !important; 
+            z-index: 999999 !important; 
+            background: transparent !important;
+        }
+        #launcher-icon img { 
+            width: 60px !important; 
+            height: auto !important; 
+            transition: transform 0.2s ease-in-out !important; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)) !important;
+        }
+        #launcher-icon img:hover { 
+            transform: scale(1.1) !important; 
+        }
+        
+        /* Popup Menu External Link (Muncul melayang DI ATAS ikon launcher) */
+        #launcher-menu-popup { 
+            position: fixed !important; 
+            bottom: 150px !important; /* Ditempatkan pas di atas posisi ikon 80px */
+            right: 20px !important; 
+            width: 280px !important; 
+            background: rgba(255, 255, 255, 0.95) !important; 
+            backdrop-filter: blur(10px) !important;
+            border-radius: 16px !important; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
+            display: none !important; 
+            flex-direction: column !important; 
+            overflow: hidden !important; 
             z-index: 999999 !important;
+            border: 1px solid rgba(0,0,0,0.08) !important;
+        }
+        
+        #launcher-menu-popup.open { 
+            display: flex !important; 
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; 
         }
 
-        /* Tombol Utama Toggle */
-        .launcher-toggle {
-            width: 60px !important;
-            height: 60px !important;
-            border-radius: 50% !important;
-            background: #075E54 !important;
-            border: none !important;
-            color: white !important;
-            cursor: pointer !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+        .launcher-header { 
+            background: #075E54 !important; 
+            color: white !important; 
+            padding: 12px 15px !important; 
+            display: flex !important; 
+            align-items: center !important; 
+            justify-content: space-between !important; 
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }
+
+        .launcher-links-container {
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            max-height: 300px !important;
+            overflow-y: auto !important;
+            background: rgba(229, 221, 213, 0.4) !important;
+        }
+
+        .external-link-btn {
             display: flex !important;
             align-items: center !important;
-            justify-content: center !important;
-            position: relative !important;
-            z-index: 2 !important;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            outline: none !important;
-        }
-
-        .launcher-toggle:hover {
-            transform: scale(1.08) !important;
-        }
-
-        .launcher-toggle svg {
-            width: 26px !important;
-            height: 26px !important;
-            stroke: currentColor !important;
-            stroke-width: 2 !important;
-            stroke-linecap: round !important;
-            stroke-linejoin: round !important;
-            fill: none !important;
-            transition: transform 0.3s ease, opacity 0.3s ease !important;
-        }
-
-        .launcher-toggle .icon-close {
-            position: absolute !important;
-            opacity: 0 !important;
-            transform: rotate(-90deg) scale(0.5) !important;
-        }
-
-        /* State Saat Menu Terbuka */
-        .launcher-container.active .launcher-toggle {
-            background: #dc2626 !important;
-        }
-
-        .launcher-container.active .launcher-toggle .icon-open {
-            opacity: 0 !important;
-            transform: rotate(90deg) scale(0.5) !important;
-        }
-
-        .launcher-container.active .launcher-toggle .icon-close {
-            opacity: 1 !important;
-            transform: rotate(0deg) scale(1) !important;
-        }
-
-        /* Container Item Menu */
-        .launcher-menu {
-            position: absolute !important;
-            bottom: 0 !important;
-            right: 0 !important;
-            width: 60px !important;
-            height: 60px !important;
-            z-index: 1 !important;
-            pointer-events: none !important;
-        }
-
-        /* Item Shortcut Melingkar */
-        .launcher-item {
-            position: absolute !important;
-            width: 48px !important;
-            height: 48px !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            color: #1e293b !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            gap: 10px !important;
+            padding: 10px 14px !important;
+            background: white !important;
+            color: #303030 !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.18) !important;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            opacity: 0 !important;
-            transform: translate(0, 0) scale(0.3) !important;
-            font-size: 20px !important;
-            border: 1px solid rgba(0,0,0,0.05) !important;
-        }
-
-        .launcher-item:hover {
-            background: #dcf8c6 !important;
-            transform: scale(1.15) !important;
-        }
-
-        /* Label Tooltip Saat Hover Item */
-        .launcher-item::after {
-            content: attr(data-title) !important;
-            position: absolute !important;
-            right: 56px !important;
-            background: rgba(15, 23, 42, 0.85) !important;
-            color: white !important;
-            padding: 4px 10px !important;
-            border-radius: 6px !important;
-            font-size: 12px !important;
-            white-space: nowrap !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            transition: opacity 0.2s ease !important;
+            border-radius: 12px !important;
+            font-size: 13px !important;
             font-weight: 500 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+            transition: all 0.2s ease !important;
         }
 
-        .launcher-item:hover::after {
-            opacity: 1 !important;
+        .external-link-btn:hover {
+            background: #dcf8c6 !important;
+            transform: translateX(-3px) !important;
         }
 
-        /* Aktifkan Event Klik & Posisi Setengah Lingkaran Saat Buka */
-        .launcher-container.active .launcher-item {
-            opacity: 1 !important;
-            pointer-events: auto !important;
+        .external-link-btn span {
+            font-size: 16px !important;
         }
     `;
     document.head.appendChild(style);
 
-    // 2. Daftar Shortcut External Link
-    const menuData = [
-        { title: "Launcher", url: "https://apxid.github.io/kelas9i/launcher.html", icon: "🚀" },
-        { title: "Materi Kelas", url: "https://google.com", icon: "📚" },
-        { title: "Tugas", url: "https://classroom.google.com", icon: "📝" },
-        { title: "Website", url: "https://apxid.github.io/kelas9i/", icon: "🌐" }
-    ];
-
-    // 3. Render Elemen DOM
+    // 2. Injeksi Elemen HTML ke DOM
     const initWidget = () => {
-        if (document.getElementById('launcherContainer')) return;
+        if (document.getElementById('launcher-widget-wrapper')) return;
 
         const container = document.createElement('div');
-        container.className = 'launcher-container';
-        container.id = 'launcherContainer';
-
+        container.id = 'launcher-widget-wrapper';
         container.innerHTML = `
-            <div class="launcher-menu" id="launcherMenu"></div>
-            <button class="launcher-toggle" id="launcherToggle" aria-label="Buka Menu">
-              <svg class="icon-open" viewBox="0 0 24 24">
-                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-              </svg>
-              <svg class="icon-close" viewBox="0 0 24 24">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
+            <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+            <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+            <!-- Ikon Launcher -->
+            <div id="launcher-icon" onclick="toggleLauncherMenu()">
+                <img src="https://apxid.github.io/kelas9i/assets/launcher.png" alt="Launcher Icon"/>
+            </div>
+
+            <!-- Card Menu External Links -->
+            <div id="launcher-menu-popup">
+                <div class="launcher-header">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://apxid.github.io/kelas9i/assets/launcher.png" style="width:24px; height:auto;" alt="Logo"/>
+                        <span>Pilihan Tautan</span>
+                    </div>
+                    <button onclick="toggleLauncherMenu()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">×</button>
+                </div>
+                <div class="launcher-links-container">
+                    <!-- Tambah atau ubah daftar link eksternal di bawah ini -->
+                    <a href="https://apxid.github.io/kelas9i/launcher.html" target="_blank" class="external-link-btn">
+                        <span>🚀</span> Halaman Launcher
+                    </a>
+                    <a href="https://google.com" target="_blank" class="external-link-btn">
+                        <span>📚</span> Materi Kelas
+                    </a>
+                    <a href="https://classroom.google.com" target="_blank" class="external-link-btn">
+                        <span>📝</span> Pengumpulan Tugas
+                    </a>
+                </div>
+            </div>
         `;
-
         document.body.appendChild(container);
-
-        // Render Item Menu & Hitung Matematika Posisi Setengah Lingkaran (Arc 90°-180°)
-        const menuEl = document.getElementById('launcherMenu');
-        const radius = 100; // Jarak jangkauan busur setengah lingkaran (piksel)
-        const totalItems = menuData.length;
-
-        menuData.forEach((item, index) => {
-            const a = document.createElement('a');
-            a.className = 'launcher-item';
-            a.href = item.url;
-            a.target = '_blank';
-            a.setAttribute('data-title', item.title);
-            a.innerHTML = item.icon;
-
-            // Hitung Sudut Menyebar Menyudut ke Kiri-Atas (Sudut 90 Derajat Sampai 180 Derajat)
-            const angle = 90 + (index * (90 / (totalItems - 1 || 1)));
-            const rad = angle * (Math.PI / 180);
-
-            const x = Math.round(radius * Math.cos(rad));
-            const y = Math.round(-radius * Math.sin(rad));
-
-            // Simpan Koordinat Posisi Akhir Item
-            a.dataset.x = x;
-            a.dataset.y = y;
-
-            menuEl.appendChild(a);
-        });
-
-        // Event Listener Toggle
-        const toggleBtn = document.getElementById('launcherToggle');
-        toggleBtn.addEventListener('click', () => {
-            container.classList.toggle('active');
-            const items = menuEl.querySelectorAll('.launcher-item');
-
-            items.forEach((item) => {
-                if (container.classList.contains('active')) {
-                    item.style.transform = `translate(${item.dataset.x}px, ${item.dataset.y}px) scale(1)`;
-                } else {
-                    item.style.transform = `translate(0, 0) scale(0.3)`;
-                }
-            });
-        });
     };
 
     if (document.readyState === 'loading') {
@@ -217,4 +145,21 @@
     } else {
         initWidget();
     }
+
+    // 3. Logika Buka / Tutup Menu External Link
+    window.toggleLauncherMenu = function() {
+        const menu = document.getElementById('launcher-menu-popup');
+        const soundOpen = document.getElementById('sound-open');
+        const soundClose = document.getElementById('sound-close');
+
+        if (menu.classList.contains('open')) {
+            if (soundClose) soundClose.play().catch(() => {});
+            menu.classList.remove('open');
+            setTimeout(() => { menu.style.display = 'none'; }, 200);
+        } else {
+            if (soundOpen) soundOpen.play().catch(() => {});
+            menu.style.display = 'flex';
+            menu.classList.add('open');
+        }
+    };
 })();
