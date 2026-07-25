@@ -33,7 +33,7 @@
   <!-- Konten Halaman Utama -->
   <div class="demo-info">
     <h2>Floating Launcher Menu</h2>
-    <p>Lihat di sebelah kanan bawah layar untuk membuka shortcut launcher.</p>
+    <p>Klik tombol roket di sebelah kanan bawah untuk menampilkan shortcut link eksternal.</p>
   </div>
 
   <!-- Skrip Widget Floating Launcher -->
@@ -47,25 +47,24 @@
           --launcher-bg: #ffffff;
           --launcher-text: #1e293b;
           --launcher-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);
-          --launcher-shadow-hover: 0 20px 30px -5px rgba(37, 99, 235, 0.4), 0 8px 10px -6px rgba(0,0,0,0.1);
-          --launcher-speed: 0.4s;
+          --launcher-shadow-hover: 0 20px 30px -5px rgba(37, 99, 235, 0.35), 0 8px 10px -6px rgba(0,0,0,0.1);
+          --launcher-speed: 0.35s;
           --launcher-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Keyframes Animasi Roket Bersiap Meluncur */
+        /* Keyframes Animasi Getar Roket Bersiap Meluncur */
         @keyframes rocketShake {
-          0% { transform: scale(1.08) translate(0, 0) rotate(0deg); }
-          20% { transform: scale(1.08) translate(-1px, -2px) rotate(-1deg); }
-          40% { transform: scale(1.08) translate(2px, -1px) rotate(1deg); }
-          60% { transform: scale(1.08) translate(-1px, 1px) rotate(-1deg); }
-          80% { transform: scale(1.08) translate(1px, -2px) rotate(1deg); }
-          100% { transform: scale(1.08) translate(0, -3px) rotate(0deg); }
+          0% { transform: scale(1.05) translate(0, 0); }
+          25% { transform: scale(1.05) translate(-1px, -2px); }
+          50% { transform: scale(1.05) translate(2px, -1px); }
+          75% { transform: scale(1.05) translate(-1px, 1px); }
+          100% { transform: scale(1.05) translate(1px, -2px); }
         }
 
         @keyframes rocketThrust {
-          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 10px 25px -5px rgba(0,0,0,0.15); }
-          50% { box-shadow: 0 15px 25px 8px rgba(249, 115, 22, 0.5), var(--launcher-shadow-hover); }
-          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 10px 25px -5px rgba(0,0,0,0.15); }
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5), 0 10px 25px -5px rgba(0,0,0,0.15); }
+          50% { box-shadow: 0 12px 20px 6px rgba(249, 115, 22, 0.4), var(--launcher-shadow-hover); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5), 0 10px 25px -5px rgba(0,0,0,0.15); }
         }
 
         /* Container Utama Widget */
@@ -81,11 +80,11 @@
           font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
         }
 
-        /* Tombol Utama (Bentuk Rounded Card agar Gambar Utuh) */
+        /* Tombol Utama Trigger */
         #floating-launcher-container .launcher-toggle {
           width: 68px !important;
           height: 68px !important;
-          border-radius: 18px !important; /* Dibuat sedikit membulat, bukan lingkaran sempurna */
+          border-radius: 18px !important;
           background-color: var(--launcher-bg) !important;
           color: var(--launcher-text) !important;
           border: none !important;
@@ -95,72 +94,51 @@
           justify-content: center !important;
           align-items: center !important;
           position: relative !important;
-          z-index: 2 !important;
+          z-index: 10 !important;
           transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease !important;
           outline: none !important;
           padding: 6px !important;
-          overflow: visible !important;
         }
 
-        /* Efek Hover Animasi Meluncur */
+        /* Hover Animasi Sebelum Diklik */
         #floating-launcher-container .launcher-toggle:hover {
           animation: rocketShake 0.15s infinite alternate, rocketThrust 1s infinite !important;
         }
 
-        /* Gambar Ikon Custom Roket */
+        /* Gambar Ikon Roket Custom */
         #floating-launcher-container .launcher-toggle img.icon-custom {
           width: 100% !important;
           height: 100% !important;
-          object-fit: contain !important; /* Agar gambar tidak terpotong sama sekali */
+          object-fit: contain !important;
           border-radius: 12px !important;
-          transition: transform var(--launcher-speed) ease, opacity var(--launcher-speed) ease !important;
-          position: absolute !important;
+          transition: transform var(--launcher-speed) var(--launcher-ease) !important;
+          display: block !important;
+          opacity: 1 !important; /* Dipastikan tetap terlihat */
         }
 
-        /* Ikon Close (X) saat menu terbuka */
-        #floating-launcher-container .launcher-toggle svg.icon-close {
-          width: 28px !important;
-          height: 28px !important;
-          fill: none !important;
-          stroke: var(--launcher-primary) !important;
-          stroke-width: 2.5 !important;
-          stroke-linecap: round !important;
-          stroke-linejoin: round !important;
-          transition: transform var(--launcher-speed) ease, opacity var(--launcher-speed) ease !important;
-          position: absolute !important;
-          opacity: 0 !important;
-          transform: rotate(-180deg) scale(0.5) !important;
-        }
-
-        /* State Aktif (Menu Terbuka) */
+        /* State Aktif (Saat Menu Terbuka) */
         #floating-launcher-container.active .launcher-toggle {
-          border-radius: 50% !important;
           animation: none !important;
+          box-shadow: var(--launcher-shadow-hover) !important;
+          transform: scale(1.08) !important;
         }
 
+        /* Efek Roket Meluncur Agak Ke Atas Saat Terbuka (Tidak Hilang) */
         #floating-launcher-container.active .icon-custom {
-          opacity: 0 !important;
-          transform: translateY(-20px) scale(0.3) !important; /* Efek roket terbang ke atas saat menu terbuka */
-        }
-
-        #floating-launcher-container.active .icon-close {
-          opacity: 1 !important;
-          transform: rotate(0deg) scale(1) !important;
+          transform: translateY(-4px) scale(1.1) !important;
         }
 
         /* Wrapper Menu Shortcut */
         #floating-launcher-container .launcher-menu {
           position: absolute !important;
+          top: 50% !important;
+          left: 50% !important;
           width: 0 !important;
           height: 0 !important;
-          pointer-events: none !important;
+          z-index: 5 !important;
         }
 
-        #floating-launcher-container.active .launcher-menu {
-          pointer-events: auto !important;
-        }
-
-        /* Tombol Shortcut Item */
+        /* Tombol Shortcut Link Eksternal */
         #floating-launcher-container .launcher-item {
           position: absolute !important;
           width: 50px !important;
@@ -174,18 +152,20 @@
           text-decoration: none !important;
           box-shadow: var(--launcher-shadow) !important;
           opacity: 0 !important;
-          transform: translate(0, 0) scale(0.3) !important;
-          transition: transform var(--launcher-speed) var(--launcher-ease), opacity var(--launcher-speed) ease, box-shadow 0.2s ease !important;
-          top: -25px !important;
-          left: -25px !important;
+          pointer-events: none !important;
+          transform: translate(-50%, -50%) scale(0.2) !important;
+          transition: transform var(--launcher-speed) var(--launcher-ease), opacity 0.25s ease, box-shadow 0.2s ease !important;
         }
 
+        /* Ketika Aktif, Link Muncul dan Bisa Diklik */
         #floating-launcher-container.active .launcher-item {
           opacity: 1 !important;
+          pointer-events: auto !important;
+          transform: var(--target-transform) scale(1) !important;
         }
 
         #floating-launcher-container .launcher-item:hover {
-          transform: var(--target-transform) scale(1.15) !important;
+          transform: var(--target-transform) scale(1.18) !important;
           box-shadow: var(--launcher-shadow-hover) !important;
         }
 
@@ -193,7 +173,6 @@
           width: 24px !important;
           height: 24px !important;
           object-fit: contain !important;
-          border-radius: 4px !important;
         }
 
         #floating-launcher-container .launcher-item svg {
@@ -206,14 +185,14 @@
           stroke-linejoin: round !important;
         }
 
-        /* Tooltip */
+        /* Tooltip Label */
         #floating-launcher-container .launcher-item::after {
           content: attr(data-title);
           position: absolute !important;
           right: 60px !important;
-          background-color: rgba(15, 23, 42, 0.85) !important;
+          background-color: rgba(15, 23, 42, 0.88) !important;
           color: #ffffff !important;
-          padding: 5px 10px !important;
+          padding: 6px 12px !important;
           border-radius: 6px !important;
           font-size: 12px !important;
           font-weight: 500 !important;
@@ -222,7 +201,7 @@
           visibility: hidden !important;
           pointer-events: none !important;
           transition: opacity 0.2s ease, transform 0.2s ease !important;
-          transform: translateX(10px) !important;
+          transform: translateX(8px) !important;
           box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
         }
 
@@ -232,7 +211,7 @@
           transform: translateX(0) !important;
         }
 
-        /* Responsif Mobile */
+        /* Adaptasi Layar Kecil / Mobile */
         @media (max-width: 480px) {
           #floating-launcher-container {
             top: 65% !important;
@@ -246,29 +225,23 @@
           #floating-launcher-container .launcher-item {
             width: 46px !important;
             height: 46px !important;
-            top: -23px !important;
-            left: -23px !important;
           }
         }
       `;
       document.head.appendChild(style);
 
-      // 2. Injeksi Elemen HTML ke <body>
+      // 2. Injeksi Elemen HTML
       const launcherContainer = document.createElement('div');
       launcherContainer.id = 'floating-launcher-container';
       launcherContainer.innerHTML = `
         <div class="launcher-menu" id="launcherMenu"></div>
         <button class="launcher-toggle" id="launcherToggle" aria-label="Buka Menu">
           <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="icon-custom" alt="Launcher Roket" />
-          <svg class="icon-close" viewBox="0 0 24 24">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
         </button>
       `;
       document.body.appendChild(launcherContainer);
 
-      // 3. Logika JavaScript & Data Array
+      // 3. Logika JavaScript & Data Link Eksternal
       window.launcherItems = [
         {
           title: "Kas Kelas 9I",
@@ -294,10 +267,11 @@
 
       const toggleBtn = document.getElementById('launcherToggle');
       const menu = document.getElementById('launcherMenu');
-      const radius = 130;
-      const startAngle = 180;
-      const endAngle = 270;
+      const radius = 120; // Jarak jangkar sebaran shortcut (px)
+      const startAngle = 180; // Sudut awal (arah kiri)
+      const endAngle = 270;   // Sudut akhir (arah atas)
 
+      // Kalkulasi Posisi Item Berbentuk Busur
       window.renderLauncherItems = function() {
         menu.innerHTML = '';
         const totalItems = window.launcherItems.length;
@@ -327,36 +301,28 @@
           const x = Math.round(radius * Math.cos(angleRadian));
           const y = Math.round(radius * Math.sin(angleRadian));
 
-          const targetTransform = `translate(${x}px, ${y}px)`;
+          // Menentukan posisi target transform dengan mengabaikan offset pusat
+          const targetTransform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
           anchor.style.setProperty('--target-transform', targetTransform);
-          anchor.style.transitionDelay = `${index * 0.04}s`;
+          anchor.style.transitionDelay = `${index * 0.05}s`;
 
           menu.appendChild(anchor);
         });
       };
 
+      // Jalankan fungsi render
       window.renderLauncherItems();
 
+      // Fungsi Toggle
       window.toggleLauncher = function() {
-        const isActive = launcherContainer.classList.toggle('active');
-        const items = menu.querySelectorAll('.launcher-item');
-
-        items.forEach((item) => {
-          if (isActive) {
-            const targetTransform = item.style.getPropertyValue('--target-transform');
-            item.style.transform = `${targetTransform} scale(1)`;
-          } else {
-            item.style.transform = 'translate(0, 0) scale(0.3)';
-          }
-        });
+        launcherContainer.classList.toggle('active');
       };
 
       window.closeLauncher = function() {
-        if (launcherContainer.classList.contains('active')) {
-          window.toggleLauncher();
-        }
+        launcherContainer.classList.remove('active');
       };
 
+      // Event Listeners
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         window.toggleLauncher();
