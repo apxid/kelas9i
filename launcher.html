@@ -33,7 +33,7 @@
   <!-- Konten Halaman Utama -->
   <div class="demo-info">
     <h2>Floating Launcher Menu</h2>
-    <p>Lihat di sebelah kanan bawah layar (di bawah pertengahan) untuk membuka shortcut launcher.</p>
+    <p>Lihat di sebelah kanan bawah layar untuk membuka shortcut launcher.</p>
   </div>
 
   <!-- Skrip Widget Floating Launcher -->
@@ -44,19 +44,34 @@
       style.innerHTML = `
         :root {
           --launcher-primary: #2563eb;
-          --launcher-primary-hover: #1d4ed8;
           --launcher-bg: #ffffff;
           --launcher-text: #1e293b;
           --launcher-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);
-          --launcher-shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.2), 0 8px 10px -6px rgba(0,0,0,0.1);
+          --launcher-shadow-hover: 0 20px 30px -5px rgba(37, 99, 235, 0.4), 0 8px 10px -6px rgba(0,0,0,0.1);
           --launcher-speed: 0.4s;
           --launcher-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Container Utama Widget - Diletakkan di bawah tengah layar sebelah kanan */
+        /* Keyframes Animasi Roket Bersiap Meluncur */
+        @keyframes rocketShake {
+          0% { transform: scale(1.08) translate(0, 0) rotate(0deg); }
+          20% { transform: scale(1.08) translate(-1px, -2px) rotate(-1deg); }
+          40% { transform: scale(1.08) translate(2px, -1px) rotate(1deg); }
+          60% { transform: scale(1.08) translate(-1px, 1px) rotate(-1deg); }
+          80% { transform: scale(1.08) translate(1px, -2px) rotate(1deg); }
+          100% { transform: scale(1.08) translate(0, -3px) rotate(0deg); }
+        }
+
+        @keyframes rocketThrust {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 10px 25px -5px rgba(0,0,0,0.15); }
+          50% { box-shadow: 0 15px 25px 8px rgba(249, 115, 22, 0.5), var(--launcher-shadow-hover); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6), 0 10px 25px -5px rgba(0,0,0,0.15); }
+        }
+
+        /* Container Utama Widget */
         #floating-launcher-container {
           position: fixed !important;
-          top: 60% !important; /* Di bawah pertengahan layar */
+          top: 60% !important;
           right: 25px !important;
           transform: translateY(-50%) !important;
           z-index: 999999 !important;
@@ -66,11 +81,11 @@
           font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
         }
 
-        /* Tombol Utama (Trigger) */
+        /* Tombol Utama (Bentuk Rounded Card agar Gambar Utuh) */
         #floating-launcher-container .launcher-toggle {
-          width: 64px !important;
-          height: 64px !important;
-          border-radius: 50% !important;
+          width: 68px !important;
+          height: 68px !important;
+          border-radius: 18px !important; /* Dibuat sedikit membulat, bukan lingkaran sempurna */
           background-color: var(--launcher-bg) !important;
           color: var(--launcher-text) !important;
           border: none !important;
@@ -81,23 +96,23 @@
           align-items: center !important;
           position: relative !important;
           z-index: 2 !important;
-          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease !important;
           outline: none !important;
-          padding: 0 !important;
-          overflow: hidden !important;
+          padding: 6px !important;
+          overflow: visible !important;
         }
 
+        /* Efek Hover Animasi Meluncur */
         #floating-launcher-container .launcher-toggle:hover {
-          transform: scale(1.08) !important;
-          box-shadow: var(--launcher-shadow-hover) !important;
+          animation: rocketShake 0.15s infinite alternate, rocketThrust 1s infinite !important;
         }
 
-        /* Gambar Ikon Custom Launcher */
+        /* Gambar Ikon Custom Roket */
         #floating-launcher-container .launcher-toggle img.icon-custom {
           width: 100% !important;
           height: 100% !important;
-          object-fit: cover !important;
-          border-radius: 50% !important;
+          object-fit: contain !important; /* Agar gambar tidak terpotong sama sekali */
+          border-radius: 12px !important;
           transition: transform var(--launcher-speed) ease, opacity var(--launcher-speed) ease !important;
           position: absolute !important;
         }
@@ -118,9 +133,14 @@
         }
 
         /* State Aktif (Menu Terbuka) */
+        #floating-launcher-container.active .launcher-toggle {
+          border-radius: 50% !important;
+          animation: none !important;
+        }
+
         #floating-launcher-container.active .icon-custom {
           opacity: 0 !important;
-          transform: rotate(180deg) scale(0.5) !important;
+          transform: translateY(-20px) scale(0.3) !important; /* Efek roket terbang ke atas saat menu terbuka */
         }
 
         #floating-launcher-container.active .icon-close {
@@ -219,8 +239,9 @@
             right: 15px !important;
           }
           #floating-launcher-container .launcher-toggle {
-            width: 56px !important;
-            height: 56px !important;
+            width: 60px !important;
+            height: 60px !important;
+            border-radius: 14px !important;
           }
           #floating-launcher-container .launcher-item {
             width: 46px !important;
@@ -238,7 +259,7 @@
       launcherContainer.innerHTML = `
         <div class="launcher-menu" id="launcherMenu"></div>
         <button class="launcher-toggle" id="launcherToggle" aria-label="Buka Menu">
-          <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="icon-custom" alt="Launcher" />
+          <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="icon-custom" alt="Launcher Roket" />
           <svg class="icon-close" viewBox="0 0 24 24">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -273,11 +294,10 @@
 
       const toggleBtn = document.getElementById('launcherToggle');
       const menu = document.getElementById('launcherMenu');
-      const radius = 130; // Jarak sebaran busur (px)
-      const startAngle = 180; // Sudut awal (kiri)
-      const endAngle = 270;   // Sudut akhir (atas)
+      const radius = 130;
+      const startAngle = 180;
+      const endAngle = 270;
 
-      // Render Shortcut secara Dinamis dengan Trigonometri
       window.renderLauncherItems = function() {
         menu.innerHTML = '';
         const totalItems = window.launcherItems.length;
@@ -296,7 +316,6 @@
             anchor.innerHTML = item.icon;
           }
 
-          // Hitung sudut tiap item dalam rentang 180°-270°
           let angleDegree;
           if (totalItems === 1) {
             angleDegree = 225;
@@ -316,10 +335,8 @@
         });
       };
 
-      // Panggil render pertama kali
       window.renderLauncherItems();
 
-      // Fungsi Buka/Tutup Menu
       window.toggleLauncher = function() {
         const isActive = launcherContainer.classList.toggle('active');
         const items = menu.querySelectorAll('.launcher-item');
@@ -340,7 +357,6 @@
         }
       };
 
-      // Event Listeners
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         window.toggleLauncher();
