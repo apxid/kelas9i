@@ -1,8 +1,7 @@
 (function() {
-    // 1. Injeksi CSS Widget ke dalam <head>
+    // 1. Injeksi CSS ke <head>
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Styling Dasar */
         #launcher-chat, #launcher-icon { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
         }
@@ -17,9 +16,9 @@
             100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } 
         }
 
-        /* Icon Launcher */
+        /* Icon Floating Launcher */
         #launcher-icon { 
-            position: absolute !important; 
+            position: fixed !important; 
             bottom: 20px !important; 
             right: 20px !important; 
             cursor: pointer !important; 
@@ -35,15 +34,13 @@
             transform: scale(1.1) !important; 
         }
         
-        /* Chatbox Container */
+        /* Chatbox Floating Container */
         #launcher-chat { 
-            position: absolute !important; 
+            position: fixed !important; 
             bottom: 20px !important; 
             right: 20px !important; 
-            left: 20px !important;
-            width: auto !important; 
-            max-width: 330px !important;
-            margin-left: auto !important;
+            width: 330px !important; 
+            max-width: calc(100vw - 40px) !important;
             height: 430px !important; 
             background: rgba(255, 255, 255, 0.95) !important; 
             backdrop-filter: blur(10px) !important;
@@ -51,7 +48,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
             display: none !important; 
             flex-direction: column !important; 
-            overflow: visible !important; 
+            overflow: hidden !important; 
             z-index: 999999 !important;
         }
         
@@ -73,7 +70,7 @@
             border-radius: 20px 20px 0 0 !important; 
         }
         .header-logo { 
-            width: 50px !important; 
+            width: 40px !important; 
             height: auto !important; 
             margin-right: 10px !important; 
         }
@@ -89,10 +86,10 @@
         
         .bubble { 
             padding: 10px 14px !important; 
-            margin: 8px 10px !important; 
+            margin: 8px 0 !important; 
             border-radius: 15px !important; 
             max-width: 80% !important; 
-            font-size: 14.5px !important; 
+            font-size: 14px !important; 
             line-height: 1.4 !important; 
             position: relative !important; 
             word-wrap: break-word !important; 
@@ -151,17 +148,16 @@
             background: none !important; 
             border: none !important; 
             color: #075E54 !important; 
-            font-size: 22px !important; 
+            font-size: 20px !important; 
             cursor: pointer !important; 
             padding: 0 10px !important; 
         }
     `;
     document.head.appendChild(style);
 
-    // 2. Menyisipkan Elemen Widget Langsung ke DOM
+    // 2. Fungsi tempel elemen langsung ke Document Body
     const initWidget = () => {
-        let appContainer = document.querySelector('.w-full.max-w-md') || document.body;
-        appContainer.style.position = 'relative';
+        if (document.getElementById('launcher-widget-wrapper')) return;
 
         const container = document.createElement('div');
         container.id = 'launcher-widget-wrapper';
@@ -169,12 +165,14 @@
             <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
             <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
-            <div id="launcher-icon" onclick="openChat()"><img src="https://apxid.github.io/assistant/assets/mypanda.gif" alt="Launcher Icon"/></div>
+            <div id="launcher-icon" onclick="openChat()">
+                <img src="https://apxid.github.io/assistant/assets/mypanda.gif" alt="Launcher Icon"/>
+            </div>
 
             <div id="launcher-chat">
                 <div class="header">
                     <div style="display:flex; align-items:center;">
-                        <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo" alt="Launcher Logo"/>
+                        <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo" alt="Logo"/>
                         <span id="app-name" style="font-weight:600; font-size:15px;"></span>
                     </div>
                     <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
@@ -186,7 +184,7 @@
                 </div>
             </div>
         `;
-        appContainer.appendChild(container);
+        document.body.appendChild(container);
     };
 
     if (document.readyState === 'loading') {
@@ -195,7 +193,7 @@
         initWidget();
     }
 
-    // 3. Logika & Fungsi Operasional
+    // 3. Logika & Metode JavaScript
     window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
     window.isWaitingForName = false;
     window.typeTimer = null;
