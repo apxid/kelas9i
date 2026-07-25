@@ -11,17 +11,17 @@
             to { transform: translateY(0) scale(1); opacity: 1; } 
         }
 
-        /* Icon Floating Launcher (Dinaikkan ke 80px agar pas di atas elemen lain) */
+        /* Icon Floating Launcher (Di atas posisi panda) */
         #launcher-icon { 
-            position: fixed !important; 
-            bottom: 80px !important; 
-            right: 20px !important; 
+            position: absolute !important; 
+            bottom: 140px !important; /* Ditempatkan presisi di atas panda (bottom 62px + tinggi panda) */
+            right: 18px !important; 
             cursor: pointer !important; 
-            z-index: 999999 !important; 
+            z-index: 999998 !important; 
             background: transparent !important;
         }
         #launcher-icon img { 
-            width: 60px !important; 
+            width: 55px !important; 
             height: auto !important; 
             transition: transform 0.2s ease-in-out !important; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)) !important;
@@ -30,12 +30,12 @@
             transform: scale(1.1) !important; 
         }
         
-        /* Popup Menu External Link (Melayang di atas ikon launcher) */
+        /* Popup Menu External Link */
         #launcher-menu-popup { 
-            position: fixed !important; 
-            bottom: 150px !important; 
-            right: 20px !important; 
-            width: 280px !important; 
+            position: absolute !important; 
+            bottom: 205px !important; /* Ditempatkan tepat di atas ikon launcher */
+            right: 15px !important; 
+            width: 260px !important; 
             background: rgba(255, 255, 255, 0.95) !important; 
             backdrop-filter: blur(10px) !important;
             border-radius: 16px !important; 
@@ -99,9 +99,15 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Injeksi Elemen HTML ke DOM
+    // 2. Injeksi Elemen HTML ke Pembungkus Aplikasi (.w-full.max-w-md)
     const initWidget = () => {
         if (document.getElementById('launcher-widget-wrapper')) return;
+
+        const appContainer = document.querySelector('.w-full.max-w-md');
+        if (!appContainer) return;
+
+        // Memastikan container utama bersifat relative untuk menampung elemen absolute
+        appContainer.style.position = 'relative';
 
         const container = document.createElement('div');
         container.id = 'launcher-widget-wrapper';
@@ -136,7 +142,7 @@
                 </div>
             </div>
         `;
-        document.body.appendChild(container);
+        appContainer.appendChild(container);
     };
 
     if (document.readyState === 'loading') {
