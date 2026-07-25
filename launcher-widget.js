@@ -7,20 +7,20 @@
             box-sizing: border-box !important;
         }
 
-        /* Ikon Roket Floating (Ukuran diperkecil) */
+        /* Ikon Roket Floating */
         #launcher-icon { 
             position: absolute !important; 
-            bottom: 135px !important; /* Presisi di atas posisi panda */
+            bottom: 135px !important; 
             right: 22px !important; 
             cursor: pointer !important; 
-            z-index: 999998 !important; 
+            z-index: 999999 !important; 
             background: transparent !important;
             user-select: none !important;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
         
         #launcher-icon img { 
-            width: 42px !important; /* Ukuran diperkecil */
+            width: 42px !important; 
             height: auto !important; 
             display: block !important;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)) !important;
@@ -31,19 +31,19 @@
             transform: scale(1.1) rotate(-5deg) !important; 
         }
 
-        /* Animasi saat ikon diklik (Click Feedback) */
+        /* Animasi saat ikon diklik */
         #launcher-icon.clicked {
             transform: scale(0.82) !important;
         }
 
-        /* Container Menu Setengah Lingkaran */
+        /* Container Pembungkus Item Menu Setengah Lingkaran */
         #launcher-radial-menu {
             position: absolute !important;
             bottom: 135px !important;
             right: 22px !important;
             width: 42px !important;
             height: 42px !important;
-            z-index: 999997 !important;
+            z-index: 999998 !important;
             pointer-events: none !important;
         }
 
@@ -52,8 +52,8 @@
             position: absolute !important;
             top: 0 !important;
             left: 0 !important;
-            width: 40px !important;
-            height: 40px !important;
+            width: 42px !important;
+            height: 42px !important;
             border-radius: 50% !important;
             background: #ffffff !important;
             color: #1e293b !important;
@@ -61,17 +61,17 @@
             align-items: center !important;
             justify-content: center !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
             opacity: 0 !important;
-            transform: translate(0, 0) scale(0.3) !important;
+            transform: translate(0, 0) scale(0.2) !important;
             font-size: 18px !important;
             border: 1px solid rgba(0,0,0,0.08) !important;
+            pointer-events: none !important;
         }
 
         .radial-item:hover {
             background: #dcf8c6 !important;
-            transform: scale(1.18) !important;
         }
 
         /* Tooltip Label Nama Menu Saat Hover */
@@ -96,7 +96,7 @@
             opacity: 1 !important;
         }
 
-        /* Status Aktif Menu Terbuka */
+        /* Status Aktif saat Menu Terbuka */
         #launcher-widget-wrapper.active .radial-item {
             opacity: 1 !important;
             pointer-events: auto !important;
@@ -138,7 +138,7 @@
 
         // Build Item Menu Setengah Lingkaran
         const menuContainer = document.getElementById('launcher-radial-menu');
-        const radius = 85; // Jarak sebaran menu
+        const radius = 90; // Jarak sebaran rentangan
         const totalItems = menuData.length;
 
         menuData.forEach((item, index) => {
@@ -149,15 +149,15 @@
             a.setAttribute('data-title', item.title);
             a.innerHTML = item.icon;
 
-            // Hitung sudut menyebar setengah lingkaran (90 deg s/d 180 deg)
+            // Hitung sudut menyebar (90 deg s/d 180 deg)
             const angle = 90 + (index * (90 / (totalItems - 1 || 1)));
             const rad = angle * (Math.PI / 180);
 
             const x = Math.round(radius * Math.cos(rad));
             const y = Math.round(-radius * Math.sin(rad));
 
-            a.dataset.x = x;
-            a.dataset.y = y;
+            a.setAttribute('data-x', x);
+            a.setAttribute('data-y', y);
 
             menuContainer.appendChild(a);
         });
@@ -169,7 +169,7 @@
         initWidget();
     }
 
-    // 4. Logika Animasi Klik & Buka/Tutup Menu Setengah Lingkaran
+    // 4. Logika Buka/Tutup Menu Setengah Lingkaran
     window.toggleLauncherMenu = function() {
         const wrapper = document.getElementById('launcher-widget-wrapper');
         const icon = document.getElementById('launcher-icon');
@@ -179,7 +179,7 @@
 
         if (!wrapper || !icon) return;
 
-        // Efek animasi tekan pada ikon
+        // Efek animasi tekan pada ikon roket
         icon.classList.add('clicked');
         setTimeout(() => icon.classList.remove('clicked'), 200);
 
@@ -189,12 +189,14 @@
         if (isActive) {
             if (soundOpen) soundOpen.play().catch(() => {});
             items.forEach((item) => {
-                item.style.transform = `translate(${item.dataset.x}px, ${item.dataset.y}px) scale(1)`;
+                const x = item.getAttribute('data-x');
+                const y = item.getAttribute('data-y');
+                item.style.transform = `translate(${x}px, ${y}px) scale(1)`;
             });
         } else {
             if (soundClose) soundClose.play().catch(() => {});
             items.forEach((item) => {
-                item.style.transform = `translate(0, 0) scale(0.3)`;
+                item.style.transform = `translate(0, 0) scale(0.2)`;
             });
         }
     };
