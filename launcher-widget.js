@@ -1,22 +1,17 @@
 (function() {
-    // 1. Injeksi CSS ke <head>
+    // 1. Injeksi CSS Khusus Menu Link External
     const style = document.createElement('style');
     style.innerHTML = `
-        #launcher-chat, #launcher-icon { 
+        #launcher-menu-popup, #launcher-icon { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
         }
 
         @keyframes slideUp { 
-            from { transform: translateY(100%); opacity: 0; } 
-            to { transform: translateY(0); opacity: 1; } 
-        }
-        @keyframes tvOff { 
-            0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 
-            50% { transform: scale(1, 0.05); filter: brightness(5); } 
-            100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } 
+            from { transform: translateY(20px) scale(0.95); opacity: 0; } 
+            to { transform: translateY(0) scale(1); opacity: 1; } 
         }
 
-        /* Icon Floating Launcher (Sudah dinaikkan ke 80px) */
+        /* Icon Floating Launcher (Dinaikkan ke 80px agar pas di atas gambar panda) */
         #launcher-icon { 
             position: fixed !important; 
             bottom: 80px !important; 
@@ -28,129 +23,78 @@
         #launcher-icon img { 
             width: 60px !important; 
             height: auto !important; 
-            transition: transform 0.2s !important; 
+            transition: transform 0.2s ease-in-out !important; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)) !important;
         }
         #launcher-icon img:hover { 
             transform: scale(1.1) !important; 
         }
         
-        /* Chatbox Floating Container (Diselaraskan ke 80px) */
-        #launcher-chat { 
+        /* Popup Menu External Link (Muncul melayang DI ATAS ikon launcher) */
+        #launcher-menu-popup { 
             position: fixed !important; 
-            bottom: 80px !important; 
+            bottom: 150px !important; /* Ditempatkan pas di atas posisi ikon 80px */
             right: 20px !important; 
-            width: 330px !important; 
-            max-width: calc(100vw - 40px) !important;
-            height: 430px !important; 
+            width: 280px !important; 
             background: rgba(255, 255, 255, 0.95) !important; 
             backdrop-filter: blur(10px) !important;
-            border-radius: 20px !important; 
+            border-radius: 16px !important; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
             display: none !important; 
             flex-direction: column !important; 
             overflow: hidden !important; 
             z-index: 999999 !important;
+            border: 1px solid rgba(0,0,0,0.08) !important;
         }
         
-        #launcher-chat.open { 
+        #launcher-menu-popup.open { 
             display: flex !important; 
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; 
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; 
         }
-        #launcher-chat.closing { 
-            animation: tvOff 0.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important; 
-        }
-        
-        .header { 
+
+        .launcher-header { 
             background: #075E54 !important; 
             color: white !important; 
-            padding: 15px !important; 
+            padding: 12px 15px !important; 
             display: flex !important; 
             align-items: center !important; 
             justify-content: space-between !important; 
-            border-radius: 20px 20px 0 0 !important; 
+            font-weight: 600 !important;
+            font-size: 14px !important;
         }
-        .header-logo { 
-            width: 32px !important; 
-            height: auto !important; 
-            margin-right: 10px !important; 
+
+        .launcher-links-container {
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            max-height: 300px !important;
+            overflow-y: auto !important;
+            background: rgba(229, 221, 213, 0.4) !important;
         }
-        
-        #chat-body { 
-            flex: 1 !important; 
-            padding: 15px !important; 
-            overflow-y: auto !important; 
-            background: rgba(229, 221, 213, 0.6) !important; 
-            display: flex !important; 
-            flex-direction: column !important; 
+
+        .external-link-btn {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 10px 14px !important;
+            background: white !important;
+            color: #303030 !important;
+            text-decoration: none !important;
+            border-radius: 12px !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+            transition: all 0.2s ease !important;
         }
-        
-        .bubble { 
-            padding: 10px 14px !important; 
-            margin: 8px 0 !important; 
-            border-radius: 15px !important; 
-            max-width: 80% !important; 
-            font-size: 14px !important; 
-            line-height: 1.4 !important; 
-            position: relative !important; 
-            word-wrap: break-word !important; 
-            display: flex !important; 
-            flex-direction: column !important; 
+
+        .external-link-btn:hover {
+            background: #dcf8c6 !important;
+            transform: translateX(-3px) !important;
         }
-        .launcher { 
-            background: white !important; 
-            align-self: flex-start !important; 
-            border-bottom-left-radius: 0 !important; 
-            color: #303030 !important; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-        }
-        .user { 
-            background: #dcf8c6 !important; 
-            align-self: flex-end !important; 
-            border-bottom-right-radius: 0 !important; 
-            color: #303030 !important; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-        }
-        
-        .meta-container { 
-            display: flex !important; 
-            align-items: center !important; 
-            align-self: flex-end !important; 
-            margin-top: 4px !important; 
-            gap: 3px !important; 
-            user-select: none !important; 
-        }
-        .chat-time { 
-            font-size: 10px !important; 
-            color: #808080 !important; 
-        }
-        .ticks { 
-            font-size: 11px !important; 
-            font-weight: bold !important; 
-        }
-        .ticks.sent { color: #8696a0 !important; }
-        .ticks.read { color: #53bdeb !important; }
-        
-        #input-area { 
-            padding: 10px !important; 
-            background: white !important; 
-            display: flex !important; 
-            border-radius: 0 0 20px 20px !important; 
-            align-items: center !important; 
-        }
-        #user-input { 
-            flex: 1 !important; 
-            padding: 10px 14px !important; 
-            border-radius: 20px !important; 
-            border: 1px solid #ddd !important; 
-            outline: none !important; 
-        }
-        #send-btn { 
-            background: none !important; 
-            border: none !important; 
-            color: #075E54 !important; 
-            font-size: 20px !important; 
-            cursor: pointer !important; 
-            padding: 0 10px !important; 
+
+        .external-link-btn span {
+            font-size: 16px !important;
         }
     `;
     document.head.appendChild(style);
@@ -165,22 +109,31 @@
             <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
             <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
-            <div id="launcher-icon" onclick="openChat()">
+            <!-- Ikon Launcher -->
+            <div id="launcher-icon" onclick="toggleLauncherMenu()">
                 <img src="https://apxid.github.io/kelas9i/assets/launcher.png" alt="Launcher Icon"/>
             </div>
 
-            <div id="launcher-chat">
-                <div class="header">
-                    <div style="display:flex; align-items:center;">
-                        <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="header-logo" alt="Logo"/>
-                        <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+            <!-- Card Menu External Links -->
+            <div id="launcher-menu-popup">
+                <div class="launcher-header">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://apxid.github.io/kelas9i/assets/launcher.png" style="width:24px; height:auto;" alt="Logo"/>
+                        <span>Pilihan Tautan</span>
                     </div>
-                    <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
+                    <button onclick="toggleLauncherMenu()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">×</button>
                 </div>
-                <div id="chat-body"></div>
-                <div id="input-area">
-                    <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()"/>
-                    <button id="send-btn" onclick="sendMessage()">➤</button>
+                <div class="launcher-links-container">
+                    <!-- Tambah atau ubah daftar link eksternal di bawah ini -->
+                    <a href="https://apxid.github.io/kelas9i/launcher.html" target="_blank" class="external-link-btn">
+                        <span>🚀</span> Halaman Launcher
+                    </a>
+                    <a href="https://google.com" target="_blank" class="external-link-btn">
+                        <span>📚</span> Materi Kelas
+                    </a>
+                    <a href="https://classroom.google.com" target="_blank" class="external-link-btn">
+                        <span>📝</span> Pengumpulan Tugas
+                    </a>
                 </div>
             </div>
         `;
@@ -193,118 +146,20 @@
         initWidget();
     }
 
-    // 3. Logika Interaksi & Fetching
-    window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
-    window.isWaitingForName = false;
-    window.typeTimer = null;
-    window.lastUserMessageElement = null;
-
-    window.getFormattedTime = function() {
-        const now = new Date();
-        return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    };
-
-    window.startTypewriter = function() {
-        const el = document.getElementById('app-name');
-        if (!el) return;
-        const text = "LAUNCHER ASSISTANT    ";
-        let i = 0;
-        
-        if (window.typeTimer) clearInterval(window.typeTimer);
-        
-        function type() {
-            el.innerText = text.substring(0, i);
-            i = (i + 1) % (text.length + 1);
-        }
-        window.typeTimer = setInterval(type, 150);
-    };
-
-    window.openChat = function() {
+    // 3. Logika Buka / Tutup Menu External Link
+    window.toggleLauncherMenu = function() {
+        const menu = document.getElementById('launcher-menu-popup');
         const soundOpen = document.getElementById('sound-open');
-        if (soundOpen) soundOpen.play().catch(() => {});
-
-        document.getElementById('launcher-icon').style.display = 'none';
-        const chat = document.getElementById('launcher-chat');
-        chat.style.display = 'flex';
-        chat.classList.remove('closing');
-        chat.classList.add('open');
-        
-        window.startTypewriter();
-        
-        if (document.getElementById('chat-body').innerHTML === "") {
-            const savedName = localStorage.getItem('launcher_user');
-            if (savedName) {
-                window.addMessage(`Halo kembali ${savedName}! Ada yang bisa saya bantu?`, 'launcher');
-            } else {
-                window.addMessage("Halo! Saya Launcher Assistant. Siapa nama kamu?", 'launcher');
-                window.isWaitingForName = true;
-            }
-        }
-    };
-
-    window.closeChat = function() {
         const soundClose = document.getElementById('sound-close');
-        if (soundClose) soundClose.play().catch(() => {});
 
-        if (window.typeTimer) clearInterval(window.typeTimer);
-        const chat = document.getElementById('launcher-chat');
-        chat.classList.remove('open');
-        chat.classList.add('closing');
-        
-        setTimeout(() => {
-            chat.style.display = 'none';
-            document.getElementById('launcher-icon').style.display = 'block';
-        }, 500);
-    };
-
-    window.addMessage = function(text, sender) {
-        const body = document.getElementById('chat-body');
-        const div = document.createElement('div');
-        div.className = `bubble ${sender}`;
-        div.innerHTML = `<span>${text}</span><div class="meta-container"><span class="chat-time">${window.getFormattedTime()}</span></div>`;
-        
-        if (sender === 'user') {
-            const ticks = document.createElement('span');
-            ticks.className = 'ticks sent';
-            ticks.innerHTML = '&#10004;&#10004;';
-            div.querySelector('.meta-container').appendChild(ticks);
-            window.lastUserMessageElement = ticks;
-        }
-        
-        body.appendChild(div);
-        body.scrollTop = body.scrollHeight;
-    };
-
-    window.sendMessage = async function() {
-        const input = document.getElementById('user-input');
-        const val = input.value.trim();
-        if (!val) return;
-
-        window.addMessage(val, 'user');
-        input.value = '';
-
-        if (window.isWaitingForName) {
-            localStorage.setItem('launcher_user', val);
-            window.isWaitingForName = false;
-            window.addMessage(`Halo ${val}! Apa yang ingin ditanyakan?`, 'launcher');
-            if (window.lastUserMessageElement) window.lastUserMessageElement.className = 'ticks read';
-            return;
-        }
-
-        const typing = document.createElement('div');
-        typing.className = 'bubble launcher';
-        typing.innerHTML = "<i>Sedang mengetik...</i>";
-        document.getElementById('chat-body').appendChild(typing);
-        
-        try {
-            const res = await fetch(`${window.GAS_URL}?question=${encodeURIComponent(val)}&userName=${encodeURIComponent(localStorage.getItem('launcher_user') || 'Pengunjung')}`);
-            const data = await res.json();
-            typing.remove();
-            if (window.lastUserMessageElement) window.lastUserMessageElement.className = 'ticks read';
-            window.addMessage(data.answer, 'launcher');
-        } catch(err) {
-            typing.remove();
-            window.addMessage("Maaf, koneksi gagal.", 'launcher');
+        if (menu.classList.contains('open')) {
+            if (soundClose) soundClose.play().catch(() => {});
+            menu.classList.remove('open');
+            setTimeout(() => { menu.style.display = 'none'; }, 200);
+        } else {
+            if (soundOpen) soundOpen.play().catch(() => {});
+            menu.style.display = 'flex';
+            menu.classList.add('open');
         }
     };
 })();
