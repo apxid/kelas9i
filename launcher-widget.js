@@ -11,7 +11,7 @@
             to { transform: translateY(0) scale(1); opacity: 1; } 
         }
 
-        /* Icon Floating Launcher (Dinaikkan ke 80px agar pas di atas gambar panda) */
+        /* Icon Floating Launcher (Dinaikkan ke 80px agar pas di atas elemen lain) */
         #launcher-icon { 
             position: fixed !important; 
             bottom: 80px !important; 
@@ -30,10 +30,10 @@
             transform: scale(1.1) !important; 
         }
         
-        /* Popup Menu External Link (Muncul melayang DI ATAS ikon launcher) */
+        /* Popup Menu External Link (Melayang di atas ikon launcher) */
         #launcher-menu-popup { 
             position: fixed !important; 
-            bottom: 150px !important; /* Ditempatkan pas di atas posisi ikon 80px */
+            bottom: 150px !important; 
             right: 20px !important; 
             width: 280px !important; 
             background: rgba(255, 255, 255, 0.95) !important; 
@@ -124,7 +124,6 @@
                     <button onclick="toggleLauncherMenu()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">×</button>
                 </div>
                 <div class="launcher-links-container">
-                    <!-- Tambah atau ubah daftar link eksternal di bawah ini -->
                     <a href="https://apxid.github.io/kelas9i/kas" target="_blank" class="external-link-btn">
                         <span>🚀</span> KAS
                     </a>
@@ -152,10 +151,14 @@
         const soundOpen = document.getElementById('sound-open');
         const soundClose = document.getElementById('sound-close');
 
+        if (!menu) return;
+
         if (menu.classList.contains('open')) {
             if (soundClose) soundClose.play().catch(() => {});
             menu.classList.remove('open');
-            setTimeout(() => { menu.style.display = 'none'; }, 200);
+            setTimeout(() => { 
+                menu.style.display = 'none'; 
+            }, 200);
         } else {
             if (soundOpen) soundOpen.play().catch(() => {});
             menu.style.display = 'flex';
