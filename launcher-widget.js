@@ -20,13 +20,14 @@
         /* Icon Launcher */
         #launcher-icon { 
             position: absolute !important; 
-            bottom: 62px !important; 
-            right: 15px !important; 
+            bottom: 20px !important; 
+            right: 20px !important; 
             cursor: pointer !important; 
             z-index: 999999 !important; 
+            background: transparent !important;
         }
         #launcher-icon img { 
-            width: 65px !important; 
+            width: 60px !important; 
             height: auto !important; 
             transition: transform 0.2s !important; 
         }
@@ -37,14 +38,15 @@
         /* Chatbox Container */
         #launcher-chat { 
             position: absolute !important; 
-            bottom: 62px !important; 
-            right: 15px !important; 
-            left: 15px !important;
+            bottom: 20px !important; 
+            right: 20px !important; 
+            left: 20px !important;
             width: auto !important; 
             max-width: 330px !important;
             margin-left: auto !important;
             height: 430px !important; 
-            background: white !important; 
+            background: rgba(255, 255, 255, 0.95) !important; 
+            backdrop-filter: blur(10px) !important;
             border-radius: 20px !important; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
             display: none !important; 
@@ -71,24 +73,23 @@
             border-radius: 20px 20px 0 0 !important; 
         }
         .header-logo { 
-            width: 60px !important; 
+            width: 50px !important; 
             height: auto !important; 
             margin-right: 10px !important; 
-            margin-top: -30px !important; 
         }
         
         #chat-body { 
             flex: 1 !important; 
             padding: 15px !important; 
             overflow-y: auto !important; 
-            background: #e5ddd5 !important; 
+            background: rgba(229, 221, 213, 0.6) !important; 
             display: flex !important; 
             flex-direction: column !important; 
         }
         
         .bubble { 
             padding: 10px 14px !important; 
-            margin: 8px 15px !important; 
+            margin: 8px 10px !important; 
             border-radius: 15px !important; 
             max-width: 80% !important; 
             font-size: 14.5px !important; 
@@ -103,12 +104,14 @@
             align-self: flex-start !important; 
             border-bottom-left-radius: 0 !important; 
             color: #303030 !important; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
         }
         .user { 
             background: #dcf8c6 !important; 
             align-self: flex-end !important; 
             border-bottom-right-radius: 0 !important; 
             color: #303030 !important; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
         }
         
         .meta-container { 
@@ -139,7 +142,7 @@
         }
         #user-input { 
             flex: 1 !important; 
-            padding: 10px !important; 
+            padding: 10px 14px !important; 
             border-radius: 20px !important; 
             border: 1px solid #ddd !important; 
             outline: none !important; 
@@ -148,20 +151,16 @@
             background: none !important; 
             border: none !important; 
             color: #075E54 !important; 
-            font-size: 24px !important; 
+            font-size: 22px !important; 
             cursor: pointer !important; 
             padding: 0 10px !important; 
         }
     `;
     document.head.appendChild(style);
 
-    // 2. Tentukan target container di DOM
+    // 2. Menyisipkan Elemen Widget Langsung ke DOM
     const initWidget = () => {
-        let appContainer = document.querySelector('.w-full.max-w-md');
-        if (!appContainer) {
-            appContainer = document.body;
-        }
-
+        let appContainer = document.querySelector('.w-full.max-w-md') || document.body;
         appContainer.style.position = 'relative';
 
         const container = document.createElement('div');
@@ -190,14 +189,13 @@
         appContainer.appendChild(container);
     };
 
-    // Jalankan setelah DOM siap
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initWidget);
     } else {
         initWidget();
     }
 
-    // 3. Logika & Metode JavaScript Widget
+    // 3. Logika & Fungsi Operasional
     window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
     window.isWaitingForName = false;
     window.typeTimer = null;
