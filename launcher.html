@@ -6,26 +6,11 @@
   <title>Floating Launcher Menu</title>
   
   <style>
-    /* ==========================================================================
-       1. STYLES & DESAIN UTAMA (CSS)
-       ========================================================================== */
-    
-    :root {
-      --primary-color: #2563eb;       /* Warna biru utama */
-      --primary-hover: #1d4ed8;       /* Warna biru saat hover */
-      --bg-white: #ffffff;
-      --text-color: #1e293b;
-      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      --transition-speed: 0.4s;
-      --transition-cubic: cubic-bezier(0.34, 1.56, 0.64, 1); /* Efek membal (bounce) halus */
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
@@ -34,234 +19,236 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      color: var(--text-color);
+      color: #1e293b;
     }
 
-    /* Teks Pembantu di Halaman */
     .demo-info {
       text-align: center;
       padding: 20px;
-    }
-
-    /* Container Utama Widget Launcher */
-    .launcher-container {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 9999; /* Selalu berada di paling atas */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Tombol Utama (Main Trigger) */
-    .launcher-toggle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background-color: var(--primary-color);
-      color: var(--bg-white);
-      border: none;
-      cursor: pointer;
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 2;
-      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-      outline: none;
-    }
-
-    .launcher-toggle:hover {
-      background-color: var(--primary-hover);
-      transform: scale(1.05);
-      box-shadow: var(--shadow-hover);
-    }
-
-    /* Ikon di Dalam Tombol Utama */
-    .launcher-toggle svg {
-      width: 28px;
-      height: 28px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: transform var(--transition-speed) ease;
-      position: absolute;
-    }
-
-    .icon-open {
-      opacity: 1;
-      transform: rotate(0deg) scale(1);
-    }
-
-    .icon-close {
-      opacity: 0;
-      transform: rotate(-180deg) scale(0.5);
-    }
-
-    /* State Ketika Launcher Terbuka */
-    .launcher-container.active .icon-open {
-      opacity: 0;
-      transform: rotate(180deg) scale(0.5);
-    }
-
-    .launcher-container.active .icon-close {
-      opacity: 1;
-      transform: rotate(0deg) scale(1);
-    }
-
-    /* Container untuk Menampung Seluruh Shortcut Item */
-    .launcher-menu {
-      position: absolute;
-      width: 0;
-      height: 0;
-      pointer-events: none; /* Cegah interaksi saat menu tertutup */
-    }
-
-    .launcher-container.active .launcher-menu {
-      pointer-events: auto;
-    }
-
-    /* Masing-masing Tombol Shortcut Item */
-    .launcher-item {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: var(--bg-white);
-      color: var(--primary-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-      box-shadow: var(--shadow-soft);
-      opacity: 0;
-      transform: translate(0, 0) scale(0.3);
-      transition: 
-        transform var(--transition-speed) var(--transition-cubic),
-        opacity var(--transition-speed) ease,
-        box-shadow 0.2s ease;
-      /* Mengatur titik acuan animasi berada di tengah tombol utama */
-      top: -25px;
-      left: -25px;
-    }
-
-    .launcher-container.active .launcher-item {
-      opacity: 1;
-    }
-
-    .launcher-item:hover {
-      transform: var(--target-transform) scale(1.15) !important;
-      box-shadow: var(--shadow-hover);
-    }
-
-    /* Styling Ikon atau Gambar di Dalam Shortcut */
-    .launcher-item img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      border-radius: 4px;
-    }
-
-    .launcher-item svg {
-      width: 24px;
-      height: 24px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    /* Tooltip Teks saat Hover Shortcut */
-    .launcher-item::after {
-      content: attr(data-title);
-      position: absolute;
-      right: 60px;
-      background-color: rgba(15, 23, 42, 0.85);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      transform: translateX(10px);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-
-    .launcher-item:hover::after {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(0);
-    }
-
-    /* Pengaturan Ukuran khusus Mobile Screen */
-    @media (max-width: 480px) {
-      .launcher-container {
-        bottom: 20px;
-        right: 20px;
-      }
-      .launcher-toggle {
-        width: 56px;
-        height: 56px;
-      }
-      .launcher-item {
-        width: 46px;
-        height: 46px;
-        top: -23px;
-        left: -23px;
-      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Teks Informasi Sederhana -->
+  <!-- Konten Halaman Utama -->
   <div class="demo-info">
     <h2>Floating Launcher Menu</h2>
-    <p>Klik tombol lingkaran di kanan bawah untuk membuka shortcut.</p>
+    <p>Lihat di sebelah kanan bawah layar (di bawah pertengahan) untuk membuka shortcut launcher.</p>
   </div>
 
-  <!-- ==========================================================================
-       2. STRUKTUR ELEMEN WIDGET (HTML)
-       ========================================================================== -->
-  <div class="launcher-container" id="launcherContainer">
-    <!-- Menu tempat item shortcut akan di-render secara dinamis -->
-    <div class="launcher-menu" id="launcherMenu"></div>
-
-    <!-- Tombol Utamanya -->
-    <button class="launcher-toggle" id="launcherToggle" aria-label="Buka Menu">
-      <!-- Ikon Apps / Grid (Kondisi Tertutup) -->
-      <svg class="icon-open" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-      </svg>
-      <!-- Ikon Close / X (Kondisi Terbuka) -->
-      <svg class="icon-close" viewBox="0 0 24 24">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-
-  <!-- ==========================================================================
-       3. LOGIKA DAN PERHITUNGAN DINAMIS (JAVASCRIPT ES6)
-       ========================================================================== -->
+  <!-- Skrip Widget Floating Launcher -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      
-      /* DATA SHORTCUT 
-         Dapat ditambah/dikurangi tanpa perlu mengubah struktur HTML/CSS */
-      const launcherItems = [
+    (function() {
+      // 1. Injeksi CSS Widget ke dalam <head>
+      const style = document.createElement('style');
+      style.innerHTML = `
+        :root {
+          --launcher-primary: #2563eb;
+          --launcher-primary-hover: #1d4ed8;
+          --launcher-bg: #ffffff;
+          --launcher-text: #1e293b;
+          --launcher-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);
+          --launcher-shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.2), 0 8px 10px -6px rgba(0,0,0,0.1);
+          --launcher-speed: 0.4s;
+          --launcher-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Container Utama Widget - Diletakkan di bawah tengah layar sebelah kanan */
+        #floating-launcher-container {
+          position: fixed !important;
+          top: 60% !important; /* Di bawah pertengahan layar */
+          right: 25px !important;
+          transform: translateY(-50%) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
+        }
+
+        /* Tombol Utama (Trigger) */
+        #floating-launcher-container .launcher-toggle {
+          width: 64px !important;
+          height: 64px !important;
+          border-radius: 50% !important;
+          background-color: var(--launcher-bg) !important;
+          color: var(--launcher-text) !important;
+          border: none !important;
+          cursor: pointer !important;
+          box-shadow: var(--launcher-shadow) !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          position: relative !important;
+          z-index: 2 !important;
+          transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+          outline: none !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+        }
+
+        #floating-launcher-container .launcher-toggle:hover {
+          transform: scale(1.08) !important;
+          box-shadow: var(--launcher-shadow-hover) !important;
+        }
+
+        /* Gambar Ikon Custom Launcher */
+        #floating-launcher-container .launcher-toggle img.icon-custom {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          border-radius: 50% !important;
+          transition: transform var(--launcher-speed) ease, opacity var(--launcher-speed) ease !important;
+          position: absolute !important;
+        }
+
+        /* Ikon Close (X) saat menu terbuka */
+        #floating-launcher-container .launcher-toggle svg.icon-close {
+          width: 28px !important;
+          height: 28px !important;
+          fill: none !important;
+          stroke: var(--launcher-primary) !important;
+          stroke-width: 2.5 !important;
+          stroke-linecap: round !important;
+          stroke-linejoin: round !important;
+          transition: transform var(--launcher-speed) ease, opacity var(--launcher-speed) ease !important;
+          position: absolute !important;
+          opacity: 0 !important;
+          transform: rotate(-180deg) scale(0.5) !important;
+        }
+
+        /* State Aktif (Menu Terbuka) */
+        #floating-launcher-container.active .icon-custom {
+          opacity: 0 !important;
+          transform: rotate(180deg) scale(0.5) !important;
+        }
+
+        #floating-launcher-container.active .icon-close {
+          opacity: 1 !important;
+          transform: rotate(0deg) scale(1) !important;
+        }
+
+        /* Wrapper Menu Shortcut */
+        #floating-launcher-container .launcher-menu {
+          position: absolute !important;
+          width: 0 !important;
+          height: 0 !important;
+          pointer-events: none !important;
+        }
+
+        #floating-launcher-container.active .launcher-menu {
+          pointer-events: auto !important;
+        }
+
+        /* Tombol Shortcut Item */
+        #floating-launcher-container .launcher-item {
+          position: absolute !important;
+          width: 50px !important;
+          height: 50px !important;
+          border-radius: 50% !important;
+          background-color: var(--launcher-bg) !important;
+          color: var(--launcher-primary) !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          text-decoration: none !important;
+          box-shadow: var(--launcher-shadow) !important;
+          opacity: 0 !important;
+          transform: translate(0, 0) scale(0.3) !important;
+          transition: transform var(--launcher-speed) var(--launcher-ease), opacity var(--launcher-speed) ease, box-shadow 0.2s ease !important;
+          top: -25px !important;
+          left: -25px !important;
+        }
+
+        #floating-launcher-container.active .launcher-item {
+          opacity: 1 !important;
+        }
+
+        #floating-launcher-container .launcher-item:hover {
+          transform: var(--target-transform) scale(1.15) !important;
+          box-shadow: var(--launcher-shadow-hover) !important;
+        }
+
+        #floating-launcher-container .launcher-item img {
+          width: 24px !important;
+          height: 24px !important;
+          object-fit: contain !important;
+          border-radius: 4px !important;
+        }
+
+        #floating-launcher-container .launcher-item svg {
+          width: 24px !important;
+          height: 24px !important;
+          fill: none !important;
+          stroke: currentColor !important;
+          stroke-width: 2 !important;
+          stroke-linecap: round !important;
+          stroke-linejoin: round !important;
+        }
+
+        /* Tooltip */
+        #floating-launcher-container .launcher-item::after {
+          content: attr(data-title);
+          position: absolute !important;
+          right: 60px !important;
+          background-color: rgba(15, 23, 42, 0.85) !important;
+          color: #ffffff !important;
+          padding: 5px 10px !important;
+          border-radius: 6px !important;
+          font-size: 12px !important;
+          font-weight: 500 !important;
+          white-space: nowrap !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+          transition: opacity 0.2s ease, transform 0.2s ease !important;
+          transform: translateX(10px) !important;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+        }
+
+        #floating-launcher-container .launcher-item:hover::after {
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: translateX(0) !important;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 480px) {
+          #floating-launcher-container {
+            top: 65% !important;
+            right: 15px !important;
+          }
+          #floating-launcher-container .launcher-toggle {
+            width: 56px !important;
+            height: 56px !important;
+          }
+          #floating-launcher-container .launcher-item {
+            width: 46px !important;
+            height: 46px !important;
+            top: -23px !important;
+            left: -23px !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+
+      // 2. Injeksi Elemen HTML ke <body>
+      const launcherContainer = document.createElement('div');
+      launcherContainer.id = 'floating-launcher-container';
+      launcherContainer.innerHTML = `
+        <div class="launcher-menu" id="launcherMenu"></div>
+        <button class="launcher-toggle" id="launcherToggle" aria-label="Buka Menu">
+          <img src="https://apxid.github.io/kelas9i/assets/launcher.png" class="icon-custom" alt="Launcher" />
+          <svg class="icon-close" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      `;
+      document.body.appendChild(launcherContainer);
+
+      // 3. Logika JavaScript & Data Array
+      window.launcherItems = [
         {
           title: "Kas Kelas 9I",
           icon: `<svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
@@ -284,80 +271,59 @@
         }
       ];
 
-      // Deklarasi Elemen DOM
-      const container = document.getElementById('launcherContainer');
       const toggleBtn = document.getElementById('launcherToggle');
       const menu = document.getElementById('launcherMenu');
+      const radius = 130; // Jarak sebaran busur (px)
+      const startAngle = 180; // Sudut awal (kiri)
+      const endAngle = 270;   // Sudut akhir (atas)
 
-      /* PARAMETER POSISI DINAMIS */
-      const radius = 140; // Jarak melengkung (px) dari pusat tombol utama
-      const totalItems = launcherItems.length;
-      
-      // Rentang sudut setengah lingkaran (Busur 180° hingga 270° berada di Kuadran Kiri-Atas)
-      const startAngle = 180; // Menghadap lurus ke kiri
-      const endAngle = 270;   // Menghadap lurus ke atas
+      // Render Shortcut secara Dinamis dengan Trigonometri
+      window.renderLauncherItems = function() {
+        menu.innerHTML = '';
+        const totalItems = window.launcherItems.length;
 
-      /**
-       * Menderetkan dan merender item shortcut ke dalam DOM 
-       * serta mengkalkulasi koordinat posisi masing-masing menggunakan Trigonometri.
-       */
-      const renderMenuItems = () => {
-        menu.innerHTML = ''; // Reset konten menu
-
-        launcherItems.forEach((item, index) => {
+        window.launcherItems.forEach((item, index) => {
           const anchor = document.createElement('a');
           anchor.className = 'launcher-item';
           anchor.href = item.url;
           anchor.target = '_blank';
           anchor.rel = 'noopener noreferrer';
           anchor.setAttribute('data-title', item.title);
-          
-          // Memasukkan gambar URL atau string SVG Icon
+
           if (item.icon.startsWith('http') || item.icon.startsWith('data:image')) {
             anchor.innerHTML = `<img src="${item.icon}" alt="${item.title}" />`;
           } else {
             anchor.innerHTML = item.icon;
           }
 
-          /* KALKULASI TRIGONOMETRI (Math.cos & Math.sin)
-             Menentukan derajat (degree) tiap item agar tersebar merata dalam rentang 180° - 270° */
+          // Hitung sudut tiap item dalam rentang 180°-270°
           let angleDegree;
           if (totalItems === 1) {
-            angleDegree = 225; // Jika hanya ada 1 item, letakkan persis di diagonal tengah (45 derajat)
+            angleDegree = 225;
           } else {
             angleDegree = startAngle + (index * ((endAngle - startAngle) / (totalItems - 1)));
           }
 
-          // Konversi derajat ke radian
           const angleRadian = angleDegree * (Math.PI / 180);
-
-          // Hitung nilai X (Horizontal) dan Y (Vertikal)
           const x = Math.round(radius * Math.cos(angleRadian));
           const y = Math.round(radius * Math.sin(angleRadian));
 
-          // Set properti CSS Transform target secara spesifik pada elemen
           const targetTransform = `translate(${x}px, ${y}px)`;
           anchor.style.setProperty('--target-transform', targetTransform);
-
-          // Berikan delay staggered animation (efek muncul berurutan)
           anchor.style.transitionDelay = `${index * 0.04}s`;
 
-          // Event Listener: Terapkan posisi saat menu diaktifkan
           menu.appendChild(anchor);
         });
       };
 
-      // Tampilkan item launcher ke layar
-      renderMenuItems();
+      // Panggil render pertama kali
+      window.renderLauncherItems();
 
-      /**
-       * Fungsi Buka / Tutup Launcher
-       */
-      const toggleLauncher = () => {
-        const isActive = container.classList.toggle('active');
-        
-        // Atur posisi transform seluruh item sesuai koordinat kalkulasi
+      // Fungsi Buka/Tutup Menu
+      window.toggleLauncher = function() {
+        const isActive = launcherContainer.classList.toggle('active');
         const items = menu.querySelectorAll('.launcher-item');
+
         items.forEach((item) => {
           if (isActive) {
             const targetTransform = item.style.getPropertyValue('--target-transform');
@@ -368,37 +334,30 @@
         });
       };
 
-      const closeLauncher = () => {
-        if (container.classList.contains('active')) {
-          toggleLauncher();
+      window.closeLauncher = function() {
+        if (launcherContainer.classList.contains('active')) {
+          window.toggleLauncher();
         }
       };
 
-      /* ==========================================================================
-         4. EVENT LISTENERS
-         ========================================================================== */
-
-      // 1. Klik Tombol Utama
+      // Event Listeners
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleLauncher();
+        window.toggleLauncher();
       });
 
-      // 2. Klik Area Di Luar Launcher untuk Menutup Menu
       document.addEventListener('click', (e) => {
-        if (!container.contains(e.target)) {
-          closeLauncher();
+        if (!launcherContainer.contains(e.target)) {
+          window.closeLauncher();
         }
       });
 
-      // 3. Tekan Tombol ESC pada Keyboard untuk Menutup Menu
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          closeLauncher();
+          window.closeLauncher();
         }
       });
-
-    });
+    })();
   </script>
 </body>
 </html>
