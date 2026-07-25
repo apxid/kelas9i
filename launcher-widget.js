@@ -125,8 +125,8 @@
                 </div>
                 <div class="launcher-links-container">
                     <!-- Tambah atau ubah daftar link eksternal di bawah ini -->
-                    <a href="https://apxid.github.io/kelas9i/launcher.html" target="_blank" class="external-link-btn">
-                        <span>🚀</span> Halaman Launcher
+                    <a href="https://apxid.github.io/kelas9i/kas" target="_blank" class="external-link-btn">
+                        <span>🚀</span> KAS
                     </a>
                     <a href="https://google.com" target="_blank" class="external-link-btn">
                         <span>📚</span> Materi Kelas
