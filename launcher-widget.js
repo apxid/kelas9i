@@ -31,12 +31,12 @@
             transform: scale(1.1) rotate(-5deg) !important; 
         }
 
-        /* Animasi saat ikon diklik */
+        /* Animasi Tekan Klik */
         #launcher-icon.clicked {
             transform: scale(0.82) !important;
         }
 
-        /* Container Pembungkus Item Menu Setengah Lingkaran */
+        /* Container Pembungkus Item Menu */
         #launcher-radial-menu {
             position: absolute !important;
             bottom: 135px !important;
@@ -47,7 +47,7 @@
             pointer-events: none !important;
         }
 
-        /* Item Tombol Menu Setengah Lingkaran */
+        /* Item Tombol Menu Setengah Lingkaran (Tanpa !important pada transform agar JS bisa mengubah posisi) */
         .radial-item {
             position: absolute !important;
             top: 0 !important;
@@ -62,9 +62,9 @@
             justify-content: center !important;
             text-decoration: none !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
             opacity: 0 !important;
-            transform: translate(0, 0) scale(0.2) !important;
+            transform: translate(0, 0) scale(0.2);
             font-size: 18px !important;
             border: 1px solid rgba(0,0,0,0.08) !important;
             pointer-events: none !important;
@@ -111,14 +111,14 @@
         { title: "LMS Informatika", url: "https://tik-spensamo.blogspot.com/", icon: "📝" }
     ];
 
-    // 3. Injeksi Elemen HTML ke Kontainer Aplikasi (.w-full.max-w-md)
+    // 3. Injeksi Elemen HTML ke Kontainer Utama
     const initWidget = () => {
         if (document.getElementById('launcher-widget-wrapper')) return;
 
-        const appContainer = document.querySelector('.w-full.max-w-md');
-        if (!appContainer) return;
-
-        appContainer.style.position = 'relative';
+        const appContainer = document.querySelector('.w-full.max-w-md') || document.body;
+        if (appContainer !== document.body) {
+            appContainer.style.position = 'relative';
+        }
 
         const wrapper = document.createElement('div');
         wrapper.id = 'launcher-widget-wrapper';
@@ -136,9 +136,9 @@
         `;
         appContainer.appendChild(wrapper);
 
-        // Build Item Menu Setengah Lingkaran
+        // Render Item Menu Setengah Lingkaran
         const menuContainer = document.getElementById('launcher-radial-menu');
-        const radius = 90; // Jarak sebaran rentangan
+        const radius = 95; // Jarak sebaran tombol dari ikon roket
         const totalItems = menuData.length;
 
         menuData.forEach((item, index) => {
@@ -149,7 +149,7 @@
             a.setAttribute('data-title', item.title);
             a.innerHTML = item.icon;
 
-            // Hitung sudut menyebar (90 deg s/d 180 deg)
+            // Sudut sebaran dari 90 derajat (Atas) ke 180 derajat (Kiri)
             const angle = 90 + (index * (90 / (totalItems - 1 || 1)));
             const rad = angle * (Math.PI / 180);
 
@@ -169,7 +169,7 @@
         initWidget();
     }
 
-    // 4. Logika Buka/Tutup Menu Setengah Lingkaran
+    // 4. Logika Buka/Tutup Menu
     window.toggleLauncherMenu = function() {
         const wrapper = document.getElementById('launcher-widget-wrapper');
         const icon = document.getElementById('launcher-icon');
@@ -179,11 +179,11 @@
 
         if (!wrapper || !icon) return;
 
-        // Efek animasi tekan pada ikon roket
+        // Efek klik membal pada roket
         icon.classList.add('clicked');
         setTimeout(() => icon.classList.remove('clicked'), 200);
 
-        // Toggle state aktif
+        // Toggle kelas aktif
         const isActive = wrapper.classList.toggle('active');
 
         if (isActive) {
@@ -191,12 +191,12 @@
             items.forEach((item) => {
                 const x = item.getAttribute('data-x');
                 const y = item.getAttribute('data-y');
-                item.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+                item.style.setProperty('transform', `translate(${x}px, ${y}px) scale(1)`, 'important');
             });
         } else {
             if (soundClose) soundClose.play().catch(() => {});
             items.forEach((item) => {
-                item.style.transform = `translate(0, 0) scale(0.2)`;
+                item.style.setProperty('transform', 'translate(0px, 0px) scale(0.2)', 'important');
             });
         }
     };
