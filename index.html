@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MyClass 9I - Dashboard</title>
+  
+  <!-- Konfigurasi PWA & Ikon -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B409C">
+  <link rel="icon" type="image/png" href="https://apxid.github.io/kelas9i/assets/9i.png">
+  <link rel="apple-touch-icon" href="https://apxid.github.io/kelas9i/assets/9i.png">
+
+  <!-- Eksternal Styling & Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,45 +41,12 @@
 </head>
 <body class="bg-slate-950 flex justify-center items-center min-h-screen font-sans antialiased">
 
-  <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
-    
-    <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
-      <div id="active-view"></div>
-    </div>
-
-    <nav id="bottom-nav" class="bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-1 py-2.5 flex justify-around items-center z-40">
-      <button onclick="switchView('dashboard')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-school text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
-      </button>
-      <button onclick="switchView('formBiodata')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-clipboard-list text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Isi Data</span>
-      </button>
-      <button onclick="switchView('profilSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-id-card text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Profil</span>
-      </button>
-      <button onclick="switchView('informasiSiswa')" class="nav-item flex flex-col items-center justify-center text-gray-400 py-1 flex-1 transition-all">
-        <i class="fas fa-folder-open text-base mb-0.5"></i>
-        <span class="text-[8px] font-bold uppercase tracking-wider">Jejak</span>
-      </button>
-    </nav>
-
-  </div>
-
-  <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-white p-5 w-full max-w-xs text-center shadow-2xl rounded-2xl">
-      <h3 id="alert-title" class="text-sm font-black text-slate-800 mb-1"></h3>
-      <p id="alert-msg" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
-      <button onclick="closeAlert()" class="w-full py-2.5 bg-smpprimary text-white font-bold text-xs rounded-xl">Selesai</button>
-    </div>
-  </div>
-
+  <!-- URL WEB APP GOOGLE APPS SCRIPT -->
   <script>
-    // URL WEB APP GOOGLE APPS SCRIPT
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyK6wmxSpZ3tEG0Rar3BlGjp7z-3ZPhTB6NvdmNkx8QlNKSoqafhsY0c1ZAcEMbPyW1VQ/exec";
   </script>
+
+  <!-- Pemanggilan Modul Skrip Eksternal -->
   <script src="Scripts.js"></script>
   <script src="piket.js"></script>
   <script src="panda.js"></script>
