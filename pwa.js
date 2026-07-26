@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Mencegah duplikasi elemen jika skrip terpanggil berulang kali
   if (document.getElementById('app-main-container')) return;
 
   const appShellHTML = `
@@ -41,16 +40,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.body.insertAdjacentHTML('afterbegin', appShellHTML);
 
+  // Beritahu skrip lain bahwa kerangka aplikasi sudah siap
+  document.dispatchEvent(new Event('appShellReady'));
+
   if (typeof switchView === 'function') {
     switchView('dashboard');
   }
 });
 
-// Pendaftaran Service Worker untuk PWA
+// Pendaftaran Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then((reg) => console.log('Service Worker PWA berhasil didaftarkan:', reg.scope))
-      .catch((err) => console.log('Service Worker PWA gagal didaftarkan:', err));
+      .catch((err) => console.log('Service Worker gagal:', err));
   });
 }
