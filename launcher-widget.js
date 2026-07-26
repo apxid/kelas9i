@@ -1,5 +1,5 @@
 (function() {
-    // 1. Injeksi CSS Khusus Launcher & Menu Setengah Lingkaran
+    // 1. Injeksi CSS Khusus Edge Panel S9 FE Style
     const style = document.createElement('style');
     style.innerHTML = `
         #launcher-widget-wrapper, #launcher-widget-wrapper * { 
@@ -7,104 +7,127 @@
             box-sizing: border-box !important;
         }
 
-        /* Ikon Roket Floating */
+        /* Tombol Handle Edge Panel di Samping Kanan Layar */
         #launcher-icon { 
-            position: absolute !important; 
-            bottom: 135px !important; 
-            right: 22px !important; 
+            position: fixed !important; 
+            top: 50% !important; 
+            right: 0 !important; 
+            transform: translateY(-50%) !important;
             cursor: pointer !important; 
             z-index: 999999 !important; 
-            background: transparent !important;
+            background: rgba(30, 41, 59, 0.6) !important;
+            backdrop-filter: blur(8px) !important;
+            padding: 12px 6px !important;
+            border-radius: 12px 0 0 12px !important;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.2) !important;
             user-select: none !important;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
         
         #launcher-icon img { 
-            width: 42px !important; 
+            width: 28px !important; 
             height: auto !important; 
             display: block !important;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)) !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)) !important;
             transition: transform 0.2s ease !important;
         }
 
-        #launcher-icon:hover img { 
-            transform: scale(1.1) rotate(-5deg) !important; 
+        #launcher-icon:hover {
+            background: rgba(30, 41, 59, 0.9) !important;
+            padding-right: 8px !important;
         }
 
-        /* Animasi Tekan Klik */
+        /* Animasi Tekan Klik Handle */
         #launcher-icon.clicked {
-            transform: scale(0.82) !important;
+            transform: translateY(-50%) scale(0.9) !important;
         }
 
-        /* Container Pembungkus Item Menu */
+        /* Container Pembungkus Panel Vertikal */
         #launcher-radial-menu {
-            position: absolute !important;
-            bottom: 135px !important;
-            right: 22px !important;
-            width: 42px !important;
-            height: 42px !important;
+            position: fixed !important;
+            top: 50% !important;
+            right: -80px !important; /* Disembunyikan di luar layar saat tertutup */
+            transform: translateY(-50%) !important;
+            width: 65px !important;
             z-index: 999998 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            padding: 15px 8px !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(16px) !important;
+            border-radius: 20px 0 0 20px !important;
+            box-shadow: -8px 0 25px rgba(0,0,0,0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            border-right: none !important;
+            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
+            opacity: 0 !important;
             pointer-events: none !important;
         }
 
-        /* Item Tombol Menu Setengah Lingkaran (Tanpa !important pada transform agar JS bisa mengubah posisi) */
+        /* Item Tombol Panel Vertikal */
         .radial-item {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 42px !important;
-            height: 42px !important;
-            border-radius: 50% !important;
+            position: relative !important;
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 14px !important;
             background: #ffffff !important;
             color: #1e293b !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
-            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
-            opacity: 0 !important;
-            transform: translate(0, 0) scale(0.2);
-            font-size: 18px !important;
-            border: 1px solid rgba(0,0,0,0.08) !important;
-            pointer-events: none !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+            transition: transform 0.2s ease, background 0.2s ease !important;
+            font-size: 20px !important;
+            border: 1px solid rgba(0,0,0,0.05) !important;
         }
 
         .radial-item:hover {
-            background: #dcf8c6 !important;
+            background: #e2e8f0 !important;
+            transform: scale(1.08) !important;
         }
 
         /* Tooltip Label Nama Menu Saat Hover */
         .radial-item::after {
             content: attr(data-title) !important;
             position: absolute !important;
-            right: 48px !important;
-            background: rgba(15, 23, 42, 0.85) !important;
+            right: 60px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            background: rgba(15, 23, 42, 0.9) !important;
             color: white !important;
-            padding: 4px 8px !important;
-            border-radius: 6px !important;
-            font-size: 11px !important;
+            padding: 5px 10px !important;
+            border-radius: 8px !important;
+            font-size: 12px !important;
             white-space: nowrap !important;
             opacity: 0 !important;
             pointer-events: none !important;
             transition: opacity 0.2s ease !important;
             font-weight: 600 !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
         }
 
         .radial-item:hover::after {
             opacity: 1 !important;
         }
 
-        /* Status Aktif saat Menu Terbuka */
-        #launcher-widget-wrapper.active .radial-item {
+        /* Status Aktif saat Edge Panel Terbuka */
+        #launcher-widget-wrapper.active #launcher-radial-menu {
+            right: 15px !important; /* Muncul menggeser ke dalam layar */
             opacity: 1 !important;
             pointer-events: auto !important;
+        }
+        
+        /* Menggeser Handle saat panel terbuka agar tidak menumpuk */
+        #launcher-widget-wrapper.active #launcher-icon {
+            right: 85px !important;
+            border-radius: 12px !important;
         }
     `;
     document.head.appendChild(style);
 
-    // 2. Data Link Eksternal
+    // 2. Data Link Eksternal (Bisa ditambah sesuai kebutuhan)
     const menuData = [
         { title: "KAS", url: "https://apxid.github.io/kelas9i/kas", icon: "🚀" },
         { title: "Home", url: "https://apxid.github.io/kelas9i/", icon: "📚" },
@@ -115,10 +138,7 @@
     const initWidget = () => {
         if (document.getElementById('launcher-widget-wrapper')) return;
 
-        const appContainer = document.querySelector('.w-full.max-w-md') || document.body;
-        if (appContainer !== document.body) {
-            appContainer.style.position = 'relative';
-        }
+        const appContainer = document.body;
 
         const wrapper = document.createElement('div');
         wrapper.id = 'launcher-widget-wrapper';
@@ -126,39 +146,26 @@
             <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
             <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
-            <!-- Menu Setengah Lingkaran -->
+            <!-- Container Edge Panel Vertikal -->
             <div id="launcher-radial-menu"></div>
 
-            <!-- Ikon Roket Launcher -->
+            <!-- Handle / Tab Edge Panel di Tepi Layar -->
             <div id="launcher-icon" onclick="toggleLauncherMenu()">
-                <img src="https://apxid.github.io/kelas9i/assets/launcher.png" alt="Launcher Icon"/>
+                <img src="https://apxid.github.io/kelas9i/assets/launcher.png" alt="Edge Panel"/>
             </div>
         `;
         appContainer.appendChild(wrapper);
 
-        // Render Item Menu Setengah Lingkaran
+        // Render Item Menu Vertikal ke dalam Panel
         const menuContainer = document.getElementById('launcher-radial-menu');
-        const radius = 95; // Jarak sebaran tombol dari ikon roket
-        const totalItems = menuData.length;
 
-        menuData.forEach((item, index) => {
+        menuData.forEach((item) => {
             const a = document.createElement('a');
             a.className = 'radial-item';
             a.href = item.url;
             a.target = '_blank';
             a.setAttribute('data-title', item.title);
             a.innerHTML = item.icon;
-
-            // Sudut sebaran dari 90 derajat (Atas) ke 180 derajat (Kiri)
-            const angle = 90 + (index * (90 / (totalItems - 1 || 1)));
-            const rad = angle * (Math.PI / 180);
-
-            const x = Math.round(radius * Math.cos(rad));
-            const y = Math.round(-radius * Math.sin(rad));
-
-            a.setAttribute('data-x', x);
-            a.setAttribute('data-y', y);
-
             menuContainer.appendChild(a);
         });
     };
@@ -169,35 +176,26 @@
         initWidget();
     }
 
-    // 4. Logika Buka/Tutup Menu
+    // 4. Logika Buka/Tutup Edge Panel
     window.toggleLauncherMenu = function() {
         const wrapper = document.getElementById('launcher-widget-wrapper');
         const icon = document.getElementById('launcher-icon');
-        const items = document.querySelectorAll('.radial-item');
         const soundOpen = document.getElementById('sound-open');
         const soundClose = document.getElementById('sound-close');
 
         if (!wrapper || !icon) return;
 
-        // Efek klik membal pada roket
+        // Efek klik membal pada handle
         icon.classList.add('clicked');
         setTimeout(() => icon.classList.remove('clicked'), 200);
 
-        // Toggle kelas aktif
+        // Toggle kelas aktif untuk memicu animasi CSS slide-in/out
         const isActive = wrapper.classList.toggle('active');
 
         if (isActive) {
             if (soundOpen) soundOpen.play().catch(() => {});
-            items.forEach((item) => {
-                const x = item.getAttribute('data-x');
-                const y = item.getAttribute('data-y');
-                item.style.setProperty('transform', `translate(${x}px, ${y}px) scale(1)`, 'important');
-            });
         } else {
             if (soundClose) soundClose.play().catch(() => {});
-            items.forEach((item) => {
-                item.style.setProperty('transform', 'translate(0px, 0px) scale(0.2)', 'important');
-            });
         }
     };
 })();
