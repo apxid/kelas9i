@@ -1,5 +1,5 @@
 (function() {
-    // 1. CSS Tampilan One UI Samsung Edge Panel
+    // 1. CSS Tampilan One UI Samsung Edge Panel (Ringkas & Full Rounded)
     const style = document.createElement('style');
     style.innerHTML = `
         #launcher-widget-wrapper, #launcher-widget-wrapper * { 
@@ -7,7 +7,7 @@
             box-sizing: border-box !important;
         }
 
-        /* Handle Garis Samping Khas Samsung Edge Panel */
+        /* Handle Garis Samping Samsung Edge Panel */
         #launcher-icon { 
             position: absolute !important; 
             top: 50% !important; 
@@ -15,50 +15,50 @@
             transform: translateY(-50%) !important;
             cursor: pointer !important; 
             z-index: 999999 !important; 
-            width: 6px !important;
-            height: 80px !important;
-            background: rgba(255, 255, 255, 0.45) !important;
+            width: 5px !important;
+            height: 75px !important;
+            background: rgba(255, 255, 255, 0.5) !important;
             backdrop-filter: blur(8px) !important;
             -webkit-backdrop-filter: blur(8px) !important;
-            border-radius: 6px 0 0 6px !important;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.2) !important;
+            border-radius: 4px 0 0 4px !important;
+            box-shadow: -2px 0 6px rgba(0,0,0,0.2) !important;
             user-select: none !important;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
         
         #launcher-icon:hover {
-            width: 10px !important;
-            background: rgba(255, 255, 255, 0.75) !important;
+            width: 8px !important;
+            background: rgba(255, 255, 255, 0.8) !important;
         }
 
         #launcher-icon.clicked {
             transform: translateY(-50%) scale(0.9) !important;
         }
 
-        /* Container Panel Utama Samsung One UI (Gelap & Blur) */
+        /* Container Panel Utama Samsung Edge (Ramping, Gelap, Rounded) */
         #launcher-radial-menu {
             position: absolute !important;
             top: 50% !important;
-            right: -130px !important;
+            right: -100px !important;
             transform: translateY(-50%) !important;
-            width: 100px !important;
+            width: 72px !important; /* Dipersempit agar pas dengan ikon */
             z-index: 999998 !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            gap: 12px !important;
-            padding: 18px 8px 14px 8px !important;
-            background: rgba(28, 28, 30, 0.75) !important;
+            gap: 10px !important;
+            padding: 14px 6px 10px 6px !important;
+            background: rgba(30, 30, 32, 0.78) !important;
             backdrop-filter: blur(25px) saturation(180%) !important;
             -webkit-backdrop-filter: blur(25px) saturation(180%) !important;
-            border-radius: 26px 0 0 26px !important;
-            box-shadow: -8px 8px 30px rgba(0, 0, 0, 0.35) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 22px 0 0 22px !important; /* Rounded corner khas One UI */
+            box-shadow: -6px 6px 25px rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
             border-right: none !important;
-            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
+            transition: right 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
             opacity: 0 !important;
             pointer-events: none !important;
-            max-height: 85vh !important;
+            max-height: 88vh !important;
             overflow-y: auto !important;
             scrollbar-width: none !important;
         }
@@ -67,14 +67,14 @@
             display: none;
         }
 
-        /* Garis Pemisah Putus-Putus */
+        /* Garis Pemisah Putus-Putus Halus */
         .edge-divider {
-            width: 80% !important;
-            border-top: 1.5px dotted rgba(255, 255, 255, 0.3) !important;
-            margin: 2px 0 !important;
+            width: 82% !important;
+            border-top: 1px dotted rgba(255, 255, 255, 0.3) !important;
+            margin: 1px 0 !important;
         }
 
-        /* Item Aplikasi (Squircle Icon + Label Teks) */
+        /* Item Aplikasi */
         .edge-item-wrapper {
             display: flex !important;
             flex-direction: column !important;
@@ -86,58 +86,63 @@
         }
 
         .edge-item-wrapper:hover {
-            transform: scale(1.06) !important;
+            transform: scale(1.08) !important;
         }
 
+        /* Ikon Squircle (Ukurannya Diperkecil & Rounded Corner Presisi) */
         .edge-icon-box {
-            width: 46px !important;
-            height: 46px !important;
-            border-radius: 15px !important;
-            background: rgba(255, 255, 255, 0.12) !important;
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 12px !important; /* Rounded Squircle */
+            background: rgba(255, 255, 255, 0.15) !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-size: 20px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+            font-size: 17px !important;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.18) !important;
             transition: background 0.2s ease !important;
         }
 
         .edge-item-wrapper:hover .edge-icon-box {
-            background: rgba(255, 255, 255, 0.25) !important;
+            background: rgba(255, 255, 255, 0.28) !important;
         }
 
+        /* Label Teks Kecil Ringkas di Bawah Ikon */
         .edge-label {
-            margin-top: 4px !important;
+            margin-top: 3px !important;
             color: #FFFFFF !important;
-            font-size: 10px !important;
+            font-size: 9px !important;
             font-weight: 400 !important;
             text-align: center !important;
-            max-width: 80px !important;
+            max-width: 64px !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
+            line-height: 1.1 !important;
         }
 
-        /* Footer Menu (Navigasi Bawah) */
+        /* Navigasi Bawah (Footer Icon Grid & Edit) */
         .edge-footer {
             display: flex !important;
             justify-content: space-around !important;
             width: 100% !important;
-            padding-top: 6px !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+            padding-top: 4px !important;
+            margin-top: 2px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         .edge-footer-btn {
             background: transparent !important;
             border: none !important;
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-size: 14px !important;
+            color: rgba(255, 255, 255, 0.75) !important;
+            font-size: 12px !important;
             cursor: pointer !important;
+            padding: 2px !important;
         }
 
-        /* Status Aktif saat Edge Panel Terbuka */
+        /* Status Aktif Panel Terbuka */
         #launcher-widget-wrapper.active #launcher-radial-menu {
             right: 0 !important;
             opacity: 1 !important;
@@ -145,8 +150,8 @@
         }
         
         #launcher-widget-wrapper.active #launcher-icon {
-            right: 100px !important;
-            border-radius: 6px !important;
+            right: 72px !important;
+            border-radius: 4px !important;
         }
     `;
     document.head.appendChild(style);
@@ -175,7 +180,7 @@
         return a;
     };
 
-    // 3. Injeksi Elemen HTML ke Kontainer Utama Web
+    // 3. Injeksi Elemen HTML ke Kontainer Utama
     const initWidget = () => {
         if (document.getElementById('launcher-widget-wrapper')) return;
 
@@ -194,7 +199,7 @@
             <div id="launcher-radial-menu">
                 <div id="edge-featured-container" style="width:100%;"></div>
                 <div class="edge-divider"></div>
-                <div id="edge-main-container" style="width:100%; display:flex; flex-direction:column; gap:10px; align-items:center;"></div>
+                <div id="edge-main-container" style="width:100%; display:flex; flex-direction:column; gap:8px; align-items:center;"></div>
                 <div class="edge-footer">
                     <button class="edge-footer-btn" title="Menu">:::</button>
                     <button class="edge-footer-btn" title="Edit">✏️</button>
@@ -205,11 +210,11 @@
         `;
         appContainer.appendChild(wrapper);
 
-        // Render Item Atas (Pilih Cerdas)
+        // Render Item Atas
         const featuredContainer = document.getElementById('edge-featured-container');
         if (featuredContainer) featuredContainer.appendChild(createItemElement(featuredItem));
 
-        // Render Item Utama (Banyak Link)
+        // Render Item Utama
         const mainContainer = document.getElementById('edge-main-container');
         if (mainContainer) {
             mainData.forEach((item) => {
