@@ -62,35 +62,45 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Cari pembungkus aplikasi utama di file HTML Anda
-    const appContainer = document.querySelector('.w-full.max-w-md');
+    // Fungsi Inisialisasi Widget Panda
+    function initPandaWidget() {
+        if (document.getElementById('panda-icon')) return; // Mencegah duplikasi
 
-    if (appContainer) {
-        appContainer.style.position = 'relative';
+        const appContainer = document.querySelector('.w-full.max-w-md');
 
-        const container = document.createElement('div');
-        container.innerHTML = `
-            <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-            <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+        if (appContainer) {
+            appContainer.style.position = 'relative';
 
-            <div id="panda-icon" onclick="openChat()"><img src="https://apxid.github.io/assistant/assets/mypanda.gif"/></div>
+            const container = document.createElement('div');
+            container.innerHTML = `
+                <audio id="sound-open" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+                <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
-            <div id="panda-chat">
-                <div class="header">
-                    <div style="display:flex; align-items:center;">
-                        <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
-                        <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+                <div id="panda-icon" onclick="openChat()"><img src="https://apxid.github.io/assistant/assets/mypanda.gif"/></div>
+
+                <div id="panda-chat">
+                    <div class="header">
+                        <div style="display:flex; align-items:center;">
+                            <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
+                            <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+                        </div>
+                        <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
                     </div>
-                    <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
+                    <div id="chat-body"></div>
+                    <div id="input-area">
+                        <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+                        <button id="send-btn" onclick="sendMessage()">➤</button>
+                    </div>
                 </div>
-                <div id="chat-body"></div>
-                <div id="input-area">
-                    <input type="text" id="user-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()"/>
-                    <button id="send-btn" onclick="sendMessage()">➤</button>
-                </div>
-            </div>
-        `;
-        appContainer.appendChild(container);
+            `;
+            appContainer.appendChild(container);
+        }
+    }
+
+    // Jalankan saat kerangka PWA siap, atau langsung jika kontainer sudah ada
+    document.addEventListener('appShellReady', initPandaWidget);
+    if (document.querySelector('.w-full.max-w-md')) {
+        initPandaWidget();
     }
 
     // 3. Fungsi-fungsi JavaScript Widget
