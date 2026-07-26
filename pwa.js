@@ -1,7 +1,9 @@
-// 1. Inject Kerangka HTML Utama ke dalam Body secara Dinamis
 document.addEventListener("DOMContentLoaded", () => {
+  // Mencegah duplikasi elemen jika skrip terpanggil berulang kali
+  if (document.getElementById('app-main-container')) return;
+
   const appShellHTML = `
-    <div class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
+    <div id="app-main-container" class="w-full max-w-md h-[100vh] sm:h-[840px] bg-appbg shadow-2xl overflow-hidden relative flex flex-col border border-slate-800/50">
       
       <div id="screen-container" class="flex-1 overflow-y-auto bg-gray-50/50">
         <div id="active-view"></div>
@@ -37,20 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   `;
 
-  // Sisipkan ke body
   document.body.insertAdjacentHTML('afterbegin', appShellHTML);
 
-  // Jalankan view awal jika fungsi switchView tersedia dari Scripts.js
   if (typeof switchView === 'function') {
     switchView('dashboard');
   }
 });
 
-// 2. Daftarkan Service Worker untuk PWA
+// Pendaftaran Service Worker untuk PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then((reg) => console.log('Service Worker berhasil didaftarkan:', reg.scope))
-      .catch((err) => console.log('Service Worker gagal didaftarkan:', err));
+      .then((reg) => console.log('Service Worker PWA berhasil didaftarkan:', reg.scope))
+      .catch((err) => console.log('Service Worker PWA gagal didaftarkan:', err));
   });
 }
