@@ -1,5 +1,5 @@
 (function() {
-    // 1. CSS Tampilan One UI Samsung Edge Panel (Ringkas & Full Rounded)
+    // 1. CSS Tampilan One UI Samsung Edge Panel (Full Rounded Capsule)
     const style = document.createElement('style');
     style.innerHTML = `
         #launcher-widget-wrapper, #launcher-widget-wrapper * { 
@@ -35,26 +35,25 @@
             transform: translateY(-50%) scale(0.9) !important;
         }
 
-        /* Container Panel Utama Samsung Edge (Ramping, Gelap, Rounded) */
+        /* Container Panel Utama Samsung Edge (Full Rounded Corner Kiri & Kanan) */
         #launcher-radial-menu {
             position: absolute !important;
             top: 50% !important;
             right: -100px !important;
             transform: translateY(-50%) !important;
-            width: 72px !important; /* Dipersempit agar pas dengan ikon */
+            width: 72px !important;
             z-index: 999998 !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
             gap: 10px !important;
             padding: 14px 6px 10px 6px !important;
-            background: rgba(30, 30, 32, 0.78) !important;
+            background: rgba(30, 30, 32, 0.8) !important;
             backdrop-filter: blur(25px) saturation(180%) !important;
             -webkit-backdrop-filter: blur(25px) saturation(180%) !important;
-            border-radius: 22px 0 0 22px !important; /* Rounded corner khas One UI */
-            box-shadow: -6px 6px 25px rgba(0, 0, 0, 0.4) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-right: none !important;
+            border-radius: 22px !important; /* Rounded Corner Penuh di Semua Sudut */
+            box-shadow: -4px 6px 25px rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
             transition: right 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
             opacity: 0 !important;
             pointer-events: none !important;
@@ -89,11 +88,11 @@
             transform: scale(1.08) !important;
         }
 
-        /* Ikon Squircle (Ukurannya Diperkecil & Rounded Corner Presisi) */
+        /* Ikon Squircle One UI */
         .edge-icon-box {
             width: 38px !important;
             height: 38px !important;
-            border-radius: 12px !important; /* Rounded Squircle */
+            border-radius: 12px !important;
             background: rgba(255, 255, 255, 0.15) !important;
             display: flex !important;
             align-items: center !important;
@@ -108,7 +107,7 @@
             background: rgba(255, 255, 255, 0.28) !important;
         }
 
-        /* Label Teks Kecil Ringkas di Bawah Ikon */
+        /* Label Teks di Bawah Ikon */
         .edge-label {
             margin-top: 3px !important;
             color: #FFFFFF !important;
@@ -142,15 +141,15 @@
             padding: 2px !important;
         }
 
-        /* Status Aktif Panel Terbuka */
+        /* Status Aktif Panel Terbuka (Diberi Jarak 5px dari Kanan Layar Agar Lengkungan Kanan Terlihat Penuh) */
         #launcher-widget-wrapper.active #launcher-radial-menu {
-            right: 0 !important;
+            right: 5px !important;
             opacity: 1 !important;
             pointer-events: auto !important;
         }
         
         #launcher-widget-wrapper.active #launcher-icon {
-            right: 72px !important;
+            right: 80px !important;
             border-radius: 4px !important;
         }
     `;
