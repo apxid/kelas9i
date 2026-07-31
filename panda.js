@@ -104,7 +104,7 @@
     }
 
     // 3. Fungsi-fungsi JavaScript Widget
-    window.GAS_URL = "https://script.google.com/macros/s/AKfycbxmTinumB5E5iXvEnmYMZmvTwyjI-x_Wxm43BFAXSKsHQKP3ypxZ2QhzpdKLup07Ubx/exec";
+    window.GAS_URL = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
     window.isWaitingForName = false;
     window.typeTimer = null;
     window.lastUserMessageElement = null;
