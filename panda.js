@@ -8,7 +8,7 @@
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
 
-        /* Icon: Diturunkan sedikit ke bottom: 62px agar pas di atas garis menu bawah */
+        /* Icon */
         #panda-icon { 
             position: absolute !important; 
             bottom: 62px !important; 
@@ -19,7 +19,7 @@
         #panda-icon img { width: 65px !important; height: auto !important; transition: transform 0.2s !important; }
         #panda-icon img:hover { transform: scale(1.1) !important; }
         
-        /* Chatbox: Menyesuaikan posisi bawahnya agar sejajar */
+        /* Chatbox */
         #panda-chat { 
             position: absolute !important; 
             bottom: 62px !important; 
@@ -32,7 +32,7 @@
             background: white !important; 
             border-radius: 20px !important; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
-            display: none !important; 
+            display: none; 
             flex-direction: column !important; 
             overflow: visible !important; 
             z-index: 999999 !important;
@@ -62,14 +62,16 @@
     `;
     document.head.appendChild(style);
 
-    // Fungsi Inisialisasi Widget Panda
+    // 2. Fungsi Inisialisasi Widget Panda
     function initPandaWidget() {
-        if (document.getElementById('panda-icon')) return; // Mencegah duplikasi
+        if (document.getElementById('panda-icon')) return;
 
-        const appContainer = document.querySelector('.w-full.max-w-md');
+        const appContainer = document.querySelector('.w-full.max-w-md') || document.body;
 
         if (appContainer) {
-            appContainer.style.position = 'relative';
+            if (appContainer !== document.body) {
+                appContainer.style.position = 'relative';
+            }
 
             const container = document.createElement('div');
             container.innerHTML = `
@@ -82,7 +84,7 @@
                     <div class="header">
                         <div style="display:flex; align-items:center;">
                             <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
-                            <span id="app-name" style="font-weight:600; font-size:15px;"></span>
+                            <span id="app-name" style="font-weight:600; font-size:15px; min-width: 130px; display: inline-block;"></span>
                         </div>
                         <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
                     </div>
@@ -97,10 +99,11 @@
         }
     }
 
-    // Jalankan saat kerangka PWA siap, atau langsung jika kontainer sudah ada
     document.addEventListener('appShellReady', initPandaWidget);
-    if (document.querySelector('.w-full.max-w-md')) {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initPandaWidget();
+    } else {
+        document.addEventListener('DOMContentLoaded', initPandaWidget);
     }
 
     // 3. Fungsi-fungsi JavaScript Widget
@@ -115,10 +118,13 @@
     };
 
     window.startTypewriter = function() {
+        if (window.typeTimer) clearTimeout(window.typeTimer);
         const el = document.getElementById('app-name');
         if (!el) return;
-        const text = "PANDA ASSISTANT    ";
+        
+        const text = "PANDA ASSISTANT    "; // Menggunakan spasi standar (ASCII 32)
         let i = 0;
+        
         function type() {
             el.innerText = text.substring(0, i);
             i = (i + 1) % (text.length + 1);
@@ -128,14 +134,17 @@
     };
 
     window.openChat = function() {
-        document.getElementById('sound-open').play();
+        const soundOpen = document.getElementById('sound-open');
+        if (soundOpen) soundOpen.play().catch(() => {});
+
         document.getElementById('panda-icon').style.display = 'none';
         const chat = document.getElementById('panda-chat');
         chat.classList.remove('closing');
         chat.classList.add('open');
+        
         window.startTypewriter();
         
-        if (document.getElementById('chat-body').innerHTML === "") {
+        if (document.getElementById('chat-body').innerHTML.trim() === "") {
             const savedName = localStorage.getItem('panda_user');
             if (savedName) {
                 window.addMessage(`Halo kembali ${savedName}! Ada yang bisa saya bantu?`, 'panda');
@@ -147,11 +156,15 @@
     };
 
     window.closeChat = function() {
-        document.getElementById('sound-close').play();
-        clearTimeout(window.typeTimer);
+        const soundClose = document.getElementById('sound-close');
+        if (soundClose) soundClose.play().catch(() => {});
+
+        if (window.typeTimer) clearTimeout(window.typeTimer);
+        
         const chat = document.getElementById('panda-chat');
         chat.classList.remove('open');
         chat.classList.add('closing');
+        
         setTimeout(() => {
             chat.style.display = 'none';
             document.getElementById('panda-icon').style.display = 'block';
