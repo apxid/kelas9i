@@ -8,7 +8,7 @@
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes tvOff { 0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); } 50% { transform: scale(1, 0.05); filter: brightness(5); } 100% { transform: scale(0.01, 0); opacity: 0; filter: brightness(0); } }
 
-        /* Icon */
+        /* Icon: Diturunkan sedikit ke bottom: 62px agar pas di atas garis menu bawah */
         #panda-icon { 
             position: absolute !important; 
             bottom: 62px !important; 
@@ -19,7 +19,7 @@
         #panda-icon img { width: 65px !important; height: auto !important; transition: transform 0.2s !important; }
         #panda-icon img:hover { transform: scale(1.1) !important; }
         
-        /* Chatbox */
+        /* Chatbox: Menyesuaikan posisi bawahnya agar sejajar */
         #panda-chat { 
             position: absolute !important; 
             bottom: 62px !important; 
@@ -32,7 +32,7 @@
             background: white !important; 
             border-radius: 20px !important; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important; 
-            display: none; 
+            display: none !important; 
             flex-direction: column !important; 
             overflow: visible !important; 
             z-index: 999999 !important;
@@ -62,16 +62,21 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Fungsi Inisialisasi Widget Panda
-    function initPandaWidget() {
-        if (document.getElementById('panda-icon')) return;
+    // Manajemen Session ID Unik di localStorage
+    let sessionId = localStorage.getItem('panda_session_id');
+    if (!sessionId) {
+        sessionId = 'sess_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        localStorage.setItem('panda_session_id', sessionId);
+    }
 
-        const appContainer = document.querySelector('.w-full.max-w-md') || document.body;
+    // Fungsi Inisialisasi Widget Panda
+    function initPandaWidget() {
+        if (document.getElementById('panda-icon')) return; // Mencegah duplikasi
+
+        const appContainer = document.querySelector('.w-full.max-w-md');
 
         if (appContainer) {
-            if (appContainer !== document.body) {
-                appContainer.style.position = 'relative';
-            }
+            appContainer.style.position = 'relative';
 
             const container = document.createElement('div');
             container.innerHTML = `
@@ -84,7 +89,7 @@
                     <div class="header">
                         <div style="display:flex; align-items:center;">
                             <img src="https://apxid.github.io/assistant/assets/panda.png" class="header-logo"/>
-                            <span id="app-name" style="font-weight:600; font-size:15px; min-width: 130px; display: inline-block;"></span>
+                            <span id="app-name" style="font-weight:600; font-size:15px;"></span>
                         </div>
                         <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
                     </div>
@@ -99,14 +104,13 @@
         }
     }
 
+    // Jalankan saat kerangka PWA siap, atau langsung jika kontainer sudah ada
     document.addEventListener('appShellReady', initPandaWidget);
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    if (document.querySelector('.w-full.max-w-md')) {
         initPandaWidget();
-    } else {
-        document.addEventListener('DOMContentLoaded', initPandaWidget);
     }
 
-    // 3. Fungsi-fungsi JavaScript Widget
+    // 3. Variabel Global Widget
     window.GAS_URL = "https://script.google.com/macros/s/AKfycbzMe6SvN_qVVUG48vkCoMphQINZRV3BU_7nEz8cyO13Y5a5iC7xRQD9eH1lFRGwsi8ZNw/exec";
     window.isWaitingForName = false;
     window.typeTimer = null;
@@ -118,13 +122,10 @@
     };
 
     window.startTypewriter = function() {
-        if (window.typeTimer) clearTimeout(window.typeTimer);
         const el = document.getElementById('app-name');
         if (!el) return;
-        
-        const text = "PANDA ASSISTANT    "; // Menggunakan spasi standar (ASCII 32)
+        const text = "PANDA ASSISTANT    ";
         let i = 0;
-        
         function type() {
             el.innerText = text.substring(0, i);
             i = (i + 1) % (text.length + 1);
@@ -136,15 +137,13 @@
     window.openChat = function() {
         const soundOpen = document.getElementById('sound-open');
         if (soundOpen) soundOpen.play().catch(() => {});
-
         document.getElementById('panda-icon').style.display = 'none';
         const chat = document.getElementById('panda-chat');
         chat.classList.remove('closing');
         chat.classList.add('open');
-        
         window.startTypewriter();
         
-        if (document.getElementById('chat-body').innerHTML.trim() === "") {
+        if (document.getElementById('chat-body').innerHTML === "") {
             const savedName = localStorage.getItem('panda_user');
             if (savedName) {
                 window.addMessage(`Halo kembali ${savedName}! Ada yang bisa saya bantu?`, 'panda');
@@ -158,13 +157,10 @@
     window.closeChat = function() {
         const soundClose = document.getElementById('sound-close');
         if (soundClose) soundClose.play().catch(() => {});
-
-        if (window.typeTimer) clearTimeout(window.typeTimer);
-        
+        clearTimeout(window.typeTimer);
         const chat = document.getElementById('panda-chat');
         chat.classList.remove('open');
         chat.classList.add('closing');
-        
         setTimeout(() => {
             chat.style.display = 'none';
             document.getElementById('panda-icon').style.display = 'block';
@@ -194,11 +190,23 @@
         window.addMessage(val, 'user');
         input.value = '';
 
+        const currentSessionId = localStorage.getItem('panda_session_id') || sessionId;
+
+        // Jika sedang menunggu nama, kirim parameter khusus "perkenalan_nama" ke Google Apps Script
         if (window.isWaitingForName) {
             localStorage.setItem('panda_user', val);
             window.isWaitingForName = false;
-            window.addMessage(`Halo ${val}! Apa yang ingin ditanyakan?`, 'panda');
+            
             if (window.lastUserMessageElement) window.lastUserMessageElement.className = 'ticks read';
+
+            try {
+                const url = `${window.GAS_URL}?question=${encodeURIComponent("perkenalan_nama")}&userName=${encodeURIComponent(val)}&sessionId=${encodeURIComponent(currentSessionId)}`;
+                await fetch(url, { method: 'GET' });
+            } catch(e) {
+                console.log("Gagal mengirim nama ke server:", e);
+            }
+
+            window.addMessage(`Halo ${val}! Apa yang ingin ditanyakan?`, 'panda');
             return;
         }
 
@@ -206,10 +214,15 @@
         typing.className = 'bubble panda';
         typing.innerHTML = "<i>Panda sedang mengetik...</i>";
         document.getElementById('chat-body').appendChild(typing);
+        document.getElementById('chat-body').scrollTop = document.getElementById('chat-body').scrollHeight;
         
         try {
-            const res = await fetch(`${window.GAS_URL}?question=${encodeURIComponent(val)}&userName=${encodeURIComponent(localStorage.getItem('panda_user') || 'Pengunjung')}`);
+            const currentUserName = localStorage.getItem('panda_user') || 'Pengunjung';
+            const url = `${window.GAS_URL}?question=${encodeURIComponent(val)}&userName=${encodeURIComponent(currentUserName)}&sessionId=${encodeURIComponent(currentSessionId)}`;
+            
+            const res = await fetch(url, { method: 'GET' });
             const data = await res.json();
+            
             typing.remove();
             if (window.lastUserMessageElement) window.lastUserMessageElement.className = 'ticks read';
             window.addMessage(data.answer, 'panda');
