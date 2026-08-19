@@ -9,7 +9,7 @@
       --primary-color: #1e3a8a;
       --secondary-color: #3b82f6;
       --card-width: 320px;
-      --card-height: 500px;
+      --card-height: 520px;
     }
 
     body {
@@ -139,16 +139,16 @@
       font-weight: 600;
     }
 
-    /* Foto & Nama diturunkan 2 baris (margin-top: 35px) */
+    /* Foto, nama, dan NISN diturunkan 3 baris lagi (margin-top: 60px) */
     .photo-box {
-      width: 125px;
-      height: 155px;
+      width: 120px;
+      height: 150px;
       border-radius: 12px;
       overflow: hidden;
       border: 3px solid var(--secondary-color);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-top: 35px; /* Menurunkan foto 2 baris kebawah */
-      margin-bottom: 15px;
+      margin-top: 60px; /* Diturunkan 3 baris lagi */
+      margin-bottom: 12px;
     }
 
     .photo-box img {
@@ -195,13 +195,15 @@
       text-align: left;
     }
 
+    /* Teks Biodata diturunkan 1 baris (margin-top: 20px) */
     .header-back {
       font-size: 14px;
       font-weight: 700;
       color: var(--primary-color);
       border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 8px;
-      margin-bottom: 15px;
+      padding-bottom: 6px;
+      margin-top: 20px; /* Turun 1 baris */
+      margin-bottom: 12px;
       text-align: center;
       text-transform: uppercase;
     }
@@ -209,7 +211,7 @@
     .detail-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11px;
+      font-size: 10.5px;
     }
 
     .detail-table tr {
@@ -217,7 +219,7 @@
     }
 
     .detail-table td {
-      padding: 6px 2px;
+      padding: 4px 2px;
       vertical-align: top;
     }
 
@@ -236,6 +238,30 @@
       color: #0f172a;
       font-weight: 500;
       width: 65%;
+    }
+
+    /* Bagian Wali Kelas */
+    .teacher-signature {
+      margin-top: auto;
+      text-align: right;
+      font-size: 10px;
+      color: #1e293b;
+      padding-top: 10px;
+    }
+
+    .teacher-signature .title {
+      font-weight: 600;
+      margin-bottom: 35px; /* Space untuk tanda tangan */
+    }
+
+    .teacher-signature .name {
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .teacher-signature .nip {
+      color: #64748b;
+      font-size: 9.5px;
     }
 
     #status-container {
@@ -299,7 +325,7 @@
         return;
       }
 
-      // Cari siswa yang cocok berdasarkan NISN (pencarian fleksibel string)
+      // Cari siswa yang cocok berdasarkan NISN
       const siswa = allStudentsData.find(s => String(s.nisn).trim() === inputNisn);
 
       if (!siswa) {
@@ -321,9 +347,9 @@
                 <h3>KELAS IX I</h3>
               </div>
 
-              <!-- Foto diturunkan kebawah -->
+              <!-- Foto, Nama, NISN Diturunkan kebawah -->
               <div class="photo-box">
-                <img src="${siswa.foto || 'https://via.placeholder.com/125x155'}" alt="Foto ${siswa.nama}">
+                <img src="${siswa.foto || 'https://via.placeholder.com/120x150'}" alt="Foto ${siswa.nama}">
               </div>
 
               <div class="info-front">
@@ -384,6 +410,14 @@
                   <td class="value">${siswa.cita || '-'}</td>
                 </tr>
               </table>
+
+              <!-- Bagian Wali Kelas -->
+              <div class="teacher-signature">
+                <div class="title">Wali Kelas 9I</div>
+                <div class="name">YANUAR BAYU TRIYONO, S.I.Pust.</div>
+                <div class="nip">NIP 198601272024211008</div>
+              </div>
+
             </div>
 
           </div>
