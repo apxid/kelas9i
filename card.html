@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cetak KTS IX I</title>
+
+  <!-- Library untuk Unduh Gambar & PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root {
       --primary-color: #1e3a8a;
@@ -22,13 +27,13 @@
       align-items: center;
     }
 
-    /* Container Form Pencarian NISN */
+    /* Form Pencarian NISN */
     .search-box {
       background: white;
       padding: 20px 25px;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       display: flex;
       gap: 10px;
       align-items: center;
@@ -43,19 +48,33 @@
       width: 220px;
     }
 
-    .search-box button {
-      padding: 10px 20px;
-      font-size: 15px;
-      background-color: var(--primary-color);
+    .btn {
+      padding: 10px 18px;
+      font-size: 14px;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.2s;
     }
 
-    .search-box button:hover {
-      background-color: var(--secondary-color);
+    .btn-primary { background-color: var(--primary-color); }
+    .btn-primary:hover { background-color: var(--secondary-color); }
+
+    .btn-side { background-color: #475569; }
+    .btn-side.active { background-color: #0284c7; }
+
+    .btn-download { background-color: #16a34a; }
+    .btn-download:hover { background-color: #15803d; }
+
+    /* Control Panel (Tombol Ganti Sisi & Unduh) */
+    .controls-panel {
+      display: none;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .container {
@@ -63,41 +82,21 @@
       justify-content: center;
     }
 
-    /* Container Kartu (Mendukung Flip Efek 3D) */
+    /* Wrapper Kartu */
     .card-wrapper {
       width: var(--card-width);
       height: var(--card-height);
-      perspective: 1000px;
-      cursor: pointer;
     }
 
-    .card-inner {
-      position: relative;
+    .card-container {
       width: 100%;
       height: 100%;
-      text-align: center;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      border-radius: 16px;
-    }
-
-    .card-wrapper:hover .card-inner,
-    .card-wrapper.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .card-front, .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
       border-radius: 16px;
       overflow: hidden;
       background: white;
       box-sizing: border-box;
       border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
     }
@@ -107,6 +106,10 @@
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       padding: 20px;
       align-items: center;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     .header-front {
@@ -130,6 +133,7 @@
       color: var(--primary-color);
       font-weight: 800;
       letter-spacing: 0.5px;
+      text-align: center;
     }
 
     .header-front h3 {
@@ -137,9 +141,10 @@
       font-size: 12px;
       color: #64748b;
       font-weight: 600;
+      text-align: center;
     }
 
-    /* Foto, nama, dan NISN diturunkan 3 baris lagi (margin-top: 60px) */
+    /* Posisi Foto Diturunkan */
     .photo-box {
       width: 120px;
       height: 150px;
@@ -147,7 +152,7 @@
       overflow: hidden;
       border: 3px solid var(--secondary-color);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-top: 60px; /* Diturunkan 3 baris lagi */
+      margin-top: 60px;
       margin-bottom: 12px;
     }
 
@@ -159,7 +164,7 @@
 
     .info-front {
       width: 100%;
-      margin-bottom: 10px;
+      text-align: center;
     }
 
     .info-front .student-name {
@@ -181,28 +186,23 @@
       border-radius: 20px;
     }
 
-    .footer-hint {
-      font-size: 10px;
-      color: #94a3b8;
-      margin-top: auto;
-    }
-
     /* --- BAGIAN BELAKANG --- */
     .card-back {
-      transform: rotateY(180deg);
       background: white;
       padding: 20px;
-      text-align: left;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Teks Biodata diturunkan 1 baris (margin-top: 20px) */
     .header-back {
       font-size: 14px;
       font-weight: 700;
       color: var(--primary-color);
       border-bottom: 2px solid var(--primary-color);
       padding-bottom: 6px;
-      margin-top: 20px; /* Turun 1 baris */
+      margin-top: 20px;
       margin-bottom: 12px;
       text-align: center;
       text-transform: uppercase;
@@ -240,26 +240,33 @@
       width: 65%;
     }
 
-    /* Bagian Wali Kelas */
-    .teacher-signature {
+    /* Tanda Tangan Wali Kelas (Naik 2 baris, Rata Kiri, Posisi Kanan) */
+    .teacher-signature-wrapper {
       margin-top: auto;
-      text-align: right;
+      margin-bottom: 25px; /* Dinaikkan 2 baris ke atas */
+      display: flex;
+      justify-content: flex-end; /* Memposisikan di tepi kanan */
+      width: 100%;
+    }
+
+    .teacher-signature-box {
+      text-align: left; /* Alignment Teks Rata Kiri */
       font-size: 10px;
       color: #1e293b;
-      padding-top: 10px;
+      width: 180px; /* Lebar blok ttd */
     }
 
-    .teacher-signature .title {
+    .teacher-signature-box .title {
       font-weight: 600;
-      margin-bottom: 35px; /* Space untuk tanda tangan */
+      margin-bottom: 30px; /* Space untuk tanda tangan */
     }
 
-    .teacher-signature .name {
+    .teacher-signature-box .name {
       font-weight: 700;
       text-decoration: underline;
     }
 
-    .teacher-signature .nip {
+    .teacher-signature-box .nip {
       color: #64748b;
       font-size: 9.5px;
     }
@@ -277,19 +284,27 @@
   <!-- Input Form Pencarian NISN -->
   <div class="search-box">
     <input type="text" id="input-nisn" placeholder="Masukkan NISN Siswa..." onkeypress="if(event.key==='Enter') cariSiswa()">
-    <button onclick="cariSiswa()">Cari KTS</button>
+    <button class="btn btn-primary" onclick="cariSiswa()">Cari KTS</button>
+  </div>
+
+  <!-- Panel Tombol Navigasi Sisi & Download -->
+  <div id="controls-panel" class="controls-panel">
+    <button id="btn-front" class="btn btn-side active" onclick="switchSide('front')">Sisi Depan</button>
+    <button id="btn-back" class="btn btn-side" onclick="switchSide('back')">Sisi Belakang</button>
+    <button class="btn btn-download" onclick="downloadImage()">📥 Unduh PNG</button>
+    <button class="btn btn-download" style="background-color: #dc2626;" onclick="downloadPDF()">📄 Unduh PDF</button>
   </div>
 
   <div id="status-container">Masukkan NISN siswa di atas untuk melihat KTS.</div>
   <div id="cards-wrapper" class="container"></div>
 
   <script>
-    // URL Web App Google Apps Script Anda
-    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Masukkan URL Web App Anda
+    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Ganti dengan URL Web App Anda
 
     let allStudentsData = [];
+    let currentSiswa = null;
+    let currentSide = 'front';
 
-    // Ambil data saat halaman dibuka
     async function initData() {
       const statusDiv = document.getElementById('status-container');
       try {
@@ -299,14 +314,12 @@
         
         statusDiv.innerHTML = 'Silakan masukkan NISN untuk menampilkan Kartu KTS.';
         
-        // Cek jika ada NISN di parameter URL (misal: ?nisn=0105695063)
         const urlParams = new URLSearchParams(window.location.search);
         const nisnParam = urlParams.get('nisn');
         if (nisnParam) {
           document.getElementById('input-nisn').value = nisnParam;
           cariSiswa();
         }
-
       } catch (error) {
         console.error("Error:", error);
         statusDiv.innerHTML = '❌ Gagal memuat data siswa.';
@@ -317,114 +330,130 @@
       const inputNisn = document.getElementById('input-nisn').value.trim();
       const statusDiv = document.getElementById('status-container');
       const cardsWrapper = document.getElementById('cards-wrapper');
+      const controlsPanel = document.getElementById('controls-panel');
 
       cardsWrapper.innerHTML = '';
 
       if (!inputNisn) {
         statusDiv.innerHTML = '⚠️ Harap masukkan NISN terlebih dahulu.';
+        controlsPanel.style.display = 'none';
         return;
       }
 
-      // Cari siswa yang cocok berdasarkan NISN
-      const siswa = allStudentsData.find(s => String(s.nisn).trim() === inputNisn);
+      currentSiswa = allStudentsData.find(s => String(s.nisn).trim() === inputNisn);
 
-      if (!siswa) {
+      if (!currentSiswa) {
         statusDiv.innerHTML = `❌ Data siswa dengan NISN <b>${inputNisn}</b> tidak ditemukan.`;
+        controlsPanel.style.display = 'none';
         return;
       }
 
-      statusDiv.innerHTML = ''; // Hapus pesan jika data ditemukan
+      statusDiv.innerHTML = '';
+      controlsPanel.style.display = 'flex';
+      currentSide = 'front';
+      renderCard();
+    }
 
-      const cardHTML = `
-        <div class="card-wrapper" onclick="this.classList.toggle('flipped')">
-          <div class="card-inner">
-            
-            <!-- TAMPILAN DEPAN -->
-            <div class="card-front">
-              <div class="header-front">
-                <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" onerror="this.src='https://via.placeholder.com/55'">
-                <h2>SMP NEGERI 1 MOGA</h2>
-                <h3>KELAS IX I</h3>
+    function switchSide(side) {
+      currentSide = side;
+      document.getElementById('btn-front').classList.toggle('active', side === 'front');
+      document.getElementById('btn-back').classList.toggle('active', side === 'back');
+      renderCard();
+    }
+
+    function renderCard() {
+      const cardsWrapper = document.getElementById('cards-wrapper');
+      if (!currentSiswa) return;
+
+      let cardHTML = '';
+
+      if (currentSide === 'front') {
+        cardHTML = `
+          <div class="card-wrapper">
+            <div id="card-render-target" class="card-container">
+              <div class="card-front">
+                <div class="header-front">
+                  <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" crossorigin="anonymous" onerror="this.src='https://via.placeholder.com/55'">
+                  <h2>SMP NEGERI 1 MOGA</h2>
+                  <h3>KELAS IX I</h3>
+                </div>
+
+                <div class="photo-box">
+                  <img src="${currentSiswa.foto || 'https://via.placeholder.com/120x150'}" crossorigin="anonymous" alt="Foto ${currentSiswa.nama}">
+                </div>
+
+                <div class="info-front">
+                  <div class="student-name">${currentSiswa.nama || '-'}</div>
+                  <div class="student-nisn">NISN: ${currentSiswa.nisn || '-'}</div>
+                </div>
               </div>
-
-              <!-- Foto, Nama, NISN Diturunkan kebawah -->
-              <div class="photo-box">
-                <img src="${siswa.foto || 'https://via.placeholder.com/120x150'}" alt="Foto ${siswa.nama}">
-              </div>
-
-              <div class="info-front">
-                <div class="student-name">${siswa.nama || '-'}</div>
-                <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
-              </div>
-
-              <div class="footer-hint">* Klik / Sentuh kartu untuk membalik</div>
             </div>
-
-            <!-- TAMPILAN BELAKANG -->
-            <div class="card-back">
-              <div class="header-back">BIODATA SISWA</div>
-              <table class="detail-table">
-                <tr>
-                  <td class="label">No Absen</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.absen || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">NISN</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.nisn || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Nama Lengkap</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.nama || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Jenis Kelamin</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.jk || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Tempat Lahir</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.tempatLahir || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Tanggal Lahir</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.tglLahir || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Alamat</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.alamat || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Hobi</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.hobi || '-'}</td>
-                </tr>
-                <tr>
-                  <td class="label">Cita-cita</td>
-                  <td class="colon">:</td>
-                  <td class="value">${siswa.cita || '-'}</td>
-                </tr>
-              </table>
-
-              <!-- Bagian Wali Kelas -->
-              <div class="teacher-signature">
-                <div class="title">Wali Kelas 9I</div>
-                <div class="name">YANUAR BAYU TRIYONO, S.I.Pust.</div>
-                <div class="nip">NIP 198601272024211008</div>
-              </div>
-
-            </div>
-
           </div>
-        </div>
-      `;
+        `;
+      } else {
+        cardHTML = `
+          <div class="card-wrapper">
+            <div id="card-render-target" class="card-container">
+              <div class="card-back">
+                <div class="header-back">BIODATA SISWA</div>
+                <table class="detail-table">
+                  <tr><td class="label">No Absen</td><td class="colon">:</td><td class="value">${currentSiswa.absen || '-'}</td></tr>
+                  <tr><td class="label">NISN</td><td class="colon">:</td><td class="value">${currentSiswa.nisn || '-'}</td></tr>
+                  <tr><td class="label">Nama Lengkap</td><td class="colon">:</td><td class="value">${currentSiswa.nama || '-'}</td></tr>
+                  <tr><td class="label">Jenis Kelamin</td><td class="colon">:</td><td class="value">${currentSiswa.jk || '-'}</td></tr>
+                  <tr><td class="label">Tempat Lahir</td><td class="colon">:</td><td class="value">${currentSiswa.tempatLahir || '-'}</td></tr>
+                  <tr><td class="label">Tanggal Lahir</td><td class="colon">:</td><td class="value">${currentSiswa.tglLahir || '-'}</td></tr>
+                  <tr><td class="label">Alamat</td><td class="colon">:</td><td class="value">${currentSiswa.alamat || '-'}</td></tr>
+                  <tr><td class="label">Hobi</td><td class="colon">:</td><td class="value">${currentSiswa.hobi || '-'}</td></tr>
+                  <tr><td class="label">Cita-cita</td><td class="colon">:</td><td class="value">${currentSiswa.cita || '-'}</td></tr>
+                </table>
+
+                <div class="teacher-signature-wrapper">
+                  <div class="teacher-signature-box">
+                    <div class="title">Wali Kelas 9I</div>
+                    <div class="name">YANUAR BAYU TRIYONO, S.I.Pust.</div>
+                    <div class="nip">NIP 198601272024211008</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
 
       cardsWrapper.innerHTML = cardHTML;
+    }
+
+    // Fungsi Unduh Gambar PNG
+    async function downloadImage() {
+      const target = document.getElementById('card-render-target');
+      if (!target) return;
+
+      const canvas = await html2canvas(target, { useCORS: true, scale: 2 });
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = `KTS_${currentSiswa.nisn}_${currentSide.toUpperCase()}.png`;
+      link.click();
+    }
+
+    // Fungsi Unduh Dokumen PDF
+    async function downloadPDF() {
+      const target = document.getElementById('card-render-target');
+      if (!target) return;
+
+      const canvas = await html2canvas(target, { useCORS: true, scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [85, 138] // Ukuran proporsional kartu KTS
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, 85, 138);
+      pdf.save(`KTS_${currentSiswa.nisn}_${currentSide.toUpperCase()}.pdf`);
     }
 
     document.addEventListener('DOMContentLoaded', initData);
