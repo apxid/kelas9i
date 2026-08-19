@@ -68,7 +68,7 @@
     .btn-download { background-color: #16a34a; }
     .btn-download:hover { background-color: #15803d; }
 
-    /* Control Panel (Tombol Ganti Sisi & Unduh) */
+    /* Control Panel */
     .controls-panel {
       display: none;
       gap: 12px;
@@ -82,7 +82,7 @@
       justify-content: center;
     }
 
-    /* Wrapper Kartu */
+    /* Wrapper Kartu Tampilan Utama */
     .card-wrapper {
       width: var(--card-width);
       height: var(--card-height);
@@ -144,7 +144,6 @@
       text-align: center;
     }
 
-    /* Posisi Foto Diturunkan */
     .photo-box {
       width: 120px;
       height: 150px;
@@ -240,25 +239,24 @@
       width: 65%;
     }
 
-    /* Tanda Tangan Wali Kelas (Naik 2 baris, Rata Kiri, Posisi Kanan) */
     .teacher-signature-wrapper {
       margin-top: auto;
-      margin-bottom: 25px; /* Dinaikkan 2 baris ke atas */
+      margin-bottom: 25px;
       display: flex;
-      justify-content: flex-end; /* Memposisikan di tepi kanan */
+      justify-content: flex-end;
       width: 100%;
     }
 
     .teacher-signature-box {
-      text-align: left; /* Alignment Teks Rata Kiri */
+      text-align: left;
       font-size: 10px;
       color: #1e293b;
-      width: 180px; /* Lebar blok ttd */
+      width: 180px;
     }
 
     .teacher-signature-box .title {
       font-weight: 600;
-      margin-bottom: 30px; /* Space untuk tanda tangan */
+      margin-bottom: 30px;
     }
 
     .teacher-signature-box .name {
@@ -277,6 +275,15 @@
       color: #475569;
       margin-top: 10px;
     }
+
+    /* Container Tersembunyi Khusus Render PDF/PNG Depan & Belakang Sekaligus */
+    #hidden-render-container {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      display: flex;
+      gap: 20px;
+    }
   </style>
 </head>
 <body>
@@ -291,12 +298,17 @@
   <div id="controls-panel" class="controls-panel">
     <button id="btn-front" class="btn btn-side active" onclick="switchSide('front')">Sisi Depan</button>
     <button id="btn-back" class="btn btn-side" onclick="switchSide('back')">Sisi Belakang</button>
-    <button class="btn btn-download" onclick="downloadImage()">📥 Unduh PNG</button>
-    <button class="btn btn-download" style="background-color: #dc2626;" onclick="downloadPDF()">📄 Unduh PDF</button>
+    <button class="btn btn-download" onclick="downloadAllPNG()">📥 Unduh PNG (Depan & Belakang)</button>
+    <button class="btn btn-download" style="background-color: #dc2626;" onclick="downloadPDF_A4()">📄 Unduh PDF A4</button>
   </div>
 
   <div id="status-container">Masukkan NISN siswa di atas untuk melihat KTS.</div>
+  
+  <!-- Container Tampilan Utama -->
   <div id="cards-wrapper" class="container"></div>
+
+  <!-- Hidden Container (Digunakan untuk proses rendering ekspor) -->
+  <div id="hidden-render-container"></div>
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Ganti dengan URL Web App Anda
@@ -361,99 +373,137 @@
       renderCard();
     }
 
+    // Helper Template Sisi Depan
+    function getFrontHTML(siswa) {
+      return `
+        <div class="card-container">
+          <div class="card-front">
+            <div class="header-front">
+              <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" crossorigin="anonymous" onerror="this.src='https://via.placeholder.com/55'">
+              <h2>SMP NEGERI 1 MOGA</h2>
+              <h3>KELAS IX I</h3>
+            </div>
+
+            <div class="photo-box">
+              <img src="${siswa.foto || 'https://via.placeholder.com/120x150'}" crossorigin="anonymous" alt="Foto ${siswa.nama}">
+            </div>
+
+            <div class="info-front">
+              <div class="student-name">${siswa.nama || '-'}</div>
+              <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper Template Sisi Belakang
+    function getBackHTML(siswa) {
+      return `
+        <div class="card-container">
+          <div class="card-back">
+            <div class="header-back">BIODATA SISWA</div>
+            <table class="detail-table">
+              <tr><td class="label">No Absen</td><td class="colon">:</td><td class="value">${siswa.absen || '-'}</td></tr>
+              <tr><td class="label">NISN</td><td class="colon">:</td><td class="value">${siswa.nisn || '-'}</td></tr>
+              <tr><td class="label">Nama Lengkap</td><td class="colon">:</td><td class="value">${siswa.nama || '-'}</td></tr>
+              <tr><td class="label">Jenis Kelamin</td><td class="colon">:</td><td class="value">${siswa.jk || '-'}</td></tr>
+              <tr><td class="label">Tempat Lahir</td><td class="colon">:</td><td class="value">${siswa.tempatLahir || '-'}</td></tr>
+              <tr><td class="label">Tanggal Lahir</td><td class="colon">:</td><td class="value">${siswa.tglLahir || '-'}</td></tr>
+              <tr><td class="label">Alamat</td><td class="colon">:</td><td class="value">${siswa.alamat || '-'}</td></tr>
+              <tr><td class="label">Hobi</td><td class="colon">:</td><td class="value">${siswa.hobi || '-'}</td></tr>
+              <tr><td class="label">Cita-cita</td><td class="colon">:</td><td class="value">${siswa.cita || '-'}</td></tr>
+            </table>
+
+            <div class="teacher-signature-wrapper">
+              <div class="teacher-signature-box">
+                <div class="title">Wali Kelas 9I</div>
+                <div class="name">YANUAR BAYU TRIYONO, S.I.Pust.</div>
+                <div class="nip">NIP 198601272024211008</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function renderCard() {
       const cardsWrapper = document.getElementById('cards-wrapper');
       if (!currentSiswa) return;
 
-      let cardHTML = '';
-
-      if (currentSide === 'front') {
-        cardHTML = `
-          <div class="card-wrapper">
-            <div id="card-render-target" class="card-container">
-              <div class="card-front">
-                <div class="header-front">
-                  <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" crossorigin="anonymous" onerror="this.src='https://via.placeholder.com/55'">
-                  <h2>SMP NEGERI 1 MOGA</h2>
-                  <h3>KELAS IX I</h3>
-                </div>
-
-                <div class="photo-box">
-                  <img src="${currentSiswa.foto || 'https://via.placeholder.com/120x150'}" crossorigin="anonymous" alt="Foto ${currentSiswa.nama}">
-                </div>
-
-                <div class="info-front">
-                  <div class="student-name">${currentSiswa.nama || '-'}</div>
-                  <div class="student-nisn">NISN: ${currentSiswa.nisn || '-'}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      } else {
-        cardHTML = `
-          <div class="card-wrapper">
-            <div id="card-render-target" class="card-container">
-              <div class="card-back">
-                <div class="header-back">BIODATA SISWA</div>
-                <table class="detail-table">
-                  <tr><td class="label">No Absen</td><td class="colon">:</td><td class="value">${currentSiswa.absen || '-'}</td></tr>
-                  <tr><td class="label">NISN</td><td class="colon">:</td><td class="value">${currentSiswa.nisn || '-'}</td></tr>
-                  <tr><td class="label">Nama Lengkap</td><td class="colon">:</td><td class="value">${currentSiswa.nama || '-'}</td></tr>
-                  <tr><td class="label">Jenis Kelamin</td><td class="colon">:</td><td class="value">${currentSiswa.jk || '-'}</td></tr>
-                  <tr><td class="label">Tempat Lahir</td><td class="colon">:</td><td class="value">${currentSiswa.tempatLahir || '-'}</td></tr>
-                  <tr><td class="label">Tanggal Lahir</td><td class="colon">:</td><td class="value">${currentSiswa.tglLahir || '-'}</td></tr>
-                  <tr><td class="label">Alamat</td><td class="colon">:</td><td class="value">${currentSiswa.alamat || '-'}</td></tr>
-                  <tr><td class="label">Hobi</td><td class="colon">:</td><td class="value">${currentSiswa.hobi || '-'}</td></tr>
-                  <tr><td class="label">Cita-cita</td><td class="colon">:</td><td class="value">${currentSiswa.cita || '-'}</td></tr>
-                </table>
-
-                <div class="teacher-signature-wrapper">
-                  <div class="teacher-signature-box">
-                    <div class="title">Wali Kelas 9I</div>
-                    <div class="name">YANUAR BAYU TRIYONO, S.I.Pust.</div>
-                    <div class="nip">NIP 198601272024211008</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      cardsWrapper.innerHTML = cardHTML;
+      cardsWrapper.innerHTML = `
+        <div class="card-wrapper">
+          ${currentSide === 'front' ? getFrontHTML(currentSiswa) : getBackHTML(currentSiswa)}
+        </div>
+      `;
     }
 
-    // Fungsi Unduh Gambar PNG
-    async function downloadImage() {
-      const target = document.getElementById('card-render-target');
-      if (!target) return;
-
-      const canvas = await html2canvas(target, { useCORS: true, scale: 2 });
-      const image = canvas.toDataURL("image/png");
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = `KTS_${currentSiswa.nisn}_${currentSide.toUpperCase()}.png`;
-      link.click();
+    // Fungsi Render Elemen Tersembunyi untuk Proses Ekspor
+    function prepareExportElements() {
+      const container = document.getElementById('hidden-render-container');
+      container.innerHTML = `
+        <div id="export-front" class="card-wrapper">${getFrontHTML(currentSiswa)}</div>
+        <div id="export-back" class="card-wrapper">${getBackHTML(currentSiswa)}</div>
+      `;
     }
 
-    // Fungsi Unduh Dokumen PDF
-    async function downloadPDF() {
-      const target = document.getElementById('card-render-target');
-      if (!target) return;
+    // Unduh Gambar PNG (Depan & Belakang Sekaligus)
+    async function downloadAllPNG() {
+      if (!currentSiswa) return;
+      prepareExportElements();
 
-      const canvas = await html2canvas(target, { useCORS: true, scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-      
+      const frontElem = document.getElementById('export-front');
+      const backElem = document.getElementById('export-back');
+
+      // Process Depan
+      const canvasFront = await html2canvas(frontElem, { useCORS: true, scale: 2 });
+      const linkFront = document.createElement('a');
+      linkFront.href = canvasFront.toDataURL("image/png");
+      linkFront.download = `KTS_${currentSiswa.nisn}_DEPAN.png`;
+      linkFront.click();
+
+      // Process Belakang
+      setTimeout(async () => {
+        const canvasBack = await html2canvas(backElem, { useCORS: true, scale: 2 });
+        const linkBack = document.createElement('a');
+        linkBack.href = canvasBack.toDataURL("image/png");
+        linkBack.download = `KTS_${currentSiswa.nisn}_BELAKANG.png`;
+        linkBack.click();
+      }, 500);
+    }
+
+    // Unduh PDF Kertas A4 (Depan dan Belakang Bersebelahan)
+    async function downloadPDF_A4() {
+      if (!currentSiswa) return;
+      prepareExportElements();
+
+      const frontElem = document.getElementById('export-front');
+      const backElem = document.getElementById('export-back');
+
+      const canvasFront = await html2canvas(frontElem, { useCORS: true, scale: 2 });
+      const canvasBack = await html2canvas(backElem, { useCORS: true, scale: 2 });
+
+      const imgFront = canvasFront.toDataURL('image/png');
+      const imgBack = canvasBack.toDataURL('image/png');
+
       const { jsPDF } = window.jspdf;
+      // Inisialisasi dokumen PDF A4 (210mm x 297mm)
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: [85, 138] // Ukuran proporsional kartu KTS
+        format: 'a4'
       });
 
-      pdf.addImage(imgData, 'PNG', 0, 0, 85, 138);
-      pdf.save(`KTS_${currentSiswa.nisn}_${currentSide.toUpperCase()}.pdf`);
+      // Dimensi Kartu di PDF A4 (Lebar: 85mm, Tinggi: 138mm)
+      const cardWidth = 85;
+      const cardHeight = 138;
+      const posY = 30; // Posisi vertikal dari atas kertas
+
+      // Posisi Horizontal: Kartu Depan (Kiri: 15mm), Kartu Belakang (Kanan: 110mm)
+      pdf.addImage(imgFront, 'PNG', 15, posY, cardWidth, cardHeight);
+      pdf.addImage(imgBack, 'PNG', 110, posY, cardWidth, cardHeight);
+
+      pdf.save(`KTS_${currentSiswa.nisn}_A4.pdf`);
     }
 
     document.addEventListener('DOMContentLoaded', initData);
