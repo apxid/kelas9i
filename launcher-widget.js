@@ -160,11 +160,11 @@
 
     const mainData = [
         { title: "Galeri", url: "https://drive.google.com/drive/folders/1HqISHRK8AlwcFun7EUBvaALYhJUbh9de?usp=sharing", icon: "🌸" },
-        { title: "Home", url: "https://apxid.github.io/kelas9i/", icon: "🏠" },
+        { title: "Card", url: "https://apxid.github.io/kelas9i/card", icon: "🔍" },
         { title: "WhatsApp", url: "https://chat.whatsapp.com/LG9ff5zCPxA847G7b82IRD", icon: "💬" },
         { title: "KAS", url: "https://apxid.github.io/kelas9i/kas/", icon: "💰" },
         { title: "TIK", url: "https://tik-spensamo.blogspot.com/", icon: "💻" },
-        { title: "WEB", url: "https://smpn1moga.sch.id/", icon: "🌐" }
+        { title: "Home", url: "https://apxid.github.io/kelas9i", icon: "🌐" }
     ];
 
     const createItemElement = (item) => {
