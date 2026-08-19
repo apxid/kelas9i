@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kartu Tanda Siswa IX I</title>
+  <title>Cetak KTS IX I</title>
   <style>
     :root {
       --primary-color: #1e3a8a;
@@ -22,12 +22,45 @@
       align-items: center;
     }
 
+    /* Container Form Pencarian NISN */
+    .search-box {
+      background: white;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box input {
+      padding: 10px 15px;
+      font-size: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      width: 220px;
+    }
+
+    .search-box button {
+      padding: 10px 20px;
+      font-size: 15px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .search-box button:hover {
+      background-color: var(--secondary-color);
+    }
+
     .container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
       justify-content: center;
-      max-width: 1200px;
     }
 
     /* Container Kartu (Mendukung Flip Efek 3D) */
@@ -35,6 +68,7 @@
       width: var(--card-width);
       height: var(--card-height);
       perspective: 1000px;
+      cursor: pointer;
     }
 
     .card-inner {
@@ -48,7 +82,6 @@
       border-radius: 16px;
     }
 
-    /* Hover atau class active untuk membalik kartu */
     .card-wrapper:hover .card-inner,
     .card-wrapper.flipped .card-inner {
       transform: rotateY(180deg);
@@ -74,7 +107,6 @@
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       padding: 20px;
       align-items: center;
-      justify-content: space-between;
     }
 
     .header-front {
@@ -83,18 +115,18 @@
       align-items: center;
       width: 100%;
       border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 10px;
+      padding-bottom: 8px;
     }
 
     .header-front img {
-      width: 60px;
+      width: 55px;
       height: auto;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .header-front h2 {
       margin: 0;
-      font-size: 16px;
+      font-size: 15px;
       color: var(--primary-color);
       font-weight: 800;
       letter-spacing: 0.5px;
@@ -102,19 +134,21 @@
 
     .header-front h3 {
       margin: 2px 0 0 0;
-      font-size: 13px;
+      font-size: 12px;
       color: #64748b;
       font-weight: 600;
     }
 
+    /* Foto & Nama diturunkan 2 baris (margin-top: 35px) */
     .photo-box {
-      width: 130px;
-      height: 160px;
+      width: 125px;
+      height: 155px;
       border-radius: 12px;
       overflow: hidden;
       border: 3px solid var(--secondary-color);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin: 15px 0;
+      margin-top: 35px; /* Menurunkan foto 2 baris kebawah */
+      margin-bottom: 15px;
     }
 
     .photo-box img {
@@ -129,16 +163,16 @@
     }
 
     .info-front .student-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #0f172a;
       text-transform: uppercase;
-      margin: 0 0 5px 0;
+      margin: 0 0 6px 0;
       line-height: 1.2;
     }
 
     .info-front .student-nisn {
-      font-size: 13px;
+      font-size: 12px;
       color: #475569;
       font-weight: 600;
       background: #e0f2fe;
@@ -204,136 +238,162 @@
       width: 65%;
     }
 
-    /* Status Message Container */
     #status-container {
       text-align: center;
-      margin-top: 50px;
-      font-size: 18px;
+      font-size: 15px;
       color: #475569;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <div id="status-container">Memuat Kartu Siswa...</div>
+  <!-- Input Form Pencarian NISN -->
+  <div class="search-box">
+    <input type="text" id="input-nisn" placeholder="Masukkan NISN Siswa..." onkeypress="if(event.key==='Enter') cariSiswa()">
+    <button onclick="cariSiswa()">Cari KTS</button>
+  </div>
+
+  <div id="status-container">Masukkan NISN siswa di atas untuk melihat KTS.</div>
   <div id="cards-wrapper" class="container"></div>
 
   <script>
     // URL Web App Google Apps Script Anda
-    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Ganti URL ini sesuai deployment Anda
+    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Masukkan URL Web App Anda
 
-    async function loadCards() {
+    let allStudentsData = [];
+
+    // Ambil data saat halaman dibuka
+    async function initData() {
       const statusDiv = document.getElementById('status-container');
-      const cardsWrapper = document.getElementById('cards-wrapper');
-
       try {
+        statusDiv.innerHTML = 'Memuat database siswa...';
         const response = await fetch(API_URL);
-        const data = await response.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          statusDiv.innerHTML = 'Data siswa tidak ditemukan.';
-          return;
+        allStudentsData = await response.json();
+        
+        statusDiv.innerHTML = 'Silakan masukkan NISN untuk menampilkan Kartu KTS.';
+        
+        // Cek jika ada NISN di parameter URL (misal: ?nisn=0105695063)
+        const urlParams = new URLSearchParams(window.location.search);
+        const nisnParam = urlParams.get('nisn');
+        if (nisnParam) {
+          document.getElementById('input-nisn').value = nisnParam;
+          cariSiswa();
         }
 
-        statusDiv.style.display = 'none'; // Sembunyikan pesan loading
-        cardsWrapper.innerHTML = '';
-
-        data.forEach(siswa => {
-          // Hanya jika status tidak "tolak"
-          if (String(siswa.statusValidation || '').toLowerCase().trim() === 'tolak') {
-            return;
-          }
-
-          const cardHTML = `
-            <div class="card-wrapper" onclick="this.classList.toggle('flipped')">
-              <div class="card-inner">
-                
-                <!-- TAMPILAN DEPAN -->
-                <div class="card-front">
-                  <div class="header-front">
-                    <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" onerror="this.src='https://via.placeholder.com/60'">
-                    <h2>SMP NEGERI 1 MOGA</h2>
-                    <h3>KELAS IX I</h3>
-                  </div>
-
-                  <div class="photo-box">
-                    <img src="${siswa.foto || 'https://via.placeholder.com/130x160'}" alt="Foto ${siswa.nama}">
-                  </div>
-
-                  <div class="info-front">
-                    <div class="student-name">${siswa.nama || '-'}</div>
-                    <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
-                  </div>
-
-                  <div class="footer-hint">* Klik / Sentuh kartu untuk membalik</div>
-                </div>
-
-                <!-- TAMPILAN BELAKANG -->
-                <div class="card-back">
-                  <div class="header-back">BIODATA SISWA</div>
-                  <table class="detail-table">
-                    <tr>
-                      <td class="label">No Absen</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.absen || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">NISN</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.nisn || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Nama Lengkap</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.nama || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Jenis Kelamin</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.jk || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Tempat Lahir</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.tempatLahir || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Tanggal Lahir</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.tglLahir || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Alamat</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.alamat || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Hobi</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.hobi || '-'}</td>
-                    </tr>
-                    <tr>
-                      <td class="label">Cita-cita</td>
-                      <td class="colon">:</td>
-                      <td class="value">${siswa.cita || '-'}</td>
-                    </tr>
-                  </table>
-                </div>
-
-              </div>
-            </div>
-          `;
-          cardsWrapper.innerHTML += cardHTML;
-        });
-
       } catch (error) {
-        console.error("Error loading cards:", error);
-        statusDiv.innerHTML = '❌ Gagal memuat data kartu siswa.';
+        console.error("Error:", error);
+        statusDiv.innerHTML = '❌ Gagal memuat data siswa.';
       }
     }
 
-    // Jalankan saat halaman dibuka
-    document.addEventListener('DOMContentLoaded', loadCards);
+    function cariSiswa() {
+      const inputNisn = document.getElementById('input-nisn').value.trim();
+      const statusDiv = document.getElementById('status-container');
+      const cardsWrapper = document.getElementById('cards-wrapper');
+
+      cardsWrapper.innerHTML = '';
+
+      if (!inputNisn) {
+        statusDiv.innerHTML = '⚠️ Harap masukkan NISN terlebih dahulu.';
+        return;
+      }
+
+      // Cari siswa yang cocok berdasarkan NISN (pencarian fleksibel string)
+      const siswa = allStudentsData.find(s => String(s.nisn).trim() === inputNisn);
+
+      if (!siswa) {
+        statusDiv.innerHTML = `❌ Data siswa dengan NISN <b>${inputNisn}</b> tidak ditemukan.`;
+        return;
+      }
+
+      statusDiv.innerHTML = ''; // Hapus pesan jika data ditemukan
+
+      const cardHTML = `
+        <div class="card-wrapper" onclick="this.classList.toggle('flipped')">
+          <div class="card-inner">
+            
+            <!-- TAMPILAN DEPAN -->
+            <div class="card-front">
+              <div class="header-front">
+                <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" onerror="this.src='https://via.placeholder.com/55'">
+                <h2>SMP NEGERI 1 MOGA</h2>
+                <h3>KELAS IX I</h3>
+              </div>
+
+              <!-- Foto diturunkan kebawah -->
+              <div class="photo-box">
+                <img src="${siswa.foto || 'https://via.placeholder.com/125x155'}" alt="Foto ${siswa.nama}">
+              </div>
+
+              <div class="info-front">
+                <div class="student-name">${siswa.nama || '-'}</div>
+                <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
+              </div>
+
+              <div class="footer-hint">* Klik / Sentuh kartu untuk membalik</div>
+            </div>
+
+            <!-- TAMPILAN BELAKANG -->
+            <div class="card-back">
+              <div class="header-back">BIODATA SISWA</div>
+              <table class="detail-table">
+                <tr>
+                  <td class="label">No Absen</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.absen || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">NISN</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.nisn || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Nama Lengkap</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.nama || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Jenis Kelamin</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.jk || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Tempat Lahir</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.tempatLahir || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Tanggal Lahir</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.tglLahir || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Alamat</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.alamat || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Hobi</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.hobi || '-'}</td>
+                </tr>
+                <tr>
+                  <td class="label">Cita-cita</td>
+                  <td class="colon">:</td>
+                  <td class="value">${siswa.cita || '-'}</td>
+                </tr>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      cardsWrapper.innerHTML = cardHTML;
+    }
+
+    document.addEventListener('DOMContentLoaded', initData);
   </script>
 
 </body>
