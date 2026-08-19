@@ -3,205 +3,338 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kartu Tanda Siswa</title>
+  <title>Kartu Tanda Siswa IX I</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f3f4f6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-    
-    /* Loading & Alert Styles */
-    .status-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
-    .status-card h2 { margin-bottom: 10px; font-size: 1.2rem; }
-    .status-card p { color: #666; font-size: 0.95rem; line-height: 1.5; }
-    .icon { font-size: 3rem; margin-bottom: 10px; }
+    :root {
+      --primary-color: #1e3a8a;
+      --secondary-color: #3b82f6;
+      --card-width: 320px;
+      --card-height: 500px;
+    }
 
-    /* Card Layout */
-    .card-wrapper { display: none; flex-direction: column; align-items: center; gap: 20px; }
-    .kts-card { width: 340px; height: 530px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 16px; color: white; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-    
-    /* Background Ornament */
-    .kts-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-    
-    .card-header { text-align: center; border-bottom: 2px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-    .card-header h3 { font-size: 1.1rem; letter-spacing: 1px; text-transform: uppercase; }
-    .card-header p { font-size: 0.75rem; opacity: 0.8; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-    .card-body { text-align: center; margin: 15px 0; }
-    .photo-frame { width: 110px; height: 140px; border-radius: 10px; border: 3px solid white; object-fit: cover; background: #ddd; margin: 0 auto 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-    .student-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; }
-    .student-nisn { font-size: 0.85rem; background: rgba(255,255,255,0.2); display: inline-block; padding: 3px 10px; border-radius: 12px; margin-bottom: 15px; }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 1200px;
+    }
 
-    /* Details Grid */
-    .details { text-align: left; font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; backdrop-filter: blur(5px); }
-    .details-row { display: flex; margin-bottom: 6px; }
-    .details-row:last-child { margin-bottom: 0; }
-    .label { width: 90px; font-weight: 600; opacity: 0.8; }
-    .value { flex: 1; font-weight: 500; word-break: break-word; }
+    /* Container Kartu (Mendukung Flip Efek 3D) */
+    .card-wrapper {
+      width: var(--card-width);
+      height: var(--card-height);
+      perspective: 1000px;
+    }
 
-    /* Print Button */
-    .btn-print { background: #10b981; color: white; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(16,185,129,0.3); transition: 0.2s; }
-    .btn-print:hover { background: #059669; }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border-radius: 16px;
+    }
 
-    /* Hide element when printing */
-    @media print {
-      body { background: white; padding: 0; justify-content: flex-start; }
-      .btn-print, .status-card { display: none !important; }
-      .card-wrapper { display: flex !important; }
-      .kts-card { box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Hover atau class active untuk membalik kartu */
+    .card-wrapper:hover .card-inner,
+    .card-wrapper.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      overflow: hidden;
+      background: white;
+      box-sizing: border-box;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- BAGIAN DEPAN --- */
+    .card-front {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-front {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+    }
+
+    .header-front img {
+      width: 60px;
+      height: auto;
+      margin-bottom: 6px;
+    }
+
+    .header-front h2 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .header-front h3 {
+      margin: 2px 0 0 0;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .photo-box {
+      width: 130px;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid var(--secondary-color);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 15px 0;
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .info-front {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .info-front .student-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin: 0 0 5px 0;
+      line-height: 1.2;
+    }
+
+    .info-front .student-nisn {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 600;
+      background: #e0f2fe;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .footer-hint {
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: auto;
+    }
+
+    /* --- BAGIAN BELAKANG --- */
+    .card-back {
+      transform: rotateY(180deg);
+      background: white;
+      padding: 20px;
+      text-align: left;
+    }
+
+    .header-back {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .detail-table tr {
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .detail-table td {
+      padding: 6px 2px;
+      vertical-align: top;
+    }
+
+    .detail-table td.label {
+      font-weight: 600;
+      color: #475569;
+      width: 32%;
+    }
+
+    .detail-table td.colon {
+      width: 3%;
+      color: #94a3b8;
+    }
+
+    .detail-table td.value {
+      color: #0f172a;
+      font-weight: 500;
+      width: 65%;
+    }
+
+    /* Status Message Container */
+    #status-container {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 18px;
+      color: #475569;
     }
   </style>
 </head>
 <body>
 
-  <!-- Loading State -->
-  <div id="loadingState" class="status-card">
-    <div class="icon">⏳</div>
-    <h2>Memuat Data...</h2>
-    <p>Mohon tunggu sebentar, sedang mengambil data kartu siswa.</p>
-  </div>
-
-  <!-- Status / Error State -->
-  <div id="statusState" class="status-card" style="display: none;">
-    <div id="statusIcon" class="icon">⚠️</div>
-    <h2 id="statusTitle">Pemberitahuan</h2>
-    <p id="statusMessage">Data tidak ditemukan.</p>
-  </div>
-
-  <!-- KTS Card Container -->
-  <div id="cardWrapper" class="card-wrapper">
-    <div class="kts-card">
-      <div class="card-header">
-        <h3>KARTU TANDA SISWA</h3>
-        <p>Kelas 9I - TA 2025/2026</p>
-      </div>
-
-      <div class="card-body">
-        <img id="ktsPhoto" class="photo-frame" src="" alt="Foto Siswa">
-        <div id="ktsName" class="student-name">-</div>
-        <div id="ktsNisn" class="student-nisn">NISN: -</div>
-
-        <div class="details">
-          <div class="details-row"><span class="label">No. Absen</span><span class="value" id="bioAbsen">: -</span></div>
-          <div class="details-row"><span class="label">Gender</span><span class="value" id="bioJk">: -</span></div>
-          <div class="details-row"><span class="label">TTL</span><span class="value" id="bioTtl">: -</span></div>
-          <div class="details-row"><span class="label">Alamat</span><span class="value" id="bioAlamat">: -</span></div>
-          <div class="details-row"><span class="label">Hobi / Cita</span><span class="value" id="bioHobiCita">: -</span></div>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-print" onclick="window.print()">🖨️ Cetak Kartu</button>
-  </div>
+  <div id="status-container">Memuat Kartu Siswa...</div>
+  <div id="cards-wrapper" class="container"></div>
 
   <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts';
-    // Fallback foto berupa SVG abu-abu dengan ikon user jika foto kosong/error
-    const DEFAULT_PHOTO = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="110" height="140" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+    // URL Web App Google Apps Script Anda
+    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Ganti URL ini sesuai deployment Anda
 
-    function formatDriveUrl(url) {
-      if (!url) return '';
-      const match = url.match(/[-\w]{25,}/);
-      return match ? `https://lh3.googleusercontent.com/d/${match[0]}` : url;
+    async function loadCards() {
+      const statusDiv = document.getElementById('status-container');
+      const cardsWrapper = document.getElementById('cards-wrapper');
+
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          statusDiv.innerHTML = 'Data siswa tidak ditemukan.';
+          return;
+        }
+
+        statusDiv.style.display = 'none'; // Sembunyikan pesan loading
+        cardsWrapper.innerHTML = '';
+
+        data.forEach(siswa => {
+          // Hanya jika status tidak "tolak"
+          if (String(siswa.statusValidation || '').toLowerCase().trim() === 'tolak') {
+            return;
+          }
+
+          const cardHTML = `
+            <div class="card-wrapper" onclick="this.classList.toggle('flipped')">
+              <div class="card-inner">
+                
+                <!-- TAMPILAN DEPAN -->
+                <div class="card-front">
+                  <div class="header-front">
+                    <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" onerror="this.src='https://via.placeholder.com/60'">
+                    <h2>SMP NEGERI 1 MOGA</h2>
+                    <h3>KELAS IX I</h3>
+                  </div>
+
+                  <div class="photo-box">
+                    <img src="${siswa.foto || 'https://via.placeholder.com/130x160'}" alt="Foto ${siswa.nama}">
+                  </div>
+
+                  <div class="info-front">
+                    <div class="student-name">${siswa.nama || '-'}</div>
+                    <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
+                  </div>
+
+                  <div class="footer-hint">* Klik / Sentuh kartu untuk membalik</div>
+                </div>
+
+                <!-- TAMPILAN BELAKANG -->
+                <div class="card-back">
+                  <div class="header-back">BIODATA SISWA</div>
+                  <table class="detail-table">
+                    <tr>
+                      <td class="label">No Absen</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.absen || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">NISN</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.nisn || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Nama Lengkap</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.nama || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Jenis Kelamin</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.jk || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Tempat Lahir</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.tempatLahir || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Tanggal Lahir</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.tglLahir || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Alamat</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.alamat || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Hobi</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.hobi || '-'}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">Cita-cita</td>
+                      <td class="colon">:</td>
+                      <td class="value">${siswa.cita || '-'}</td>
+                    </tr>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          `;
+          cardsWrapper.innerHTML += cardHTML;
+        });
+
+      } catch (error) {
+        console.error("Error loading cards:", error);
+        statusDiv.innerHTML = '❌ Gagal memuat data kartu siswa.';
+      }
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const paramAbsen = params.get('absen') || params.get('ABSEN') || '';
-    const paramNisn = params.get('nisn') || params.get('NISN') || '';
-    const paramNama = params.get('nama') || params.get('NAMA') || '';
-
-    const loadingEl = document.getElementById('loadingState');
-    const statusEl = document.getElementById('statusState');
-    const statusIcon = document.getElementById('statusIcon');
-    const statusTitle = document.getElementById('statusTitle');
-    const statusMessage = document.getElementById('statusMessage');
-    const cardWrapper = document.getElementById('cardWrapper');
-
-    function showStatus(icon, title, message) {
-      loadingEl.style.display = 'none';
-      cardWrapper.style.display = 'none';
-      statusIcon.textContent = icon;
-      statusTitle.textContent = title;
-      statusMessage.textContent = message;
-      statusEl.style.display = 'block';
-    }
-
-    fetch(GAS_URL)
-      .then(res => res.json())
-      .then(data => {
-        if (!Array.isArray(data)) {
-          showStatus('🚨', 'Format Data Salah', 'Data yang diterima dari server tidak sesuai format.');
-          return;
-        }
-
-        let found = null;
-
-        for (let item of data) {
-          if (paramAbsen && String(item.absen || '').trim() === String(paramAbsen).trim()) {
-            found = item;
-            break;
-          } else if (paramNisn && String(item.nisn || '').trim() === String(paramNisn).trim()) {
-            found = item;
-            break;
-          } else if (paramNama && String(item.nama || '').toLowerCase().includes(String(paramNama).toLowerCase())) {
-            found = item;
-            break;
-          }
-        }
-
-        if (!found) {
-          showStatus('🔍', 'Data Tidak Ditemukan', 'Siswa dengan parameter tersebut tidak terdaftar di sistem.');
-          return;
-        }
-
-        // Cek Validasi Admin (Kolom Status Validation)
-        const status = String(found.statusValidation || '').toLowerCase().trim();
-
-        if (status !== 'setujui') {
-          if (status === 'tolak') {
-            showStatus('❌', 'Akses Ditolak', 'Pengajuan biodata/KTS Anda telah ditolak oleh admin. Silakan perbaiki data Anda.');
-          } else {
-            showStatus('⏳', 'Verifikasi Pending', 'Biodata Anda masih dalam proses peninjauan oleh admin. Cetak kartu belum tersedia.');
-          }
-          return;
-        }
-
-        // Tampilkan Data ke Kartu
-        document.getElementById('ktsName').textContent = found.nama || '-';
-        document.getElementById('ktsNisn').textContent = 'NISN: ' + (found.nisn || '-');
-        document.getElementById('bioAbsen').textContent = ': ' + (found.absen || '-');
-        document.getElementById('bioJk').textContent = ': ' + (found.jk || '-');
-
-        // Handling Format Tanggal Lahir Aman
-        let tglFormatted = '';
-        if (found.tglLahir) {
-          const d = new Date(found.tglLahir);
-          tglFormatted = !isNaN(d.getTime()) ? d.toLocaleDateString('id-ID') : found.tglLahir;
-        }
-
-        const tempatLahir = found.tempatLahir || '';
-        document.getElementById('bioTtl').textContent = `: ${tempatLahir}${tempatLahir && tglFormatted ? ', ' : ''}${tglFormatted}`;
-        document.getElementById('bioAlamat').textContent = ': ' + (found.alamat || '-');
-        document.getElementById('bioHobiCita').textContent = `: ${found.hobi || '-'} / ${found.cita || '-'}`;
-
-        // Handling Foto Siswa
-        const photoElement = document.getElementById('ktsPhoto');
-        const formattedFoto = formatDriveUrl(found.foto);
-        
-        photoElement.onerror = function() {
-          this.onerror = null;
-          this.src = DEFAULT_PHOTO;
-        };
-        
-        photoElement.src = formattedFoto ? formattedFoto : DEFAULT_PHOTO;
-
-        document.title = 'KTS - ' + (found.nama || 'Siswa');
-        loadingEl.style.display = 'none';
-        statusEl.style.display = 'none';
-        cardWrapper.style.display = 'flex';
-      })
-      .catch(err => {
-        console.error('Error:', err);
-        showStatus('🚨', 'Gagal Terhubung', 'Terjadi kesalahan saat mengambil data dari server.');
-      });
+    // Jalankan saat halaman dibuka
+    document.addEventListener('DOMContentLoaded', loadCards);
   </script>
+
 </body>
 </html>
