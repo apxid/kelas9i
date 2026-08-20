@@ -8,11 +8,15 @@
   <!-- Library untuk Unduh Gambar & PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Library JsBarcode untuk Render Barcode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
 
   <style>
     :root {
       --primary-color: #1e3a8a;
       --secondary-color: #3b82f6;
+      --osis-yellow: #f59e0b;
+      --smp-blue: #0284c7;
       --card-width: 320px;
       --card-height: 520px;
     }
@@ -99,17 +103,19 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     /* --- BAGIAN DEPAN --- */
     .card-front {
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      padding: 20px;
+      padding: 16px;
       align-items: center;
       height: 100%;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .header-front {
@@ -118,11 +124,12 @@
       align-items: center;
       width: 100%;
       border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 8px;
+      padding-bottom: 6px;
+      z-index: 2;
     }
 
     .header-front img {
-      width: 55px;
+      width: 50px;
       height: auto;
       margin-bottom: 4px;
     }
@@ -144,15 +151,27 @@
       text-align: center;
     }
 
+    /* Hiasan Wave Biru & Kuning OSIS */
+    .wave-decoration {
+      position: absolute;
+      top: 110px;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .photo-box {
-      width: 120px;
-      height: 150px;
+      width: 110px;
+      height: 140px;
       border-radius: 12px;
       overflow: hidden;
       border: 3px solid var(--secondary-color);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-top: 60px;
-      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      margin-top: 25px;
+      margin-bottom: 10px;
+      z-index: 2;
     }
 
     .photo-box img {
@@ -164,25 +183,42 @@
     .info-front {
       width: 100%;
       text-align: center;
+      z-index: 2;
     }
 
     .info-front .student-name {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: #0f172a;
       text-transform: uppercase;
-      margin: 0 0 6px 0;
+      margin: 0 0 4px 0;
       line-height: 1.2;
     }
 
     .info-front .student-nisn {
-      font-size: 12px;
+      font-size: 11px;
       color: #475569;
       font-weight: 600;
       background: #e0f2fe;
       display: inline-block;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    /* Element Barcode */
+    .barcode-container {
+      margin-top: auto;
+      margin-bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .barcode-container svg {
+      max-width: 240px;
+      height: 45px;
     }
 
     /* --- BAGIAN BELAKANG --- */
@@ -201,7 +237,7 @@
       color: var(--primary-color);
       border-bottom: 2px solid var(--primary-color);
       padding-bottom: 6px;
-      margin-top: 20px;
+      margin-top: 10px;
       margin-bottom: 12px;
       text-align: center;
       text-transform: uppercase;
@@ -241,7 +277,7 @@
 
     .teacher-signature-wrapper {
       margin-top: auto;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       display: flex;
       justify-content: flex-end;
       width: 100%;
@@ -276,7 +312,6 @@
       margin-top: 10px;
     }
 
-    /* Container Tersembunyi Khusus Render PDF/PNG Depan & Belakang Sekaligus */
     #hidden-render-container {
       position: absolute;
       top: -9999px;
@@ -311,7 +346,7 @@
   <div id="hidden-render-container"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts'; // Ganti dengan URL Web App Anda
+    const API_URL = 'https://script.google.com/macros/s/AKfycbweHaAg7Juv6HnjligTyD7k3d6vJEIvcB5BwVn-2FnRv4Tn_mfV_2kIIuZjEwZsOnXyAg/exec?action=getKts';
 
     let allStudentsData = [];
     let currentSiswa = null;
@@ -373,24 +408,35 @@
       renderCard();
     }
 
-    // Helper Template Sisi Depan
-    function getFrontHTML(siswa) {
+    // Helper Template Sisi Depan dengan Gelombang & Barcode
+    function getFrontHTML(siswa, prefix = '') {
+      const barcodeId = `${prefix}barcode-${siswa.nisn || '00000'}`;
       return `
         <div class="card-container">
           <div class="card-front">
+            <!-- Hiasan Line Wave Biru SMP & Kuning OSIS -->
+            <svg class="wave-decoration" viewBox="0 0 320 80" preserveAspectRatio="none">
+              <path d="M0,20 C100,50 220,-10 320,30 L320,0 L0,0 Z" fill="#0284c7" opacity="0.18"></path>
+              <path d="M0,35 C120,0 200,60 320,15 L320,0 L0,0 Z" fill="#f59e0b" opacity="0.25"></path>
+            </svg>
+
             <div class="header-front">
-              <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" crossorigin="anonymous" onerror="this.src='https://via.placeholder.com/55'">
+              <img src="https://apxid.github.io/kelas9i/assets/9i.png" alt="Logo 9I" crossorigin="anonymous" onerror="this.src='https://via.placeholder.com/50'">
               <h2>SMP NEGERI 1 MOGA</h2>
               <h3>KELAS IX I</h3>
             </div>
 
             <div class="photo-box">
-              <img src="${siswa.foto || 'https://via.placeholder.com/120x150'}" crossorigin="anonymous" alt="Foto ${siswa.nama}">
+              <img src="${siswa.foto || 'https://via.placeholder.com/110x140'}" crossorigin="anonymous" alt="Foto ${siswa.nama}">
             </div>
 
             <div class="info-front">
               <div class="student-name">${siswa.nama || '-'}</div>
               <div class="student-nisn">NISN: ${siswa.nisn || '-'}</div>
+            </div>
+
+            <div class="barcode-container">
+              <svg id="${barcodeId}"></svg>
             </div>
           </div>
         </div>
@@ -427,27 +473,45 @@
       `;
     }
 
+    function generateBarcode(elementId, value) {
+      if (!value) return;
+      try {
+        JsBarcode(`#${elementId}`, String(value), {
+          format: "CODE128",
+          width: 1.6,
+          height: 35,
+          displayValue: false,
+          margin: 0
+        });
+      } catch (e) {
+        console.error("Gagal membuat barcode:", e);
+      }
+    }
+
     function renderCard() {
       const cardsWrapper = document.getElementById('cards-wrapper');
       if (!currentSiswa) return;
 
       cardsWrapper.innerHTML = `
         <div class="card-wrapper">
-          ${currentSide === 'front' ? getFrontHTML(currentSiswa) : getBackHTML(currentSiswa)}
+          ${currentSide === 'front' ? getFrontHTML(currentSiswa, 'main-') : getBackHTML(currentSiswa)}
         </div>
       `;
+
+      if (currentSide === 'front') {
+        generateBarcode(`main-barcode-${currentSiswa.nisn || '00000'}`, currentSiswa.nisn);
+      }
     }
 
-    // Fungsi Render Elemen Tersembunyi untuk Proses Ekspor
     function prepareExportElements() {
       const container = document.getElementById('hidden-render-container');
       container.innerHTML = `
-        <div id="export-front" class="card-wrapper">${getFrontHTML(currentSiswa)}</div>
+        <div id="export-front" class="card-wrapper">${getFrontHTML(currentSiswa, 'exp-')}</div>
         <div id="export-back" class="card-wrapper">${getBackHTML(currentSiswa)}</div>
       `;
+      generateBarcode(`exp-barcode-${currentSiswa.nisn || '00000'}`, currentSiswa.nisn);
     }
 
-    // Unduh Gambar PNG (Depan & Belakang Sekaligus)
     async function downloadAllPNG() {
       if (!currentSiswa) return;
       prepareExportElements();
@@ -455,14 +519,12 @@
       const frontElem = document.getElementById('export-front');
       const backElem = document.getElementById('export-back');
 
-      // Process Depan
       const canvasFront = await html2canvas(frontElem, { useCORS: true, scale: 2 });
       const linkFront = document.createElement('a');
       linkFront.href = canvasFront.toDataURL("image/png");
       linkFront.download = `KTS_${currentSiswa.nisn}_DEPAN.png`;
       linkFront.click();
 
-      // Process Belakang
       setTimeout(async () => {
         const canvasBack = await html2canvas(backElem, { useCORS: true, scale: 2 });
         const linkBack = document.createElement('a');
@@ -472,7 +534,6 @@
       }, 500);
     }
 
-    // Unduh PDF Kertas A4 (Depan dan Belakang Bersebelahan)
     async function downloadPDF_A4() {
       if (!currentSiswa) return;
       prepareExportElements();
@@ -487,19 +548,16 @@
       const imgBack = canvasBack.toDataURL('image/png');
 
       const { jsPDF } = window.jspdf;
-      // Inisialisasi dokumen PDF A4 (210mm x 297mm)
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
 
-      // Dimensi Kartu di PDF A4 (Lebar: 85mm, Tinggi: 138mm)
       const cardWidth = 85;
       const cardHeight = 138;
-      const posY = 30; // Posisi vertikal dari atas kertas
+      const posY = 30;
 
-      // Posisi Horizontal: Kartu Depan (Kiri: 15mm), Kartu Belakang (Kanan: 110mm)
       pdf.addImage(imgFront, 'PNG', 15, posY, cardWidth, cardHeight);
       pdf.addImage(imgBack, 'PNG', 110, posY, cardWidth, cardHeight);
 
