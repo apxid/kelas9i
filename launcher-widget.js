@@ -35,7 +35,7 @@
             transform: translateY(-50%) scale(0.9) !important;
         }
 
-        /* Container Panel Utama Samsung Edge (Full Rounded Corner Kiri & Kanan) */
+        /* Container Panel Utama Samsung Edge */
         #launcher-radial-menu {
             position: absolute !important;
             top: 50% !important;
@@ -47,11 +47,11 @@
             flex-direction: column !important;
             align-items: center !important;
             gap: 10px !important;
-            padding: 14px 6px 10px 6px !important;
+            padding: 14px 6px 14px 6px !important;
             background: rgba(30, 30, 32, 0.8) !important;
             backdrop-filter: blur(25px) saturation(180%) !important;
             -webkit-backdrop-filter: blur(25px) saturation(180%) !important;
-            border-radius: 22px !important; /* Rounded Corner Penuh di Semua Sudut */
+            border-radius: 22px !important;
             box-shadow: -4px 6px 25px rgba(0, 0, 0, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             transition: right 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease !important;
@@ -64,13 +64,6 @@
 
         #launcher-radial-menu::-webkit-scrollbar {
             display: none;
-        }
-
-        /* Garis Pemisah Putus-Putus Halus */
-        .edge-divider {
-            width: 82% !important;
-            border-top: 1px dotted rgba(255, 255, 255, 0.3) !important;
-            margin: 1px 0 !important;
         }
 
         /* Item Aplikasi */
@@ -122,26 +115,7 @@
             line-height: 1.1 !important;
         }
 
-        /* Navigasi Bawah (Footer Icon Grid & Edit) */
-        .edge-footer {
-            display: flex !important;
-            justify-content: space-around !important;
-            width: 100% !important;
-            padding-top: 4px !important;
-            margin-top: 2px !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .edge-footer-btn {
-            background: transparent !important;
-            border: none !important;
-            color: rgba(255, 255, 255, 0.75) !important;
-            font-size: 12px !important;
-            cursor: pointer !important;
-            padding: 2px !important;
-        }
-
-        /* Status Aktif Panel Terbuka (Diberi Jarak 5px dari Kanan Layar Agar Lengkungan Kanan Terlihat Penuh) */
+        /* Status Aktif Panel Terbuka */
         #launcher-widget-wrapper.active #launcher-radial-menu {
             right: 5px !important;
             opacity: 1 !important;
@@ -155,12 +129,10 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Data Link Eksternal
-    const featuredItem = { title: "Pilih cerdas", url: "https://apxid.github.io/kelas9i/", icon: "🔍" };
-
+    // 2. Data Link Eksternal Utama
     const mainData = [
         { title: "Galeri", url: "https://drive.google.com/drive/folders/1HqISHRK8AlwcFun7EUBvaALYhJUbh9de?usp=sharing", icon: "🌸" },
-        { title: "Card", url: "https://apxid.github.io/kelas9i/card", icon: "🔍" },
+        { title: "Card", url: "https://apxid.github.io/kelas9i/card", icon: "🪪" }, // Ikon diubah ke ID Card
         { title: "WhatsApp", url: "https://chat.whatsapp.com/LG9ff5zCPxA847G7b82IRD", icon: "💬" },
         { title: "KAS", url: "https://apxid.github.io/kelas9i/kas/", icon: "💰" },
         { title: "TIK", url: "https://tik-spensamo.blogspot.com/", icon: "💻" },
@@ -196,22 +168,12 @@
             <audio id="sound-close" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
             <div id="launcher-radial-menu">
-                <div id="edge-featured-container" style="width:100%;"></div>
-                <div class="edge-divider"></div>
                 <div id="edge-main-container" style="width:100%; display:flex; flex-direction:column; gap:8px; align-items:center;"></div>
-                <div class="edge-footer">
-                    <button class="edge-footer-btn" title="Menu">:::</button>
-                    <button class="edge-footer-btn" title="Edit">✏️</button>
-                </div>
             </div>
 
             <div id="launcher-icon" onclick="toggleLauncherMenu()"></div>
         `;
         appContainer.appendChild(wrapper);
-
-        // Render Item Atas
-        const featuredContainer = document.getElementById('edge-featured-container');
-        if (featuredContainer) featuredContainer.appendChild(createItemElement(featuredItem));
 
         // Render Item Utama
         const mainContainer = document.getElementById('edge-main-container');
