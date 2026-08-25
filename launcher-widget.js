@@ -135,8 +135,8 @@
         { title: "Card", url: "https://apxid.github.io/kelas9i/card", icon: "🪪" }, // Ikon diubah ke ID Card
         { title: "WhatsApp", url: "https://chat.whatsapp.com/LG9ff5zCPxA847G7b82IRD", icon: "💬" },
         { title: "KAS", url: "https://apxid.github.io/kelas9i/kas/", icon: "💰" },
-        { title: "TIK", url: "https://tik-spensamo.blogspot.com/", icon: "💻" },
-        { title: "Home", url: "https://apxid.github.io/kelas9i", icon: "🌐" }
+        { title: "TIK", url: "https://tik-spensamo.blogspot.com/", icon: "🌐" },
+        { title: "Home", url: "https://apxid.github.io/kelas9i", icon: "🏠" }
     ];
 
     const createItemElement = (item) => {
