@@ -242,6 +242,15 @@ th{
   font-weight:700;
 }
 
+.terbayar{
+  background:#dcfce7;
+  color:#16a34a;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
 .kurang{
   background:#fee2e2;
   color:#dc2626;
@@ -856,30 +865,128 @@ function renderRekap(){
   const table = document.getElementById("rekapTable");
   let html = "";
 
+  if(!DASHBOARD.rekap || DASHBOARD.rekap.length === 0){
+    table.innerHTML = "";
+    return;
+  }
+
+  // Header digunakan untuk menentukan jenis kolom.
+  // Aturan:
+  // KAS       -> total setoran, HIJAU
+  // TABUNGAN  -> total setoran, HIJAU
+  // ASIK      -> LUNAS HIJAU / KEKURANGAN MERAH
+  // GRADUATION-> LUNAS HIJAU / KEKURANGAN MERAH
+  // TALI ASIH -> LUNAS HIJAU / KEKURANGAN MERAH
+  const headerRow = DASHBOARD.rekap[0];
+
   DASHBOARD.rekap.forEach((row,index)=>{
     html += "<tr>";
+
     row.forEach((cell,col)=>{
+
+      // ======================================
       // HEADER
+      // ======================================
       if(index === 0){
+
         html += `<th>${cell}</th>`;
+
       }
+
+      // ======================================
       // BODY
+      // ======================================
       else{
+
+        // ------------------------------------
         // NAMA SISWA
+        // ------------------------------------
         if(col === 0){
-          html += `<td style="text-align:left; font-weight:600">${cell}</td>`;
+
+          html += `
+            <td style="text-align:left; font-weight:600">
+              ${cell}
+            </td>
+          `;
+
         }
-        // STATUS LUNAS
-        else if(String(cell).toUpperCase() === "LUNAS"){
-          html += `<td><span class="lunas">LUNAS</span></td>`;
-        }
-        // ANGKA SISA
+
         else{
-          const nominal = Number(cell || 0);
-          html += `<td><span class="kurang">Rp${nominal.toLocaleString('id-ID')}</span></td>`;
+
+          const namaKolom =
+            String(headerRow[col] || "")
+              .trim()
+              .toUpperCase();
+
+          // ----------------------------------
+          // KAS & TABUNGAN
+          // SELALU TOTAL SUDAH DISETORKAN
+          // WARNA HIJAU
+          // ----------------------------------
+          if(
+            namaKolom === "KAS" ||
+            namaKolom === "TABUNGAN"
+          ){
+
+            const nominal =
+              Number(cell || 0);
+
+            html += `
+              <td>
+                <span class="terbayar">
+                  Rp${nominal.toLocaleString('id-ID')}
+                </span>
+              </td>
+            `;
+
+          }
+
+          // ----------------------------------
+          // LUNAS
+          // HANYA UNTUK ASIK /
+          // GRADUATION / TALI ASIH
+          // ----------------------------------
+          else if(
+            String(cell)
+              .trim()
+              .toUpperCase() === "LUNAS"
+          ){
+
+            html += `
+              <td>
+                <span class="lunas">
+                  LUNAS
+                </span>
+              </td>
+            `;
+
+          }
+
+          // ----------------------------------
+          // KEKURANGAN
+          // ASIK / GRADUATION / TALI ASIH
+          // ----------------------------------
+          else{
+
+            const nominal =
+              Number(cell || 0);
+
+            html += `
+              <td>
+                <span class="kurang">
+                  Rp${nominal.toLocaleString('id-ID')}
+                </span>
+              </td>
+            `;
+
+          }
+
         }
+
       }
+
     });
+
     html += "</tr>";
   });
 
