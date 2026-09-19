@@ -378,6 +378,14 @@ MENU SISWA
   white-space:nowrap;
 }
 
+/* Transaksi pengambilan tabungan / nominal negatif */
+.tabunganNominalMinus{
+   text-align:right !important;
+   color:#dc2626 !important;
+   font-weight:700;
+   white-space:nowrap;
+}
+
 .tabunganEmpty{
   text-align:center;
   padding:24px 10px;
@@ -1388,13 +1396,29 @@ function renderRekapTabungan(res){
     const nominal =
       Number(item.nominal || 0);
 
+    /*
+     * POSITIF  : setoran tabungan -> hijau -> +Rp...
+     * NEGATIF  : pengambilan uang -> merah -> -Rp...
+     * NOL      : netral -> Rp...
+     */
+    let nominalClass = "tabunganNominal";
+    let nominalText = "Rp" + Math.abs(nominal).toLocaleString("id-ID");
+
+    if(nominal > 0){
+      nominalText = "+Rp" + nominal.toLocaleString("id-ID");
+    }
+    else if(nominal < 0){
+      nominalClass = "tabunganNominalMinus";
+      nominalText = "-Rp" + Math.abs(nominal).toLocaleString("id-ID");
+    }
+
     html += `
       <tr>
         <td class="tabunganDate">
           📅 ${item.tanggal}
         </td>
-        <td class="tabunganNominal">
-          +Rp${nominal.toLocaleString("id-ID")}
+        <td class="${nominalClass}">
+          ${nominalText}
         </td>
       </tr>
     `;
