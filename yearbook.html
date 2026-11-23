@@ -1,0 +1,686 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year Book 9I • Pembagian Kelompok</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Pacifico&display=swap');
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    color:#18233a;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(244,206,20,.35), transparent 25%),
+        radial-gradient(circle at 90% 15%, rgba(11,64,156,.25), transparent 28%),
+        linear-gradient(135deg,#eef5ff,#f9fbff 45%,#fff8e1);
+}
+
+/* HEADER */
+.hero{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(135deg,#0B409C,#1769d2);
+    color:white;
+    padding:45px 20px 75px;
+    text-align:center;
+    border-radius:0 0 45px 45px;
+    box-shadow:0 12px 35px rgba(11,64,156,.25);
+}
+
+.hero::before,
+.hero::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+}
+
+.hero::before{
+    width:260px;
+    height:260px;
+    left:-100px;
+    top:-100px;
+}
+
+.hero::after{
+    width:330px;
+    height:330px;
+    right:-150px;
+    bottom:-180px;
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 18px;
+    border-radius:30px;
+    background:#F4CE14;
+    color:#18233a;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:1px;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-size:clamp(32px,8vw,62px);
+    line-height:1.05;
+    font-weight:800;
+    position:relative;
+    z-index:2;
+}
+
+.hero h1 span{
+    color:#F4CE14;
+}
+
+.hero .script{
+    font-family:'Pacifico',cursive;
+    font-size:clamp(24px,6vw,42px);
+    margin-top:8px;
+    position:relative;
+    z-index:2;
+}
+
+.hero p{
+    margin:15px auto 0;
+    max-width:650px;
+    color:#e7f0ff;
+    font-size:14px;
+    position:relative;
+    z-index:2;
+}
+
+/* STATS */
+.stats{
+    max-width:900px;
+    margin:-38px auto 35px;
+    padding:0 18px;
+    position:relative;
+    z-index:5;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.stat{
+    background:rgba(255,255,255,.95);
+    border-radius:22px;
+    padding:20px 10px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(35,62,100,.12);
+    border:1px solid rgba(255,255,255,.8);
+}
+
+.stat strong{
+    display:block;
+    font-size:28px;
+    color:#0B409C;
+    font-weight:800;
+}
+
+.stat small{
+    font-size:11px;
+    color:#6c7484;
+}
+
+/* CONTENT */
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:0 18px 50px;
+}
+
+.section-title{
+    text-align:center;
+    margin:25px 0 28px;
+}
+
+.section-title h2{
+    font-size:26px;
+    font-weight:800;
+}
+
+.section-title p{
+    color:#737d90;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* GROUP GRID */
+.groups{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.group{
+    position:relative;
+    background:rgba(255,255,255,.9);
+    border-radius:28px;
+    padding:22px;
+    box-shadow:0 12px 30px rgba(35,62,100,.10);
+    border:2px solid rgba(255,255,255,.9);
+    overflow:hidden;
+    transition:.3s;
+}
+
+.group:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 40px rgba(35,62,100,.16);
+}
+
+.group::before{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:#F4CE14;
+    opacity:.12;
+    right:-35px;
+    top:-35px;
+}
+
+.group-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:17px;
+    position:relative;
+}
+
+.group-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.number{
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border-radius:16px;
+    background:linear-gradient(135deg,#0B409C,#3280df);
+    color:white;
+    font-size:19px;
+    font-weight:800;
+    box-shadow:0 7px 15px rgba(11,64,156,.22);
+}
+
+.group h3{
+    font-size:18px;
+    font-weight:800;
+}
+
+.composition{
+    font-size:11px;
+    font-weight:700;
+    color:#0B409C;
+    background:#edf4ff;
+    padding:7px 10px;
+    border-radius:20px;
+}
+
+/* STUDENTS */
+.students{
+    display:grid;
+    gap:9px;
+}
+
+.student{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f7f9fc;
+    border-radius:15px;
+    padding:9px 11px;
+    transition:.2s;
+}
+
+.student:hover{
+    background:#edf4ff;
+}
+
+.avatar{
+    width:33px;
+    height:33px;
+    flex-shrink:0;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    font-weight:800;
+}
+
+.avatar.L{
+    background:#dceaff;
+    color:#0B409C;
+}
+
+.avatar.P{
+    background:#ffe3ef;
+    color:#b52a62;
+}
+
+.student-name{
+    font-size:12.5px;
+    font-weight:600;
+    line-height:1.3;
+}
+
+.gender{
+    margin-left:auto;
+    font-size:10px;
+    font-weight:700;
+    opacity:.55;
+}
+
+/* SPECIAL LAST CARD */
+.group:last-child{
+    grid-column:1 / -1;
+    max-width:530px;
+    width:100%;
+    justify-self:center;
+}
+
+/* INFO */
+.info{
+    margin-top:35px;
+    background:linear-gradient(135deg,#0B409C,#164d9f);
+    color:white;
+    border-radius:28px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(11,64,156,.22);
+}
+
+.info .emoji{
+    font-size:30px;
+    margin-bottom:7px;
+}
+
+.info h3{
+    font-size:19px;
+}
+
+.info p{
+    margin-top:7px;
+    font-size:12px;
+    line-height:1.7;
+    color:#e3edff;
+}
+
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:25px 15px 35px;
+    color:#7a8497;
+    font-size:11px;
+}
+
+footer strong{
+    color:#0B409C;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+    .hero{
+        padding:38px 18px 65px;
+        border-radius:0 0 32px 32px;
+    }
+
+    .stats-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .stat{
+        padding:16px 5px;
+        border-radius:17px;
+    }
+
+    .stat strong{
+        font-size:23px;
+    }
+
+    .groups{
+        grid-template-columns:1fr;
+        gap:15px;
+    }
+
+    .group:last-child{
+        grid-column:auto;
+        max-width:none;
+    }
+
+    .group{
+        padding:18px;
+        border-radius:23px;
+    }
+
+    .composition{
+        font-size:9px;
+    }
+
+    .student-name{
+        font-size:12px;
+    }
+}
+
+@media(max-width:400px){
+    .stats-grid{
+        gap:7px;
+    }
+
+    .stat strong{
+        font-size:20px;
+    }
+
+    .stat small{
+        font-size:9px;
+    }
+
+    .group-header{
+        align-items:flex-start;
+    }
+
+    .composition{
+        padding:6px 7px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<header class="hero">
+
+    <div class="badge">📸 YEAR BOOK 2026</div>
+
+    <h1>CLASS <span>9I</span></h1>
+
+    <div class="script">
+        Our Year Book Team
+    </div>
+
+    <p>
+        Pembagian kelompok untuk kegiatan Year Book
+        Kelas 9I — Satu langkah, satu cerita, satu kenangan.
+    </p>
+
+</header>
+
+
+<!-- STATISTIK -->
+<section class="stats">
+
+    <div class="stats-grid">
+
+        <div class="stat">
+            <strong>30</strong>
+            <small>JUMLAH SISWA</small>
+        </div>
+
+        <div class="stat">
+            <strong>5</strong>
+            <small>KELOMPOK</small>
+        </div>
+
+        <div class="stat">
+            <strong>6</strong>
+            <small>SISWA / KELOMPOK</small>
+        </div>
+
+    </div>
+
+</section>
+
+
+<main class="container">
+
+    <div class="section-title">
+        <h2>✨ Pembagian Kelompok</h2>
+        <p>Silakan cek nama kalian pada kelompok masing-masing.</p>
+    </div>
+
+
+    <div class="groups">
+
+
+        <!-- KELOMPOK 1 -->
+        <div class="group">
+
+            <div class="group-header">
+
+                <div class="group-title">
+                    <div class="number">01</div>
+                    <h3>Kelompok 1</h3>
+                </div>
+
+                <div class="composition">
+                    3 L • 3 P
+                </div>
+
+            </div>
+
+            <div class="students">
+
+                <div class="student">
+                    <div class="avatar L">L</div>
+                    <div class="student-name">Agus Rama Dani</div>
+                    <div class="gender">L</div>
+                </div>
+
+                <div class="student">
+                    <div class="avatar P">P</div>
+                    <div class="student-name">Arifatul Maulia</div>
+                    <div class="gender">P</div>
+                </div>
+
+                <div class="student">
+                    <div class="avatar L">L</div>
+                    <div class="student-name">Ahmad Adlimu Sya'ni</div>
+                    <div class="gender">L</div>
+                </div>
+
+                <div class="student">
+                    <div class="avatar P">P</div>
+                    <div class="student-name">Indira Ramadhani</div>
+                    <div class="gender">P</div>
+                </div>
+
+                <div class="student">
+                    <div class="avatar P">P</div>
+                    <div class="student-name">Mega Septiani</div>
+                    <div class="gender">P</div>
+                </div>
+
+                <div class="student">
+                    <div class="avatar L">L</div>
+                    <div class="student-name">Rafiansyah Imam Malik</div>
+                    <div class="gender">L</div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- KELOMPOK 2 -->
+        <div class="group">
+
+            <div class="group-header">
+
+                <div class="group-title">
+                    <div class="number">02</div>
+                    <h3>Kelompok 2</h3>
+                </div>
+
+                <div class="composition">
+                    2 L • 4 P
+                </div>
+
+            </div>
+
+            <div class="students">
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Ahmad Zidni Almadani</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Ayu Dinda Kinara</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Dasya Wulan Isnaeni</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Kaisya Ayundira Azzahra</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Muhamad Faiz Saputra</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Nadia Kayla Putri</div><div class="gender">P</div></div>
+
+            </div>
+        </div>
+
+
+        <!-- KELOMPOK 3 -->
+        <div class="group">
+
+            <div class="group-header">
+
+                <div class="group-title">
+                    <div class="number">03</div>
+                    <h3>Kelompok 3</h3>
+                </div>
+
+                <div class="composition">
+                    3 L • 3 P
+                </div>
+
+            </div>
+
+            <div class="students">
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Fajrul Al Azzidan</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Isma Zakia</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Muhamad Arif Arfan</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Najma Nur Maulida</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Sevilla Seninda Evlien</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Trio Aji Kurniawan</div><div class="gender">L</div></div>
+
+            </div>
+        </div>
+
+
+        <!-- KELOMPOK 4 -->
+        <div class="group">
+
+            <div class="group-header">
+
+                <div class="group-title">
+                    <div class="number">04</div>
+                    <h3>Kelompok 4</h3>
+                </div>
+
+                <div class="composition">
+                    3 L • 3 P
+                </div>
+
+            </div>
+
+            <div class="students">
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Assyahla Rumeena Priyanto Putri</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Fariz Aiman Najib</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Laelatul Windana</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Muhamad Davine Raif Alifi</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Novia Ul Khusna</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Tubagus Zuknawa Zidna</div><div class="gender">L</div></div>
+
+            </div>
+        </div>
+
+
+        <!-- KELOMPOK 5 -->
+        <div class="group">
+
+            <div class="group-header">
+
+                <div class="group-title">
+                    <div class="number">05</div>
+                    <h3>Kelompok 5</h3>
+                </div>
+
+                <div class="composition">
+                    2 L • 4 P
+                </div>
+
+            </div>
+
+            <div class="students">
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Afika Khaldatu Rizqina</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Muhamad Ibastyan</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar L">L</div><div class="student-name">Muhammad Raffa</div><div class="gender">L</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Prameswary Cahyaningpurnama</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Sinta Maharani</div><div class="gender">P</div></div>
+
+                <div class="student"><div class="avatar P">P</div><div class="student-name">Wihda Meygi Irza Saputri</div><div class="gender">P</div></div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- INFO -->
+    <div class="info">
+
+        <div class="emoji">📸 ✨ 🎓</div>
+
+        <h3>Let's Make Memories!</h3>
+
+        <p>
+            Kelompok ini digunakan untuk kegiatan <strong>Year Book Kelas 9I</strong>.
+            Jaga kekompakan, komunikasi, dan kerja sama.
+            Buat momen terakhir di SMP menjadi kenangan yang seru dan berkesan!
+        </p>
+
+    </div>
+
+</main>
+
+
+<footer>
+    <strong>YEAR BOOK 9I • 2026</strong><br>
+    Satu langkah • Satu cerita • Satu kenangan
+</footer>
+
+</body>
+</html>
+```
